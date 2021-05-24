@@ -1,0 +1,668 @@
+<template>
+  <TablePage>
+    <h3>Promotions</h3>
+    <div class="menu-bar">
+      <div>
+        <span class="icon-wrap">
+          <i class="fa fa-search fa-1x"></i>
+        </span>
+
+        <input
+          v-model="search"
+          class="search-field"
+          type="text"
+          placeholder="search"
+          :style="{ marginBottom: '0' }"
+        />
+      </div>
+      <CustomSelect
+        type="Filter"
+        :options="selectOption"
+        :style="{ marginRight: '20px' }"
+        @selection="selectionFilter"
+      />
+      <CustomSelect
+        type="Sort by"
+        :options="selectOption"
+        :style="{ marginRight: '20px' }"
+        @selection="selectionSort"
+      />
+      <DefaultButton
+        @click="searchData()"
+        type="small"
+        :style="width < 650 ? { width: '70px' } : {}"
+      >
+        Search
+      </DefaultButton>
+      <AddButton
+        :style="
+          width < 800
+            ? { position: 'fixed', right: '20px', top: '80px' }
+            : { position: 'fixed', right: '60px', top: '170px' }
+        "
+        @click="goToAddPromotion()"
+      />
+    </div>
+
+    <SearchError v-if="errorSearching" />
+    <table v-if="promotion_db.length !== 0">
+      <tr>
+        <th>Promotion Name</th>
+        <th>Season</th>
+        <th>Room Type</th>
+        <th>Discount</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Edit</th>
+      </tr>
+
+      <tr
+        v-for="(promotion, i) in promotion_db.slice(
+          currentPage * tableRow - tableRow,
+          currentPage * tableRow
+        )"
+        :key="i"
+        class="row"
+      >
+        <td>{{ promotion.promotionName }}</td>
+        <td>{{ promotion.seasonName }}</td>
+        <td>{{ promotion.roomType }}</td>
+        <td>{{ promotion.discount }}%</td>
+        <td>{{ promotion.startDate }}</td>
+        <td>{{ promotion.endDate }}</td>
+        <td>
+          <div class="manage">
+            <button
+              class="manage-button"
+              @click="getPromotionEdit('edit', promotion)"
+            >
+              <i class="fa fa-pencil fa-2x"></i>
+            </button>
+            <div class="vl"></div>
+            <button @click="deleteData(promotion)" class="manage-button">
+              <i class="fa fa-trash fa-2x"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <PaginationBar
+      :pageCount="Math.ceil(promotion_db.length / tableRow)"
+      :paginationVisible="promotion_db.length > tableRow"
+      @pageReturn="pageReturn"
+      :style="
+        width <= 1000
+          ? {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '60px',
+            }
+          : {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '200px',
+            }
+      "
+    />
+
+    <!--Edit-->
+    <Popup
+      v-bind:visible="editVisible"
+      @popReturn="editReturn"
+      @submit="submit"
+      :buttons="true"
+    >
+      <div class="input-group">
+        <!-- Season Name -->
+        <div class="group-item">
+          <h4>Season Name</h4>
+          <select v-model="form.season">
+            <option :value="season" selected disabled hidden>{{
+              form.season
+            }}</option>
+            <option
+              v-for="(season, index) in season_db"
+              :key="index"
+              :value="season.seasonName"
+              :selected="option == season.seasonName ? 'selected' : null"
+            >
+              {{ season.seasonName }}
+            </option>
+          </select>
+        </div>
+        <!-- Room Type -->
+        <div class="input-group">
+          <div class="group-item">
+            <h4>Room Type</h4>
+            <select>
+              <option :value="form.roomType" selected disabled hidden>
+                {{ form.roomType }}
+              </option>
+              <option
+                v-for="(room, index) in roomtype_db"
+                :key="index"
+                :value="room.roomType"
+                :selected="room == room.roomType ? 'selected' : null"
+              >
+                {{ room.roomType }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- Promotion Name -->
+      <h4>Promotion Name</h4>
+      <input
+        type="text"
+        v-model="form.promotion"
+        :placeholder="promoName"
+        :style="{ width: '95%' }"
+      />
+
+      <div class="input-group">
+        <!-- Start Date -->
+        <div class="group-item">
+          <h4>Start Date</h4>
+          <div class="flex x-full">
+            <v-date-picker
+              v-model="form.startDate"
+              :masks="{ input: ['YYYY-MM-DD'] }"
+              :model-config="startDateConfig"
+              mode="single"
+              class="flex-grow"
+            >
+              <template v-slot="{ inputValue, inputEvents }">
+                <div :style="{ display: 'flex', flexDirection: 'row' }">
+                  <input
+                    :value="inputValue"
+                    v-on="inputEvents"
+                    :placeholder="promoStart"
+                    :style="{ width: '120px', marginRight: '0' }"
+                  />
+                  <i class="fa fa-calendar fa-2x"></i>
+                </div>
+              </template>
+            </v-date-picker>
+          </div>
+        </div>
+        <!-- End Date -->
+        <div class="group-item">
+          <h4>End Date</h4>
+          <div class="flex x-full">
+            <v-date-picker
+              v-model="form.endDate"
+              :masks="{ input: ['YYYY-MM-DD'] }"
+              :model-config="endDateConfig"
+              mode="single"
+              class="flex-grow"
+            >
+              <template v-slot="{ inputValue, inputEvents }">
+                <div :style="{ display: 'flex', flexDirection: 'row' }">
+                  <input
+                    :value="inputValue"
+                    v-on="inputEvents"
+                    :style="{ width: '120px', marginRight: '0' }"
+                  />
+                  <i class="fa fa-calendar fa-2x"></i>
+                </div>
+              </template>
+            </v-date-picker>
+          </div>
+        </div>
+      </div>
+      <!-- Discount -->
+      <h4>Discount</h4>
+      <input v-model="form.discount" type="text" :placeholder="discount" />
+    </Popup>
+  </TablePage>
+</template>
+
+<script>
+import TablePage from "../components/TablePage.vue";
+import DefaultButton from "../components/DefaultButton.vue";
+import PaginationBar from "../components/PaginationBar.vue";
+import AddButton from "../components/AddButton.vue";
+import Popup from "../components/Popup.vue";
+import { useScreenWidth } from "../composables/useScreenWidth";
+import { useScreenHeight } from "../composables/useScreenHeight";
+import CustomSelect from "../components/CustomSelect.vue";
+import SearchError from "../components/SearchError";
+import axios from "axios";
+
+const selectOption = [
+  "Defalut",
+  "Season",
+  "Promotion",
+  "Room Type",
+  "Discount",
+  "Start",
+  "End",
+];
+export default {
+  name: "Promotion",
+  components: {
+    TablePage,
+    DefaultButton,
+    PaginationBar,
+    AddButton,
+    Popup,
+    CustomSelect,
+    SearchError,
+  },
+  setup() {
+    const { width } = useScreenWidth();
+    const { height, tableRow } = useScreenHeight(420);
+    return { width, height, tableRow };
+  },
+  data() {
+    return {
+      selectOption,
+      currentPage: 1,
+      editVisible: false,
+      errorSearching: false,
+      sort: "all",
+      filter: "all",
+      search: "",
+      promotion_db: "",
+      season_db: "",
+      roomtype_db: "",
+      check: false,
+      form: {
+        promotionID: "",
+        season: "",
+        promotion: "",
+        roomType: "",
+        discount: "",
+        startDate: "",
+        endDate: "",
+        isEdit: false,
+      },
+
+      startDateConfig: {
+        type: "string",
+        mask: "YYYY-MM-DD",
+      },
+      endDateConfig: {
+        type: "string",
+        mask: "YYYY-MM-DD",
+      },
+    };
+  },
+  created() {
+    this.getPromotion();
+  },
+  methods: {
+    pageReturn(page) {
+      this.currentPage = page;
+    },
+    editReturn(value) {
+      this.editVisible = value;
+    },
+    submit(value) {
+      this.editVisible = value;
+      this.updateData();
+    },
+    getPromotion() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
+          action: "getPromotion",
+        })
+        .then(
+          function(res) {
+            this.promotion_db = res.data;
+          }.bind(this)
+        );
+    },
+    getSeason() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
+          action: "getSeason",
+        })
+        .then(
+          function(res) {
+            this.season_db = res.data;
+          }.bind(this)
+        );
+    },
+    getPromotionEdit(type, promotion) {
+      if (type === "edit") {
+        this.editVisible = !this.editVisible;
+        this.form.isEdit = true;
+      }
+      this.getRoomType();
+      this.getSeason();
+
+      this.form.promotionID = promotion.promotionID;
+      this.form.season = promotion.seasonName;
+      this.form.promotion = promotion.promotionName;
+      this.form.roomType = promotion.roomType;
+      this.form.discount = promotion.discount;
+      this.form.startDate = promotion.startDate;
+      this.form.endDate = promotion.endDate;
+    },
+
+    getRoomType() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
+          action: "getRoomType",
+        })
+        .then(
+          function(res) {
+            this.roomtype_db = res.data;
+          }.bind(this)
+        );
+    },
+    searchData() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
+          action: "searchData",
+          search: this.search,
+          filter: this.filter,
+          sort: this.sort,
+        })
+        .then(
+          function(res) {
+            this.promotion_db = res.data;
+            if (this.promotion_db != "") {
+              this.errorSearching = false;
+            } else {
+              this.errorSearching = true;
+            }
+          }.bind(this)
+        );
+    },
+    goToAddPromotion() {
+      this.$router.push("/AddPromo");
+    },
+    updateData() {
+      this.validate();
+
+      if (this.check && this.form.isEdit) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
+            action: "updateData",
+            promotionID: this.form.promotionID,
+            promotion: this.form.promotion,
+            season: this.form.season,
+            roomType: this.form.roomType,
+            startDate: this.form.startDate,
+            endDate: this.form.endDate,
+            discount: this.form.discount,
+          })
+          .then(
+            function(res) {
+              if (res.data.success == true) {
+                alert(res.data.message);
+                this.resetData();
+                this.getPromotion();
+              } else {
+                alert(res.data.message);
+              }
+            }.bind(this)
+          );
+      }
+    },
+    deleteData(promotion) {
+      if (
+        confirm(
+          "Do you want to delete promotion '" + promotion.promotionName + "' ?"
+        )
+      ) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
+            action: "deleteData",
+            promotionID: promotion.promotionID,
+          })
+          .then(
+            function(res) {
+              if (res.data.success == true) {
+                alert(res.data.message);
+                this.getPromotion();
+              }
+            }.bind(this)
+          );
+      }
+    },
+    selectionSort(value) {
+      if (value === selectOption[0]) {
+        this.sort = "all";
+      }
+      if (value === selectOption[1]) {
+        this.sort = "seasonName";
+      }
+      if (value === selectOption[2]) {
+        this.sort = "promotionName";
+      }
+      if (value === selectOption[3]) {
+        this.sort = "roomType";
+      }
+      if (value === selectOption[4]) {
+        this.sort = "discount";
+      }
+      if (value === selectOption[5]) {
+        this.sort = "startDate";
+      }
+      if (value === selectOption[6]) {
+        this.sort = "endDate";
+      }
+    },
+    selectionFilter(value) {
+      if (value === selectOption[0]) {
+        this.filter = "all";
+      }
+      if (value === selectOption[1]) {
+        this.filter = "seasonName";
+      }
+      if (value === selectOption[2]) {
+        this.filter = "promotionName";
+      }
+      if (value === selectOption[3]) {
+        this.filter = "roomType";
+      }
+      if (value === selectOption[4]) {
+        this.filter = "discount";
+      }
+      if (value === selectOption[5]) {
+        this.filter = "startDate";
+      }
+      if (value === selectOption[6]) {
+        this.filter = "endDate";
+      }
+    },
+    validate() {
+      this.check =
+        this.form.season != "" &&
+        this.form.promotion != "" &&
+        this.form.roomType != "" &&
+        this.form.discount != "" &&
+        this.form.startDate != "" &&
+        this.form.endDate != "";
+    },
+
+    resetData() {
+      this.form.promotionID = "";
+      this.form.season = "";
+      this.form.promotion = "";
+      this.form.roomType = "";
+      this.form.discount = "";
+      this.form.startDate = "";
+      this.form.endDate = "";
+    },
+  },
+};
+</script>
+
+<style scoped>
+h3 {
+  font-size: 48px;
+  margin: 80px 0 35px 0;
+}
+h4 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+.icon-wrap {
+  position: absolute;
+  z-index: 0;
+  padding: 5px 20px;
+}
+.search-field {
+  width: 225px;
+  height: 30px;
+  padding-left: 45px;
+  font-size: 16px;
+  outline: none;
+  z-index: 1;
+  border: none;
+  border-radius: 50px;
+  margin-right: 20px;
+}
+i {
+  color: #5f5f5f;
+}
+.menu-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+table {
+  width: 100%;
+  max-width: 1000;
+  margin-top: 50px;
+  border: 1px solid black;
+  border-collapse: collapse;
+  align-self: flex-start;
+  z-index: 0;
+}
+.manage {
+  height: 35px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.vl {
+  border-left: 3px solid #eeeeee;
+  height: 25px;
+  margin: 0 5px;
+}
+.fa-pencil:hover,
+.fa-trash:hover {
+  color: var(--primary-blue);
+}
+.fa-calendar {
+  color: var(--primary-blue);
+  margin: 3px 0 0 -35px;
+}
+.manage-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+p {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+input {
+  width: 120px;
+  height: 35px;
+  padding: 0 10px;
+  margin-bottom: 20px;
+  color: var(--header-color);
+}
+.input-group {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+}
+.group-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+select {
+  width: 180px;
+  height: 35px;
+}
+th {
+  height: 35px;
+  text-align: center;
+  background-color: #eeeeee;
+  border-bottom: 1px solid black;
+}
+td {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+.row:hover {
+  cursor: pointer;
+  background: var(--grey-highlight);
+}
+*:focus {
+  outline: 0;
+}
+@media (max-width: 1000px) {
+  .search-field {
+    width: 180px;
+  }
+  .vl {
+    margin: 0 5px;
+  }
+  h4 {
+    font-size: 16px;
+  }
+  p {
+    font-size: 16px;
+  }
+  .subscript-text {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  .rank {
+    width: 40px;
+    height: 40px;
+    margin: 12px 15px 0 0;
+    font-size: 16px;
+  }
+}
+@media (max-width: 700px) {
+  th {
+    font-size: 14px;
+  }
+  td {
+    font-size: 14px;
+  }
+  .search-field {
+    width: 150px;
+    font-size: 16px;
+  }
+  h3 {
+    margin: 40px 0 20px 0;
+  }
+  h4 {
+    font-size: 14px;
+  }
+  p {
+    font-size: 14px;
+  }
+  .rank {
+    width: 35px;
+    height: 35px;
+    margin: 10px 15px 0 0;
+    font-size: 14px;
+  }
+  select {
+    width: 140px;
+  }
+  .fa-pencil,
+  .fa-trash {
+    font-size: 20px;
+  }
+}
+</style>
