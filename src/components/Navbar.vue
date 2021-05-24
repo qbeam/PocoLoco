@@ -26,7 +26,6 @@
     </div>
     <div class="menu" v-if="visible || width > 1000">
       <router-link :to="{ name: 'Home' }">Home</router-link>
-      <router-link :to="{ name: 'About' }">About</router-link>
       <router-link :to="{ name: 'Role' }">Role</router-link>
       <router-link :to="{ name: 'Customer' }">Customer</router-link>
       <router-link :to="{ name: 'HotelExpenses' }">Hotel Expenses</router-link>
