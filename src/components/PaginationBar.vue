@@ -42,6 +42,7 @@
       >
         <i class="fa fa-angle-double-right"></i>
       </button>
+      <!-- <p>{{ pageCount }}</p> -->
     </div>
   </div>
 </template>
@@ -53,17 +54,28 @@ export default {
   data() {
     return {
       currentPage: 1,
-      pageNumber: [],
+      pageNumber: null,
       pageGroup: 0,
       doubleArrowVisible: false,
     };
   },
+
   created() {
     this.pageNumber = Array.from(new Array(this.pageCount), (x, i) => i + 1);
     if (this.pageCount / 10 > 1) {
       this.doubleArrowVisible = true;
     }
   },
+
+  watch: {
+    pageCount: function(){
+      this.pageNumber = Array.from(new Array(this.pageCount), (x, i) => i + 1);
+      if (this.pageCount / 10 > 1) {
+        this.doubleArrowVisible = true;
+      }
+    }
+  },
+
   methods: {
     setPageGroup(current) {
       var i = 0;
@@ -105,6 +117,10 @@ export default {
       this.$emit("pageReturn", this.currentPage);
     },
   },
+  //beforeUnmount() {
+  //  this.$destroy();
+  //  this.$el.parentNode.removeChild(this.$el);
+  //},
 };
 </script>
 
