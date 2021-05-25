@@ -235,7 +235,7 @@ import SearchError from "../components/SearchError";
 import axios from "axios";
 
 const selectOption = [
-  "Defalut",
+  "Default",
   "Season",
   "Promotion",
   "Room Type",
