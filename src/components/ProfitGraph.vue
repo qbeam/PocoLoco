@@ -15,7 +15,6 @@
   const outcome = [12, 11, 14, 18, 17, 13, 13, 18, 17, 13, 13, 12];
   export default {
     name: "ProfitGraph",
-    watch() {},
     data() {
       return {
         income,
