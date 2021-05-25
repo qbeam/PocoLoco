@@ -1,6 +1,6 @@
 <template>
   <div class="background" v-if="visible">
-    <div class="box" v-bind:style="buttons ? {} : { paddingTop: '10px' }">
+    <div class="box">
       <div class="exit-button" @click="returnPop()">
         <buttons class="exit-icon">
           <i class="fa fa-times fa-1x"></i>
@@ -40,12 +40,19 @@
 import DefaultButton from "../components/DefaultButton.vue";
 export default {
   name: "Popup",
-  props: ["visible", "buttons"],
+  props: ["visible", "buttons", "pop2"],
   components: { DefaultButton },
   methods: {
     returnPop() {
-      this.$emit("popReturn", false);
-      close();
+      if(this.pop2 == true)
+      {
+        this.$emit("pop2Return", false);
+        close();
+      }
+      else{
+        this.$emit("popReturn", false);
+        close();
+      }
     },
     submit() {
       this.$emit("submit", false);
@@ -78,7 +85,7 @@ export default {
   background-color: white;
   z-index: 10;
   border-radius: 24px;
-  padding: 40px 50px;
+  padding: 10px 50px 35px 50px;
   overflow-y: auto;
 }
 .exit-button {
