@@ -89,17 +89,17 @@
     },
     mounted() {
       if (this.type === "cancel") {
-        this.title = "Number of booking cancelation in year xxxx";
+        this.title = "Number of booking cancelation in xxxx";
         this.options.xaxis.categories = this.month;
         this.options.colors = "var(--primary-red)";
       }
       if (this.type === "guest") {
-        this.title = "Number of guest in year xxxx";
+        this.title = "Number of guest in xxxx";
         this.options.xaxis.categories = this.month;
         this.options.colors = "var(--button-blue)";
       }
       if (this.type === "room") {
-        this.title = "Room popularity chart for year xxxx";
+        this.title = "Room popularity chart in xxxx";
         this.options.xaxis.categories = this.room;
         this.options.colors = "var(--primary-yellow)";
       }

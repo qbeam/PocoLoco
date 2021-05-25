@@ -3,18 +3,18 @@
     <p>Employee Punctuality in xxxx</p>
     <div class="vl"></div>
     <div class="list">
-      <div class="expense-item" v-for="(record, i) in lateSummary" :key="i">
+      <div class="item" v-for="(record, i) in lateSummary" :key="i">
         <div class="icon">
           <div class="user-icon">
             <img :src="require(`../assets/${record.role}.png`)" />
           </div>
         </div>
 
-        <div>
+        <div class="detail">
           <p :style="{ fontWeight: 'bold' }">
             {{ record.id }} {{ record.name }}
           </p>
-          <div class="expense-item">
+          <div class="item">
             <div class="progress-bar">
               <div class="progress" :style="{ width: record.late + '%' }"></div>
             </div>
@@ -34,6 +34,7 @@
     { id: 123456, name: "Pungkung Broccolli", role: "maid", late: 30 },
     { id: 123456, name: "Pungkung Baby", role: "owner", late: 10 },
     { id: 123456, name: "Ploypapas Pianchoopat", role: "chef", late: 5 },
+    { id: 123456, name: "Supavadee Yingying", role: "receptionist", late: 2 },
   ];
   export default {
     name: "LateEmployee",
@@ -70,14 +71,14 @@
     height: 1px;
     background: var(--grey-highlight);
   }
-  .expense-item {
+  .item {
     width: 90%;
     display: flex;
     align-self: center;
     border-bottom: 1px solid var(--grey-highlight);
   }
   .icon {
-    width: 35px;
+    width: 20%;
     display: flex;
     justify-content: center;
   }
@@ -92,6 +93,9 @@
     border-radius: 50px;
     overflow: hidden;
     align-self: center;
+  }
+  .detail {
+    width: 80%;
   }
   img {
     height: 30px;
@@ -118,5 +122,15 @@
   .unit {
     margin: -12px 0 0 10px;
     font-size: 10px;
+  }
+  @media (max-width: 550px) {
+    .chart-container {
+      width: 100%;
+      height: 400px;
+      margin: 15px 0;
+    }
+    .progress-bar {
+      width: 60%;
+    }
   }
 </style>

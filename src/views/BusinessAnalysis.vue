@@ -2,26 +2,50 @@
   <TablePage>
     <h3>Business Analysis</h3>
     <div class="cards">
-      <ProgressCard title="earning" amount="1,000,000 $" progress="50" />
-      <ProgressCard title="booking" amount="30" progress="50" />
-      <ProgressCard title="order" amount="20" progress="50" />
-      <ProgressCard title="customer" amount="250" progress="50" />
+      <div class="card-group">
+        <ProgressCard
+          title="earning"
+          :amount="earningAmount"
+          :progress="earningProgress"
+        />
+        <ProgressCard
+          title="booking"
+          :amount="bookingAmount"
+          :progress="bookingProgress"
+        />
+      </div>
+      <div class="card-group">
+        <ProgressCard
+          title="order"
+          :amount="orderAmount"
+          :progress="orderProgress"
+        />
+        <ProgressCard
+          title="customer"
+          :amount="customerProgress"
+          :progress="customerProgress"
+        />
+      </div>
     </div>
-    <div class="bottom">
+    <div class="row">
       <ProfitGraph />
     </div>
-    <div class="bottom">
+    <div class="row">
       <BarChart type="cancel" />
       <ExpenseReport />
     </div>
-    <div class="bottom">
+    <div class="row">
       <BarChart type="guest" />
       <BarChart type="room" />
     </div>
-    <div class="bottom">
+    <div class="row">
+      <PieChart />
+      <PieChart />
+    </div>
+    <div class="row">
       <BookingReport />
       <LateEmployee />
-      <LateEmployee />
+      <AbsentReport />
     </div>
   </TablePage>
 </template>
@@ -34,6 +58,8 @@
   import ExpenseReport from "../components/ExpenseReport";
   import LateEmployee from "../components/LateEmployee";
   import ProfitGraph from "../components/ProfitGraph";
+  import AbsentReport from "../components/AbsentReport";
+  import PieChart from "../components/PieChart";
 
   export default {
     name: "BusinessAnalysis",
@@ -45,6 +71,20 @@
       ExpenseReport,
       LateEmployee,
       ProfitGraph,
+      AbsentReport,
+      PieChart,
+    },
+    data() {
+      return {
+        earningAmount: 100000,
+        earningProgress: 100,
+        bookingAmount: 0,
+        bookingProgress: 0,
+        orderAmount: 0,
+        orderProgress: 0,
+        customerAmount: 0,
+        customerProgress: 0,
+      };
     },
   };
 </script>
@@ -56,10 +96,14 @@
   }
   .cards {
     display: flex;
-    justify-content: space-between;
     margin-bottom: 10px;
   }
-  .bottom {
+  .card-group {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  .row {
     margin: 10px 0;
     display: flex;
     justify-content: space-between;
@@ -67,6 +111,15 @@
   @media (max-width: 1000px) {
     h3 {
       margin: 40px 0 20px 0;
+    }
+  }
+  @media (max-width: 750px) {
+    .cards {
+      flex-direction: column;
+      margin: 0;
+    }
+    .row {
+      flex-direction: column;
     }
   }
 </style>

@@ -11,10 +11,16 @@
 </template>
 
 <script>
+  const income = [20, 25, 30, 35, 15, 24, 56, 30, 35, 15, 24, 56];
+  const outcome = [12, 11, 14, 18, 17, 13, 13, 18, 17, 13, 13, 12];
   export default {
     name: "ProfitGraph",
+    watch() {},
     data() {
       return {
+        income,
+        outcome,
+        profit: [],
         series: [
           {
             name: "Earning",
@@ -89,6 +95,15 @@
           },
         },
       };
+    },
+    method: {
+      calcProfit(income, outcome) {
+        const profit = [];
+        const i = 0;
+        while (i < income.length) {
+          this.profit.push(income[i] - outcome[i]);
+        }
+      },
     },
   };
 </script>

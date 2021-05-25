@@ -151,4 +151,9 @@
     font-size: 16px;
     margin: 0;
   }
+  @media (max-width: 750px) {
+    .chart-container {
+      width: 95%;
+    }
+  }
 </style>
