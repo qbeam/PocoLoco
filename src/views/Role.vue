@@ -145,7 +145,7 @@ import SearchError from "../components/SearchError";
 import axios from "axios";
 
 const selectOption = [
-  "Defalut",
+  "Default",
   "Role ID",
   "Department",
   "Name",

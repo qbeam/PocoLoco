@@ -3,15 +3,17 @@
     <div class="form-header">
       <h2>Add Booking</h2>
     </div>
-
+    <!-- ปจเองจ้า -->
     <InnerFormContainer :style="{ height: '560px', position: 'relative' }">
       <h3>Booking ID: {{ bookingID }}</h3>
       <div class="input-group">
         <h4>Customer ID</h4>
-        <input v-model="customerID" type="number"
-        onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
+        <input
+          v-model="customerID"
+          type="number"
+          onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
         />
-        <h4 style="color:red">{{ message }}</h4>
+        <h4 style="color: red">{{ message }}</h4>
         <!-- Add Booking Detail -->
         <!-- <AddButton
           @click="
@@ -126,14 +128,14 @@ export default {
     this.getBookingID();
   },
   mounted() {
-    this.customerID = this.$store.state.customerID
+    this.customerID = this.$store.state.customerID;
   },
   methods: {
     pageReturn(page) {
       this.currentPage = page;
     },
-    goToAddBookingDetail(){
-      this.$store.state.customerID = this.customerID
+    goToAddBookingDetail() {
+      this.$store.state.customerID = this.customerID;
       this.$router.push("/AddBookingDetail");
     },
     getBookingID() {
@@ -142,7 +144,7 @@ export default {
           action: "getBookingID",
         })
         .then(
-          function(res) {
+          function (res) {
             this.bookingID = res.data;
             this.getBookingDetail();
           }.bind(this)
@@ -156,7 +158,7 @@ export default {
           bookingID: this.bookingID,
         })
         .then(
-          function(res) {
+          function (res) {
             this.bookingDetail_db = res.data;
           }.bind(this)
         );
@@ -170,7 +172,7 @@ export default {
             bookingDetail: id,
           })
           .then(
-            function(res) {
+            function (res) {
               if (res.data.success == true) {
                 this.getBookingDetail();
               }
@@ -188,7 +190,7 @@ export default {
             customerID: this.customerID,
           })
           .then(
-            function(res) {
+            function (res) {
               console.log(res);
               if (res.data.success == true) {
                 this.getBookingID();
@@ -323,11 +325,11 @@ i:hover {
     padding-left: 10px;
   }
 }
-  input[type="number"] {
+input[type="number"] {
   -moz-appearance: textfield;
-  }
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  }
+}
 </style>

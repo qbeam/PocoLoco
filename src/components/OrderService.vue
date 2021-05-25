@@ -15,7 +15,7 @@
         :style="{ marginBottom: '0' }"
       />
     </div>
-    <DefaultButton type="small">
+    <DefaultButton type="small" @click="searchService">
       Search
     </DefaultButton>
   </div>
@@ -31,16 +31,16 @@
     </tr>
 
     <tr
-      v-for="(option, i) in options.slice(
+      v-for="(service, i) in service_db.slice(
         currentPage * resultPerPage - resultPerPage,
         currentPage * resultPerPage
       )"
       :key="i"
       class="row"
     >
-      <td v-if="width > 700">{{ option.id }}</td>
-      <td :style="{ textAlign: 'left' }">{{ option.name }}</td>
-      <td>{{ option.price }}</td>
+      <td v-if="width > 700">{{ service.serviceID }}</td>
+      <td :style="{ textAlign: 'left' }">{{ service.name }}</td>
+      <td>{{ service.servicePrice }}</td>
       <td>
         <input
           class="add-amount"
@@ -53,7 +53,7 @@
       <td>
         <DefaultButton
           type="small"
-          @click="addToOrder(option, i)"
+          @click="addToOrder(service, i)"
           :style="
             width > 700
               ? { width: '90px', height: '25px' }
@@ -66,8 +66,8 @@
     </tr>
     <tr
       v-if="
-        currentPage == Math.ceil(options.length / resultPerPage) &&
-          options.length % resultPerPage !== 0
+        currentPage == Math.ceil(service_db.length / resultPerPage) &&
+          service_db.length % resultPerPage !== 0
       "
     >
       <td colspan="5" :style="{ height: '100%' }"></td>
@@ -75,8 +75,8 @@
   </table>
 
   <PaginationBar
-    :pageCount="Math.ceil(options.length / resultPerPage)"
-    :paginationVisible="options.length > resultPerPage"
+    :pageCount="Math.ceil(service_db.length / resultPerPage)"
+    :paginationVisible="service_db.length > resultPerPage"
     @pageReturn="pageReturn"
   />
 
@@ -131,6 +131,7 @@
       >CANCEL</DefaultButton
     >
     <DefaultButton
+      @click="loopInsert()"
       :style="{
         height: '40px',
         width: '110px',
@@ -149,48 +150,7 @@ import { useScreenWidth } from "../composables/useScreenWidth";
 import PaginationBar from "../components/PaginationBar";
 import SearchError from "../components/SearchError";
 import axios from "axios";
-const options = [
-  {
-    id: 111,
-    name: "Extra Blanket",
-    price: 350,
-  },
-  {
-    id: 112,
-    name: "Extra Pillow",
-    price: 250,
-  },
-  {
-    id: 113,
-    name: "Extra Towel",
-    price: 150,
-  },
-  {
-    id: 114,
-    name: "Extra Bed",
-    price: 800,
-  },
-  {
-    id: 115,
-    name: "Extra Something",
-    price: 50,
-  },
-  {
-    id: 115,
-    name: "Extra Something",
-    price: 50,
-  },
-  {
-    id: 115,
-    name: "Extra Something",
-    price: 50,
-  },
-  {
-    id: 115,
-    name: "Extra Something",
-    price: 50,
-  },
-];
+
 export default {
   name: "OrderService",
   components: { DefaultButton, PaginationBar, DefaultButton },
@@ -213,7 +173,8 @@ export default {
       amount_insert: 0,
       serviceID_insert: "",
       total_insert: "",
-      count_success: "",
+      count_success: 0,
+      count_fail: 0,
       item: {
         id: "",
         name: "",
@@ -221,38 +182,64 @@ export default {
         price: 0,
         totalPrice: 0,
       },
-      addServiceArray: [],
-
-      options,
-
       orders: [],
       totalAmount: 0,
       totalPrice: 0,
     };
   },
+  created() {
+    this.getAllService();
+  },
+
   methods: {
     pageReturn(page) {
       this.currentPage = page;
     },
+
+    getAllService() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_orderService.php", {
+          action: "getAllService",
+        })
+        .then(
+          function(res) {
+            this.service_db = res.data;
+          }.bind(this)
+        );
+    },
+
+    searchService() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_orderService.php", {
+          action: "searchService",
+          search: this.search,
+        })
+        .then(
+          function(res) {
+            this.service_db = res.data;
+          }.bind(this)
+        );
+    },
+
     addToOrder(item, index) {
       var check = true;
       const inputAmount = Number(
         document.getElementById(`orderAmount${index}`).value
       );
       this.totalAmount = this.totalAmount + inputAmount;
-      this.totalPrice = this.totalPrice + item.price * inputAmount;
+      this.totalPrice = this.totalPrice + item.servicePrice * inputAmount;
 
       if (this.orders.length == 0) {
         this.orders.push({
-          id: item.id,
+          id: item.serviceID,
           name: item.name,
           amount: inputAmount,
-          price: item.price,
-          totalPrice: inputAmount * item.price,
+          price: item.servicePrice,
+          totalPrice: inputAmount * item.servicePrice,
         });
       } else {
         for (var i = 0; i < this.orders.length; i++) {
-          if (item.id == this.orders[i].id) {
+          if (item.serviceID == this.orders[i].id) {
             var amount_order = 0;
             var amount_item = 0;
 
@@ -262,7 +249,7 @@ export default {
             this.orders[i].amount = amount_order + amount_item;
 
             // Update Total Price
-            item.totalPrice = this.orders[i].amount * item.price;
+            item.totalPrice = this.orders[i].amount * item.servicePrice;
             this.orders[i].totalPrice = item.totalPrice;
 
             // Already have
@@ -271,15 +258,16 @@ export default {
         }
         if (check == true) {
           this.orders.push({
-            id: item.id,
+            id: item.serviceID,
             name: item.name,
             amount: inputAmount,
-            price: item.price,
-            totalPrice: inputAmount * item.price,
+            price: item.servicePrice,
+            totalPrice: inputAmount * item.servicePrice,
           });
         }
       }
     },
+
     removeOrder(order, index) {
       const inputAmount = Number(
         document.getElementById(`orderAmount${index}`).value
@@ -288,8 +276,49 @@ export default {
       this.totalPrice = this.totalPrice - order.price * inputAmount;
       this.orders.splice(index, 1);
     },
+
     clearBasket() {
+      this.roomID = "";
       this.orders = [];
+    },
+
+    loopInsert() {
+      var i = 0;
+
+      while (i < this.orders.length) {
+        this.serviceID_insert = this.orders[i].id;
+        this.amount_insert = this.orders[i].amount;
+        this.total_insert = this.orders[i].totalPrice;
+        this.confirmService();
+        i++;
+      }
+    },
+
+    confirmService() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_orderService.php", {
+          action: "confirmService",
+          serviceID: this.serviceID_insert,
+          amount: this.amount_insert,
+          total: this.total_insert,
+          roomID: this.roomID,
+        })
+        .then(
+          function(res) {
+            console.log(res.data);
+            if (res.data.success == true) {
+              this.count_success++;
+              if (this.count_success == this.orders.length) {
+                alert(res.data.message);
+              }
+            } else {
+              this.count_fail++;
+              if (this.count_fail == this.orders.length) {
+                alert(res.data.message);
+              }
+            }
+          }.bind(this)
+        );
     },
   },
 };

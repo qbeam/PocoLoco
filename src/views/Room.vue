@@ -148,7 +148,7 @@ import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
 import axios from "axios";
 
-const selectOption = ["Defalut", "Room No.", "Room Type", "Room Price"];
+const selectOption = ["Default", "Room No.", "Room Type", "Room Price"];
 
 export default {
   name: "Promotion",
@@ -268,7 +268,6 @@ export default {
           search: this.search,
           sort: this.sort,
           filter: this.filter,
-          
         })
         .then(
           function(res) {

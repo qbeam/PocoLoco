@@ -1,123 +1,122 @@
 <template>
   <TablePage>
-      <h3>Hotel Expenses</h3>
-      <div class="menu-bar">
-        <div>
-          <span class="icon-wrap">
-            <i class="fa fa-search fa-1x"></i>
-          </span>
+    <h3>Hotel Expenses</h3>
+    <div class="menu-bar">
+      <div>
+        <span class="icon-wrap">
+          <i class="fa fa-search fa-1x"></i>
+        </span>
 
-          <input
-            v-model="search"
-            class="search-field"
-            type="text"
-            placeholder="search"
-            :style="{ marginBottom: '0' }"
-          />
-        </div>
-        <CustomSelect
-          type="Filter"
-          :options="selectOption"
-          :style="{ marginRight: '20px' }"
-          @selection="selectionFilter"
-        />
-        <CustomSelect
-          type="Sort by"
-          :options="selectOption"
-          :style="{ marginRight: '20px' }"
-          @selection="selectionSort"
-        />
-        <DefaultButton
-          @click="searchData"
-          type="small"
-          :style="width < 650 ? { width: '70px' } : {}"
-        >
-          Search
-        </DefaultButton>
-        <AddButton
-          :style="
-            width < 800
-              ? { position: 'fixed', right: '20px', top: '80px' }
-              : { position: 'fixed', right: '60px', top: '170px' }
-          "
-          @click="goToAddExpense()"
+        <input
+          v-model="search"
+          class="search-field"
+          type="text"
+          placeholder="search"
+          :style="{ marginBottom: '0' }"
         />
       </div>
-
-      <SearchError v-if="errorSearching" />
-      <table v-if="expenseDetail_db.length !== 0">
-        <tr>
-          <th>Informer</th>
-          <th>Room Number</th>
-          <th>Room Type</th>
-          <th>Expense</th>
-          <th>Date</th>
-          <th>Manage</th>
-        </tr>
-
-        <tr
-          v-for="(expense, i) in expenseDetail_db.slice(
-            currentPage * tableRow - tableRow,
-            currentPage * tableRow
-          )"
-          :key="i"
-          class="row"
-        >
-          <td>{{ expense.em_firstname }} {{ expense.em_lastname }}</td>
-          <td>{{ expense.roomID }}</td>
-          <td>{{ expense.roomType }}</td>
-
-          <td>{{ expense.expense }}</td>
-          <td>{{ expense.expenseDate }}</td>
-          <td>
-            <div class="manage">
-              <!--View-->
-              <button
-                class="manage-button"
-                @click="getExpenseData('view', expense)"
-              >
-                <i class="fa fa-search fa-2x"></i>
-              </button>
-              <div class="vl"></div>
-              <!--Edit-->
-              <button
-                class="manage-button"
-                @click="getExpenseData('edit', expense)"
-              >
-                <i class="fa fa-pencil fa-2x"></i>
-              </button>
-              <div class="vl"></div>
-              <button @click="deleteData(expense)" class="manage-button">
-                <i class="fa fa-trash fa-2x"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </table>
-
-      <PaginationBar
-        :pageCount="Math.ceil(expenseDetail_db.length / tableRow)"
-        :paginationVisible="expenseDetail_db.length > tableRow"
-        @pageReturn="pageReturn"
-        :style="
-          width <= 1000
-            ? {
-                position: 'fixed',
-                bottom: '50px',
-                margin: '0 auto',
-                right: '0',
-                left: '60px',
-              }
-            : {
-                position: 'fixed',
-                bottom: '50px',
-                margin: '0 auto',
-                right: '0',
-                left: '200px',
-              }
-        "
+      <CustomSelect
+        type="Filter"
+        :options="selectOption"
+        :style="{ marginRight: '20px' }"
+        @selection="selectionFilter"
       />
+      <CustomSelect
+        type="Sort by"
+        :options="selectOption"
+        :style="{ marginRight: '20px' }"
+        @selection="selectionSort"
+      />
+      <DefaultButton
+        @click="searchData"
+        type="small"
+        :style="width < 650 ? { width: '70px' } : {}"
+      >
+        Search
+      </DefaultButton>
+      <AddButton
+        :style="
+          width < 800
+            ? { position: 'fixed', right: '20px', top: '80px' }
+            : { position: 'fixed', right: '60px', top: '170px' }
+        "
+        @click="goToAddExpense()"
+      />
+    </div>
 
+    <SearchError v-if="errorSearching" />
+    <table v-if="expenseDetail_db.length !== 0">
+      <tr>
+        <th>Informer</th>
+        <th>Room Number</th>
+        <th>Room Type</th>
+        <th>Expense</th>
+        <th>Date</th>
+        <th>Manage</th>
+      </tr>
+
+      <tr
+        v-for="(expense, i) in expenseDetail_db.slice(
+          currentPage * tableRow - tableRow,
+          currentPage * tableRow
+        )"
+        :key="i"
+        class="row"
+      >
+        <td>{{ expense.em_firstname }} {{ expense.em_lastname }}</td>
+        <td>{{ expense.roomID }}</td>
+        <td>{{ expense.roomType }}</td>
+
+        <td>{{ expense.expense }}</td>
+        <td>{{ expense.expenseDate }}</td>
+        <td>
+          <div class="manage">
+            <!--View-->
+            <button
+              class="manage-button"
+              @click="getExpenseData('view', expense)"
+            >
+              <i class="fa fa-search fa-2x"></i>
+            </button>
+            <div class="vl"></div>
+            <!--Edit-->
+            <button
+              class="manage-button"
+              @click="getExpenseData('edit', expense)"
+            >
+              <i class="fa fa-pencil fa-2x"></i>
+            </button>
+            <div class="vl"></div>
+            <button @click="deleteData(expense)" class="manage-button">
+              <i class="fa fa-trash fa-2x"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <PaginationBar
+      :pageCount="Math.ceil(expenseDetail_db.length / tableRow)"
+      :paginationVisible="expenseDetail_db.length > tableRow"
+      @pageReturn="pageReturn"
+      :style="
+        width <= 1000
+          ? {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '60px',
+            }
+          : {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '200px',
+            }
+      "
+    />
 
     <!--View-->
     <Popup v-bind:visible="viewVisible" @popReturn="viewReturn">
@@ -260,7 +259,7 @@ import SearchError from "../components/SearchError";
 import axios from "axios";
 
 const selectOption = [
-  "Defalut",
+  "Default",
   "Informer",
   "Room No.",
   "Room Type",

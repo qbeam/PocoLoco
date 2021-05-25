@@ -5,27 +5,35 @@
         <i class="fa fa-search fa-1x"></i>
       </span>
 
-      <input class="search-field" type="text" placeholder="search" />
+      <input
+        v-model="search"
+        class="search-field"
+        type="text"
+        placeholder="search"
+      />
     </div>
     <div class="menu-buttons">
       <CustomSelect
         type="Filter"
-        :options="['A', 'B', 'C']"
+        :options="selectOption"
         :style="{ marginRight: '20px' }"
         @selection="selectionFilter"
       />
       <CustomSelect
         type="Sort by"
-        :options="['A', 'B', 'C']"
+        :options="selectOption"
         :style="{ marginRight: '20px' }"
         @selection="selectionSort"
       />
-      <DefaultButton type="small">
+      <DefaultButton @click="searchActivity" type="small">
         Search
       </DefaultButton>
     </div>
   </div>
-  <table v-if="history.length !== 0">
+
+  <SearchError v-if="errorSearching" :style="{ marginTop: '80px' }" />
+
+  <table v-if="history_db.length !== 0">
     <tr>
       <th>Date</th>
       <th>Room</th>
@@ -34,16 +42,16 @@
     </tr>
 
     <tr
-      v-for="(record, i) in history.slice(
+      v-for="(record, i) in history_db.slice(
         currentPage * tableRow - tableRow,
         currentPage * tableRow
       )"
       :key="i"
       class="row"
     >
-      <td>{{ record.date }}</td>
-      <td>{{ record.room }}</td>
-      <td>{{ getTotal(record.order) }}</td>
+      <td>{{ convertDate(record.date) }}</td>
+      <td>{{ record.roomID }}</td>
+      <td>{{ record.total }}</td>
 
       <td>
         <div class="manage">
@@ -56,8 +64,8 @@
   </table>
 
   <PaginationBar
-    :pageCount="Math.ceil(history.length / tableRow)"
-    :paginationVisible="history.length > tableRow"
+    :pageCount="Math.ceil(history_db.length / tableRow)"
+    :paginationVisible="history_db.length > tableRow"
     @pageReturn="pageReturn"
     :style="
       width <= 700
@@ -92,7 +100,7 @@
   >
     <div class="popup-head">
       <p>Room Number: {{ room }}</p>
-      <h4>Date: {{ date }}</h4>
+      <h4>Date: {{ convertDate(date) }}</h4>
     </div>
     <table :style="{ marginBottom: '20px' }">
       <tr>
@@ -102,11 +110,11 @@
         <th>Total</th>
       </tr>
 
-      <tr v-for="(order, i) in orders" :key="i" class="row">
+      <tr v-for="(order, i) in order_db" :key="i" class="row">
         <td>{{ order.name }}</td>
         <td>{{ order.amount }}</td>
-        <td>{{ order.price }}</td>
-        <td>{{ order.amount * order.price }}</td>
+        <td>{{ order.servicePrice }}</td>
+        <td>{{ order.amount * order.servicePrice }}</td>
       </tr>
       <tr class="summary">
         <td>
@@ -131,93 +139,20 @@ import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import PaginationBar from "../components/PaginationBar";
 import Popup from "../components/Popup";
-const history = [
-  {
-    date: "17/07/2021",
-    room: "1010",
-    order: [
-      { name: "French Fries", amount: 1, price: 150 },
-      { name: "Coke", amount: 2, price: 50 },
-      { name: "Extra Towel", amount: 1, price: 150 },
-    ],
-  },
-  {
-    date: "23/08/2021",
-    room: "1005",
-    order: [{ name: "toothbrush", amount: 1, price: 30 }],
-  },
-  {
-    date: "13/10/2021",
-    room: "2003",
-    order: [
-      { name: "Roasted beef", amount: 1, price: 250 },
-      { name: "soju", amount: 2, price: 200 },
-    ],
-  },
-  {
-    date: "31/12/2021",
-    room: "2022",
-    order: [
-      { name: "ramyoen", amount: 1, price: 60 },
-      { name: "kimchi", amount: 2, price: 30 },
-      { name: "chopstick", amount: 1, price: 5 },
-    ],
-  },
-  {
-    date: "04/02/2021",
-    room: "3010",
-    order: [{ name: "Fanta", amount: 1, price: 25 }],
-  },
-  {
-    date: "10/04/2021",
-    room: "3003",
-    order: [
-      { name: "salmon sashimi", amount: 1, price: 280 },
-      { name: "Hot green tea", amount: 1, price: 60 },
-    ],
-  },
-  {
-    date: "24/06/2021",
-    room: "4021",
-    order: [{ name: "spaketti", amount: 1, price: 140 }],
-  },
-  {
-    date: "27/07/2021",
-    room: "1010",
-    order: [
-      { name: "cup noodele", amount: 3, price: 90 },
-      { name: "lemon tea", amount: 1, price: 60 },
-      { name: "slipper", amount: 1, price: 90 },
-      { name: "Lay", amount: 1, price: 40 },
-      { name: "sneaker", amount: 1, price: 290 },
-    ],
-  },
-  {
-    date: "27/07/2021",
-    room: "1010",
-    order: [
-      { name: "cup noodele", amount: 3, price: 90 },
-      { name: "lemon tea", amount: 1, price: 60 },
-      { name: "slipper", amount: 1, price: 90 },
-      { name: "Lay", amount: 1, price: 40 },
-      { name: "sneaker", amount: 1, price: 290 },
-    ],
-  },
-  {
-    date: "27/07/2021",
-    room: "1010",
-    order: [
-      { name: "cup noodele", amount: 3, price: 90 },
-      { name: "lemon tea", amount: 1, price: 60 },
-      { name: "slipper", amount: 1, price: 90 },
-      { name: "Lay", amount: 1, price: 40 },
-      { name: "sneaker", amount: 1, price: 290 },
-    ],
-  },
-];
+import SearchError from "../components/SearchError";
+import axios from "axios";
+
+const selectOption = ["Default", "Date", "Room"];
+
 export default {
   name: "ServiceActivity",
-  components: { CustomSelect, DefaultButton, PaginationBar, Popup },
+  components: {
+    CustomSelect,
+    DefaultButton,
+    PaginationBar,
+    Popup,
+    SearchError,
+  },
   setup() {
     const { width } = useScreenWidth();
     const { height, tableRow } = useScreenHeight(480);
@@ -225,15 +160,25 @@ export default {
   },
   data() {
     return {
-      history,
+      selectOption,
       currentPage: 1,
       viewVisible: false,
       room: null,
       date: null,
       amountSum: 0,
       priceSum: 0,
-      orders: [],
+      history_db: [],
+      order_db: [],
+
+      search: "",
+      searchSent: "",
+      filter: "all",
+      sort: "all",
+      errorSearching: false,
     };
+  },
+  created() {
+    this.getServiceActivity();
   },
   methods: {
     pageReturn(page) {
@@ -246,7 +191,7 @@ export default {
       var i = 0;
       var sum = 0;
       while (i < orders.length) {
-        sum = sum + orders[i].price * orders[i].amount;
+        sum = sum + Number(orders[i].servicePrice) * Number(orders[i].amount);
         i = i + 1;
       }
       return sum;
@@ -255,18 +200,110 @@ export default {
       var i = 0;
       var sum = 0;
       while (i < orders.length) {
-        sum = sum + orders[i].amount;
+        sum = sum + Number(orders[i].amount);
         i = i + 1;
       }
       return sum;
     },
+
+    // ORDER_DB (Popup)
     getServiceData(record) {
       this.viewVisible = !this.viewVisible;
-      this.room = record.room;
+      this.room = record.roomID;
       this.date = record.date;
-      this.orders = record.order;
-      this.amountSum = this.getAmount(record.order);
-      this.priceSum = this.getTotal(record.order);
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_serviceActivity.php", {
+          action: "getServiceData",
+          roomID: record.roomID,
+          date: record.date,
+        })
+        .then(
+          function(res) {
+            this.order_db = res.data;
+            this.amountSum = this.getAmount(this.order_db);
+            this.priceSum = this.getTotal(this.order_db);
+          }.bind(this)
+        );
+    },
+
+    // HISTORY_DB (table)
+    getServiceActivity() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_serviceActivity.php", {
+          action: "getServiceActivity",
+        })
+        .then(
+          function(res) {
+            this.history_db = res.data;
+          }.bind(this)
+        );
+    },
+
+    searchActivity() {
+      if (this.filter == "date") {
+        this.searchSent = this.converDateToQuery(this.search);
+        console.log("searchDate", this.searchSent);
+      } else {
+        this.searchSent = this.search;
+      }
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_serviceActivity.php", {
+          action: "searchActivity",
+          search: this.searchSent,
+          filter: this.filter,
+          sort: this.sort,
+        })
+        .then(
+          function(res) {
+            console.log("SEARCH", res);
+            this.history_db = res.data;
+            if (this.history_db != "") {
+              this.errorSearching = false;
+            } else {
+              this.errorSearching = true;
+            }
+          }.bind(this)
+        );
+    },
+
+    selectionSort(value) {
+      if (value === selectOption[0]) {
+        this.sort = "all";
+      }
+      if (value === selectOption[1]) {
+        this.sort = "date";
+      }
+      if (value === selectOption[2]) {
+        this.sort = "roomID";
+      }
+    },
+    selectionFilter(value) {
+      if (value === selectOption[0]) {
+        this.filter = "all";
+      }
+      if (value === selectOption[1]) {
+        this.filter = "date";
+      }
+      if (value === selectOption[2]) {
+        this.filter = "roomID";
+      }
+    },
+
+    convertDate(date) {
+      var datearray = date.split("-");
+      var newdate = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
+      return newdate;
+    },
+
+    converDateToQuery(date) {
+      var datearray = date.split("/");
+      console.log("Array", datearray);
+      if (datearray.length != 3) {
+        alert("Date format should be dd/mm/yyyy");
+      }
+      var newdate = datearray[2] + "-" + datearray[1] + "-" + datearray[0];
+      console.log("newdate", newdate);
+      return newdate;
     },
   },
 };

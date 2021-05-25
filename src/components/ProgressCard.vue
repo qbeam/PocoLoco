@@ -7,14 +7,13 @@
       <div>
         <b>{{ heading }}</b>
         <p>{{ amount }}</p>
-
         <div class="progress-bar">
           <div
             class="progress"
             :style="{ width: progress + '%', background: color }"
           ></div>
         </div>
-        <b class="percent">{{ progress }}%</b>
+        <b :style="{ fontSize: '8px' }">{{ progress }}%</b>
       </div>
     </div>
     <div class="vl"></div>
