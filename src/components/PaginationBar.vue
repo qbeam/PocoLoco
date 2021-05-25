@@ -61,22 +61,22 @@ export default {
   },
 
   created() {
-    this.pageNumber = Array.from(new Array(this.pageCount), (x, i) => i + 1);
-    if (this.pageCount / 10 > 1) {
-      this.doubleArrowVisible = true;
-    }
+    this.setPageNumber();
   },
 
   watch: {
-    pageCount: function(){
+    pageCount: function() {
+      this.setPageNumber();
+    },
+  },
+
+  methods: {
+    setPageNumber() {
       this.pageNumber = Array.from(new Array(this.pageCount), (x, i) => i + 1);
       if (this.pageCount / 10 > 1) {
         this.doubleArrowVisible = true;
       }
-    }
-  },
-
-  methods: {
+    },
     setPageGroup(current) {
       var i = 0;
       while (i < 20) {
@@ -117,10 +117,6 @@ export default {
       this.$emit("pageReturn", this.currentPage);
     },
   },
-  //beforeUnmount() {
-  //  this.$destroy();
-  //  this.$el.parentNode.removeChild(this.$el);
-  //},
 };
 </script>
 
