@@ -16,6 +16,7 @@ import HotelExpenses from "../views/HotelExpenses.vue";
 import Promotion from "../views/Promotion.vue";
 import Room from "../views/Room.vue";
 import Services from "../views/Services.vue";
+import Employee from "../views/Employee.vue";
 
 const routes = [
   {
@@ -32,6 +33,11 @@ const routes = [
     path: "/EmployeeReg",
     name: "EmployeeReg",
     component: EmployeeReg,
+  },
+  {
+    path: "/Employee",
+    name: "Employee",
+    component: Employee,
   },
   {
     path: "/CustomerReg",
