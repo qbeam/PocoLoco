@@ -104,7 +104,7 @@
     width: 100%;
   }
   .row {
-    margin: 10px 0;
+    margin: 10px 5px;
     display: flex;
     justify-content: space-between;
   }
@@ -120,6 +120,12 @@
     }
     .row {
       flex-direction: column;
+      margin: 10px;
+    }
+  }
+  @media (max-width: 550px) {
+    .row {
+      margin: 10px 5px;
     }
   }
 </style>
