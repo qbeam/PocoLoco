@@ -242,7 +242,6 @@ export default {
     searchActivity() {
       if (this.filter == "date") {
         this.searchSent = this.converDateToQuery(this.search);
-        console.log("searchDate", this.searchSent);
       } else {
         this.searchSent = this.search;
       }
@@ -255,7 +254,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log("SEARCH", res);
             this.history_db = res.data;
             if (this.history_db != "") {
               this.errorSearching = false;
@@ -297,14 +295,14 @@ export default {
 
     converDateToQuery(date) {
       var datearray = date.split("/");
-      console.log("Array", datearray);
       if (datearray.length != 3) {
         alert("Date format should be dd/mm/yyyy");
       }
       var newdate = datearray[2] + "-" + datearray[1] + "-" + datearray[0];
-      console.log("newdate", newdate);
       return newdate;
     },
+
+    
   },
 };
 </script>
