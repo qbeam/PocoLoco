@@ -313,9 +313,6 @@ export default {
       this.status = status;
     },
     deleteData() {},
-    goToAddBookingDetail() {
-      this.$router.push("/AddBookingDetail");
-    },
   },
 };
 </script>
