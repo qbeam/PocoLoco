@@ -211,19 +211,19 @@
       <div>
         <p>Status</p>
         <div class="choices">
-            <label class="container">
+            <label class="container1">
               Reserve
               <input type="radio"  value="Reserve" v-model="status"/>
               <span class="checkmark"></span>
             </label>
-            <label class="container"
+            <label class="container2"
               >Check IN
               <input type="radio"  value="Check IN" v-model="status"/>
               <span class="checkmark"></span>
             </label>
-            <label class="container"
-              >Check OUT
-              <input type="radio"  value="Check OUT" v-model="status"/>
+            <label class="container3"
+              >Cancel
+              <input type="radio"  value="Cancel" v-model="status"/>
               <span class="checkmark"></span>
             </label>
           </div>
@@ -441,7 +441,7 @@ table {
   justify-content: flex-start;
   width: 550px;
 }
-.container {
+.container1, .container2, .container3 {
   display: block;
   position: relative;
   padding: 0 0 0 35px;
@@ -452,7 +452,7 @@ table {
   background: none;
   width: 150px;
 }
-.container input {
+.container1 input, .container2 input, .container3 input{
   position: fixed;
   opacity: 0;
   cursor: pointer;
@@ -466,21 +466,27 @@ table {
   background-color: #d3d3d3;
   border-radius: 50%;
 }
-.container:hover input ~ .checkmark {
+.container1:hover input ~ .checkmark, .container2:hover input ~ .checkmark, .container3:hover input ~ .checkmark {
   background-color: #ccc;
 }
-.container input:checked ~ .checkmark {
-  background-color: var(--button-blue);
+.container1 input:checked ~ .checkmark {
+  background-color: #FFC42E;
+}
+.container2 input:checked ~ .checkmark {
+  background-color: #24BA45;
+}
+.container3 input:checked ~ .checkmark {
+  background-color: #E11818;
 }
 .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
-.container input:checked ~ .checkmark:after {
+.container1 input:checked ~ .checkmark:after, .container2 input:checked ~ .checkmark:after, .container3 input:checked ~ .checkmark:after   {
   display: block;
 }
-.container .checkmark:after {
+.container1 .checkmark:after, .container2 .checkmark:after, .container3 .checkmark:after {
   top: 6px;
   left: 6px;
   width: 8px;
