@@ -10,11 +10,6 @@
         <input class="search-field" type="text" placeholder="search" />
       </div>
       <CustomSelect
-        type="Sort by"
-        :options="['A', 'B', 'C', 'Good Night']"
-        :style="{ marginRight: '20px' }"
-      />
-      <CustomSelect
         type="Filter"
         :options="['A', 'B', 'C', 'Sleep tight']"
         :style="{ marginRight: '20px' }"
@@ -23,11 +18,16 @@
     </div>
     <table v-if="sampleBookingDetail.length !== 0">
       <tr>
-        <th>Booking Detail ID</th>
-        <th>Guest Name</th>
-        <th>Check IN</th>
-        <th>Check OUT</th>
-        <th>Status</th>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
+          </div>
+        </th>
         <th>Manage</th>
       </tr>
 
@@ -185,6 +185,7 @@ import Popup from "../components/Popup.vue";
 import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
+import SortingArrow from "../components/SortingArrow";
 
 const sampleBookingDetail = [
   {
@@ -245,6 +246,8 @@ const sampleBookingDetail = [
   },
 ];
 
+const colNames = ["Booking Detail ID", "Guest Name", "Check IN", "Check OUT", "Status"];
+
 export default {
   name: "BooikingDatail",
   components: {
@@ -254,6 +257,7 @@ export default {
     AddButton,
     Popup,
     CustomSelect,
+    SortingArrow,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -263,6 +267,7 @@ export default {
   data() {
     return {
       sampleBookingDetail,
+      colNames,
       currentPage: 1,
       visible: false,
       firstname: "",
@@ -278,6 +283,8 @@ export default {
         mask: "YYYY-MM-DD",
       },
       status: "",
+      activeArrow: 0,
+      sortDirection: "down",
     };
   },
   methods: {
@@ -289,6 +296,13 @@ export default {
     },
     submit(value) {
       this.visible = value;
+    },
+    setActiveArrow(clickedArrow) {
+      this.activeArrow = clickedArrow;
+    },
+    sortReturn(direction) {
+      this.sortDirection = direction;
+      console.log(this.sortDirection);
     },
     getRecord(fname, lname, checkIn, checkOut, status) {
       this.visible = !this.visible;
@@ -343,6 +357,11 @@ table {
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;
+}
+.tb-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .manage {
   height: 35px;
