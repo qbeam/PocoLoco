@@ -21,12 +21,7 @@
         :style="{ marginRight: '20px' }"
         @selection="selectionFilter"
       />
-      <CustomSelect
-        type="Sort by"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionSort"
-      />
+
       <DefaultButton
         @click="searchData"
         type="small"
@@ -39,11 +34,16 @@
     <SearchError v-if="errorSearching" />
     <table v-if="room_db.length !== 0">
       <tr>
-        <th>Room No.</th>
-        <th>Room Type</th>
-        <th>Price</th>
-        <th>Capacity</th>
-        <th>Size</th>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
+          </div>
+        </th>
         <th>Edit</th>
       </tr>
 
@@ -147,8 +147,10 @@ import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
 import axios from "axios";
+import SortingArrow from "../components/SortingArrow";
 
 const selectOption = ["Default", "Room No.", "Room Type", "Room Price"];
+const colNames = ["Room No.", "Room Type", "Price", "Capacity", "Size"];
 
 export default {
   name: "Promotion",
@@ -160,6 +162,7 @@ export default {
     Popup,
     CustomSelect,
     SearchError,
+    SortingArrow,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -168,6 +171,9 @@ export default {
   },
   data() {
     return {
+      colNames,
+      activeArrow: 0, // sort by which column
+      sortDirection: "down", // direction of currently active arrow
       currentPage: 1,
       editVisible: false,
       errorSearching: false,
@@ -202,6 +208,13 @@ export default {
     submit(value) {
       this.editVisible = value;
       this.updateData();
+    },
+    setActiveArrow(clickedArrow) {
+      this.activeArrow = clickedArrow;
+    },
+    sortReturn(direction) {
+      this.sortDirection = direction;
+      console.log(this.sortDirection);
     },
     getAllRoom() {
       axios
@@ -411,6 +424,11 @@ th {
   text-align: center;
   background-color: #eeeeee;
   border-bottom: 1px solid black;
+}
+.tb-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 td {
   width: 50px;
