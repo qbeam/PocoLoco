@@ -222,8 +222,8 @@
               <span class="checkmark"></span>
             </label>
             <label class="container3"
-              >Check OUT
-              <input type="radio"  value="Check OUT" v-model="status"/>
+              >Cancel
+              <input type="radio"  value="Cancel" v-model="status"/>
               <span class="checkmark"></span>
             </label>
           </div>
