@@ -30,6 +30,7 @@
       <router-link :to="{ name: 'Customer' }">Customer</router-link>
       <router-link :to="{ name: 'HotelExpenses' }">Hotel Expenses</router-link>
       <router-link :to="{ name: 'Booking' }">Booking</router-link>
+      <router-link :to="{ name: 'BookingDetail' }">BookingDetail</router-link>
       <router-link :to="{ name: 'Promotion' }">Promotion</router-link>
       <router-link :to="{ name: 'Room' }">Room</router-link>
       <router-link :to="{ name: 'Services' }">Services</router-link>
