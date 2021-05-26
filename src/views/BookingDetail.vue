@@ -20,54 +20,59 @@
         :style="{ marginRight: '20px' }"
       />
       <DefaultButton type="small">Search</DefaultButton>
-
-      <AddButton
-        :style="
-          width < 800
-            ? { position: 'fixed', right: '5%', top: '80px' }
-            : { position: 'fixed', right: '5%', top: '170px' }
-        "
-        @click="goToAddBookingDetail()"
-      />
     </div>
     <table v-if="sampleBookingDetail.length !== 0">
-        <tr>
-          <th>Booking Detail ID</th>
-          <th>Guest Name</th>
-          <th>Check IN</th>
-          <th>Check OUT</th>
-          <th>Status</th>
-          <th>Manage</th>
-        </tr>
+      <tr>
+        <th>Booking Detail ID</th>
+        <th>Guest Name</th>
+        <th>Check IN</th>
+        <th>Check OUT</th>
+        <th>Status</th>
+        <th>Manage</th>
+      </tr>
 
-        <tr
-          v-for="(sampleBookingDetail, i) in sampleBookingDetail.slice(
-            currentPage * tableRow - tableRow,
-            currentPage * tableRow
-          )"
-          :key="i"
-          class="row"
-        >
-          <td>{{ sampleBookingDetail.id}}</td>
-          <td>{{ sampleBookingDetail.guestFname}} {{ sampleBookingDetail.guestLname}}</td>
-          <td>{{ sampleBookingDetail.checkIn}}</td>
-          <td>{{ sampleBookingDetail.checkOUT}}</td>
-          <td>{{ sampleBookingDetail.status}}</td>
-          <td>
-            <div class="manage">
-              <button class="manage-button" @click="getRecord2Pop(sampleBookingDetail.status)">
-                <i class="fa fa-pencil fa-2x"></i>
-              </button>
-              <div class="vl"></div>
-              <button
-                class="manage-button"
-                @click="deleteData(sampleBookingDetail)"
-              >
-                <i class="fa fa-trash fa-2x"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
+      <tr
+        v-for="(sampleBookingDetail, i) in sampleBookingDetail.slice(
+          currentPage * tableRow - tableRow,
+          currentPage * tableRow
+        )"
+        :key="i"
+        class="row"
+      >
+        <td>{{ sampleBookingDetail.id }}</td>
+        <td>
+          {{ sampleBookingDetail.guestFname }}
+          {{ sampleBookingDetail.guestLname }}
+        </td>
+        <td>{{ sampleBookingDetail.checkIn }}</td>
+        <td>{{ sampleBookingDetail.checkOut }}</td>
+        <td>{{ sampleBookingDetail.status }}</td>
+        <td>
+          <div class="manage">
+            <button
+              class="manage-button"
+              @click="
+                getRecord(
+                  sampleBookingDetail.guestFname,
+                  sampleBookingDetail.guestLname,
+                  sampleBookingDetail.checkIn,
+                  sampleBookingDetail.checkOut,
+                  sampleBookingDetail.status
+                )
+              "
+            >
+              <i class="fa fa-pencil fa-2x"></i>
+            </button>
+            <div class="vl"></div>
+            <button
+              class="manage-button"
+              @click="deleteData(sampleBookingDetail)"
+            >
+              <i class="fa fa-trash fa-2x"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
     </table>
 
     <PaginationBar
@@ -93,7 +98,81 @@
       "
     />
 
-    
+    <Popup :visible="visible" :buttons="true" @popReturn="popReturn" @submit="submit">
+      <div class="group-row">
+        <div class="group-item">
+          <p>Guest Name</p>
+          <input type="text" v-model="firstname" :placeholder="firstname" />
+        </div>
+
+        <div class="group-item">
+          <p>Last Name</p>
+          <input type="text" v-model="lastname" :placeholder="lastname" />
+        </div>
+      </div>
+
+      <div class="group-row">
+        <div class="group-item">
+          <p>Check IN</p>
+          <div class="flex x-full">
+            <v-date-picker
+              v-model="checkInDate"
+              :masks="{ input: ['DD/MM/YYYY'] }"
+              :model-config="checkInDateConfig"
+              mode="single"
+              class="flex-grow"
+            >
+              <template v-slot="{ inputValue, inputEvents }">
+                <div :style="{ display: 'flex', flexDirection: 'row' }">
+                  <input :value="inputValue" v-on="inputEvents" />
+                  <i class="fa fa-calendar fa-2x"></i>
+                </div>
+              </template>
+            </v-date-picker>
+          </div>
+        </div>
+        <div class="group-item">
+          <p>Check OUT</p>
+          <div class="flex x-full">
+            <v-date-picker
+              v-model="checkOutDate"
+              :masks="{ input: ['DD/MM/YYYY'] }"
+              :model-config="checkOutDateConfig"
+              mode="single"
+              class="flex-grow"
+            >
+              <template v-slot="{ inputValue, inputEvents }">
+                <div :style="{ display: 'flex', flexDirection: 'row' }">
+                  <input :value="inputValue" v-on="inputEvents" />
+                  <i class="fa fa-calendar fa-2x"></i>
+                </div>
+              </template>
+            </v-date-picker>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p>Status</p>
+        <div class="choices">
+          <label class="container1">
+            Reserve
+            <input type="radio" value="Reserve" v-model="status" />
+            <span class="checkmark"></span>
+          </label>
+          <label class="container2"
+            >Check IN
+            <input type="radio" value="Check IN" v-model="status" />
+            <span class="checkmark"></span>
+          </label>
+          <label class="container3"
+            >Cancel
+            <input type="radio" value="Cancel" v-model="status" />
+            <span class="checkmark"></span>
+          </label>
+        </div>
+      </div>
+    </Popup>
   </TablePage>
 </template>
 
@@ -108,18 +187,67 @@ import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 
 const sampleBookingDetail = [
-  { id: 1023654800, guestFname: "Ying", guestLname: "Supa", checkIn: "01/01/2021", checkOUT: "05/01/2021", status: "Reserve" },
-  { id: 1023654800, guestFname: "Ying", guestLname: "Supa", checkIn: "01/01/2021", checkOUT: "05/01/2021", status: "Reserve" },
-  { id: 1023654800, guestFname: "Ying", guestLname: "Supa", checkIn: "01/01/2021", checkOUT: "05/01/2021", status: "Reserve" },
-  { id: 1023654800, guestFname: "Ying", guestLname: "Supa", checkIn: "01/01/2021", checkOUT: "05/01/2021", status: "Reserve" },
-  { id: 1023654800, guestFname: "Ying", guestLname: "Supa", checkIn: "01/01/2021", checkOUT: "05/01/2021", status: "Reserve" },
-  { id: 1023654800, guestFname: "Ying", guestLname: "Supa", checkIn: "01/01/2021", checkOUT: "05/01/2021", status: "Reserve" },
-  { id: 1023654800, guestFname: "Ying", guestLname: "Supa", checkIn: "01/01/2021", checkOUT: "05/01/2021", status: "Reserve" },
+  {
+    id: 1023654800,
+    guestFname: "Ying",
+    guestLname: "Supa",
+    checkIn: "01/01/2021",
+    checkOut: "05/01/2021",
+    status: "Reserve",
+  },
+  {
+    id: 1023654800,
+    guestFname: "Beam",
+    guestLname: "Nat",
+    checkIn: "01/01/2021",
+    checkOut: "05/01/2021",
+    status: "Cancel",
+  },
+  {
+    id: 1023654800,
+    guestFname: "Pung",
+    guestLname: "Jung",
+    checkIn: "01/01/2021",
+    checkOut: "05/01/2021",
+    status: "Reserve",
+  },
+  {
+    id: 1023654800,
+    guestFname: "Pan",
+    guestLname: "Pan",
+    checkIn: "01/01/2021",
+    checkOut: "05/01/2021",
+    status: "Check IN",
+  },
+  {
+    id: 1023654800,
+    guestFname: "Mly",
+    guestLname: "Mly",
+    checkIn: "01/01/2021",
+    checkOut: "05/01/2021",
+    status: "Check IN",
+  },
+  {
+    id: 1023654800,
+    guestFname: "Pra",
+    guestLname: "Yut",
+    checkIn: "01/01/2021",
+    checkOut: "05/01/2021",
+    status: "Check IN",
+  },
+  {
+    id: 1023654800,
+    guestFname: "Na",
+    guestLname: "Sus",
+    checkIn: "01/01/2021",
+    checkOut: "05/01/2021",
+    status: "Cancel",
+  },
 ];
 
 export default {
-    name: "BooikingDatail",
-    components: {
+  name: "BooikingDatail",
+  components: {
     DefaultButton,
     TablePage,
     PaginationBar,
@@ -133,20 +261,49 @@ export default {
     return { width, height, tableRow };
   },
   data() {
-      return {
-          sampleBookingDetail,
-          currentPage: 1,
-      }
+    return {
+      sampleBookingDetail,
+      currentPage: 1,
+      visible: false,
+      firstname: "",
+      lastname: "",
+      checkInDate: "",
+      checkInDateConfig: {
+        type: "string",
+        mask: "YYYY-MM-DD",
+      },
+      checkOutDate: "",
+      checkOutDateConfig: {
+        type: "string",
+        mask: "YYYY-MM-DD",
+      },
+      status: "",
+    };
   },
   methods: {
     pageReturn(page) {
-        this.currentPage = page;
+      this.currentPage = page;
     },
+    popReturn(value) {
+      this.visible = value;
+    },
+    submit(value) {
+      this.visible = value;
+    },
+    getRecord(fname, lname, checkIn, checkOut, status) {
+      this.visible = !this.visible;
+      this.firstname = fname;
+      this.lastname = lname;
+      this.checkInDate = checkIn;
+      this.checkOutDate = checkOut;
+      this.status = status;
+    },
+    deleteData() {},
     goToAddBookingDetail() {
-        this.$router.push("/AddBookingDetail");
-    }
+      this.$router.push("/AddBookingDetail");
+    },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -245,18 +402,17 @@ table {
   justify-content: flex-start;
   width: 550px;
 }
-.container {
+.container1, .container2, .container3 {
   display: block;
   position: relative;
   padding: 0 0 0 35px;
   margin: 0 0 15px 0;
   cursor: pointer;
-
   user-select: none;
   background: none;
   width: 150px;
 }
-.container input {
+.container1 input, .container2 input, .container3 input{
   position: fixed;
   opacity: 0;
   cursor: pointer;
@@ -270,21 +426,27 @@ table {
   background-color: #d3d3d3;
   border-radius: 50%;
 }
-.container:hover input ~ .checkmark {
+.container1:hover input ~ .checkmark, .container2:hover input ~ .checkmark, .container3:hover input ~ .checkmark {
   background-color: #ccc;
 }
-.container input:checked ~ .checkmark {
-  background-color: var(--button-blue);
+.container1 input:checked ~ .checkmark {
+  background-color: #FFC42E;
+}
+.container2 input:checked ~ .checkmark {
+  background-color: #24BA45;
+}
+.container3 input:checked ~ .checkmark {
+  background-color: #E11818;
 }
 .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
-.container input:checked ~ .checkmark:after {
+.container1 input:checked ~ .checkmark:after, .container2 input:checked ~ .checkmark:after, .container3 input:checked ~ .checkmark:after   {
   display: block;
 }
-.container .checkmark:after {
+.container1 .checkmark:after, .container2 .checkmark:after, .container3 .checkmark:after {
   top: 6px;
   left: 6px;
   width: 8px;
