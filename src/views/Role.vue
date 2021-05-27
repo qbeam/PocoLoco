@@ -20,12 +20,7 @@
         :style="{ marginRight: '20px' }"
         @selection="selectionFilter"
       />
-      <CustomSelect
-        type="Sort by"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionSort"
-      />
+
       <DefaultButton @click="searchData()" type="small">Search</DefaultButton>
 
       <AddButton
@@ -41,12 +36,16 @@
     <SearchError v-if="errorSearching" />
     <table v-if="role_db.length !== 0">
       <tr>
-        <th>Role ID</th>
-        <th>Department</th>
-        <th>Name</th>
-
-        <th>Salary</th>
-        <th>Bonus Rate</th>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
+          </div>
+        </th>
         <th>Manage</th>
       </tr>
 
@@ -70,7 +69,7 @@
               <i class="fa fa-pencil fa-2x"></i>
             </button>
             <div class="vl"></div>
-            <button class="manage-button">
+            <button class="manage-button" @click="deleteData(role)">
               <i class="fa fa-trash fa-2x"></i>
             </button>
           </div>
@@ -142,16 +141,12 @@ import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
+import SortingArrow from "../components/SortingArrow";
 import axios from "axios";
 
-const selectOption = [
-  "Default",
-  "Role ID",
-  "Department",
-  "Name",
-  "Salary",
-  "Borate Rate",
-];
+const selectOption = ["Name", "Role ID", "Department", "Salary", "Borate Rate"];
+
+const colNames = ["RoleID", "Department", "Name", "Salary", "Bonus Rate"];
 
 export default {
   name: "Role",
@@ -163,6 +158,7 @@ export default {
     Popup,
     CustomSelect,
     SearchError,
+    SortingArrow,
   },
   data() {
     return {
@@ -170,6 +166,7 @@ export default {
       currentPage: 1,
       visible: false,
       selectOption,
+      colNames,
       errorSearching: false,
 
       role_db: "",
@@ -179,8 +176,9 @@ export default {
       salary: 0,
       bonusRate: 0,
 
-      sort: "all",
-      filter: "all",
+      sortDirection: "down",
+      sort: "roleID",
+      filter: "roleName",
       search: "",
       status: "save",
       isEdit: false,
@@ -197,7 +195,7 @@ export default {
     return { width, height, tableRow };
   },
   created() {
-    this.getAllusers();
+    this.getAllRole();
   },
   mounted() {
     this.$nextTick(() => {
@@ -218,29 +216,31 @@ export default {
       this.visible = value;
       this.submitData();
     },
-    selectionSort(value) {
-      if (value === selectOption[0]) {
-        this.sort = "all";
-      }
-      if (value === selectOption[1]) {
+    setActiveArrow(clickedArrow) {
+      this.activeArrow = clickedArrow;
+      this.setSort(clickedArrow);
+      this.searchData();
+    },
+    sortReturn(direction) {
+      this.sortDirection = direction;
+    },
+    setSort(click) {
+      if (click == 0) {
         this.sort = "roleID";
-      }
-      if (value === selectOption[2]) {
+      } else if (click == 1) {
         this.sort = "departmentName";
-      }
-      if (value === selectOption[3]) {
+      } else if (click == 2) {
         this.sort = "roleName";
-      }
-      if (value === selectOption[4]) {
+      } else if (click == 3) {
         this.sort = "salary";
-      }
-      if (value === selectOption[5]) {
+      } else if (click == 4) {
         this.sort = "bonusRate";
       }
     },
+
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "all";
+        this.filter = "roleName";
       }
       if (value === selectOption[1]) {
         this.filter = "roleID";
@@ -249,12 +249,9 @@ export default {
         this.filter = "departmentName";
       }
       if (value === selectOption[3]) {
-        this.filter = "roleName";
-      }
-      if (value === selectOption[4]) {
         this.filter = "salary";
       }
-      if (value === selectOption[5]) {
+      if (value === selectOption[4]) {
         this.filter = "bonusRate";
       }
     },
@@ -273,6 +270,7 @@ export default {
           search: this.search,
           sort: this.sort,
           filter: this.filter,
+          direction: this.sortDirection,
         })
         .then(
           function(res) {
@@ -303,6 +301,21 @@ export default {
           }.bind(this)
         );
     },
+    deleteData(role) {
+      if (confirm("Delete '" + role.roleName + "' ?")) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_role.php", {
+            action: "deleteData",
+            roleID: role.roleID,
+          })
+          .then(
+            function(res) {
+              alert(res.data.message);
+              this.getAllRole();
+            }.bind(this)
+          );
+      }
+    },
     submitData() {
       this.check = this.salary != "" && this.bonusRate != "";
       if (this.check && this.isEdit) {
@@ -318,7 +331,7 @@ export default {
           .then(
             function(res) {
               alert(res.data.message);
-              this.getAllusers();
+              this.getAllRole();
               this.clearValue();
             }.bind(this)
           );
@@ -339,7 +352,7 @@ export default {
       }
     },
 
-    getAllusers() {
+    getAllRole() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_role.php", {
           action: "getAll",
@@ -433,6 +446,11 @@ th {
   text-align: center;
   background-color: #eeeeee;
   border-bottom: 1px solid black;
+}
+.tb-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 td {
   text-align: center;
