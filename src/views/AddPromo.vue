@@ -220,7 +220,7 @@
 
       <!-- Discount -->
       <div v-if="discountError">
-        <h4>Discount</h4>
+        <h4>% Discount</h4>
         <input
           type="number"
           onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
@@ -405,6 +405,8 @@ export default {
                 alert(res.data.message);
                 this.backToPromo();
                 this.resetData();
+              } else {
+                alert(res.data.message);
               }
             }.bind(this)
           );
