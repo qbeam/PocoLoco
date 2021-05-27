@@ -1,6 +1,8 @@
 <template>
   <div class="chart-container">
-    <p>Expenses</p>
+    <p class="report-head">
+      Monthly expenses
+    </p>
     <div class="vl"></div>
     <div class="list">
       <div class="expense-item" v-for="(expense, i) in expenseSum" :key="i">
@@ -43,6 +45,9 @@
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 4px;
   }
+  .report-head {
+    font-size: 16px;
+  }
   .list {
     display: flex;
     flex-direction: column;
@@ -71,6 +76,18 @@
   }
   .amount {
     margin: -10px 0 10px 15px;
-    font-size: 10px;
+    font-size: 12px;
+  }
+  @media (max-width: 750px) {
+    .chart-container {
+      width: 42%;
+      height: 250px;
+      margin: 25px auto;
+    }
+    p {
+      margin: 10px 0 10px 15px;
+      font-size: 14px;
+      color: var(--grey-text);
+    }
   }
 </style>

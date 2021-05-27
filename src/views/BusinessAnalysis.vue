@@ -1,6 +1,7 @@
 <template>
   <TablePage>
     <h3>Business Analysis</h3>
+
     <div class="cards">
       <div class="card-group">
         <ProgressCard
@@ -27,21 +28,32 @@
         />
       </div>
     </div>
+
     <div class="row">
       <ProfitGraph />
     </div>
+
     <div class="row">
       <BarChart type="cancel" />
-      <ExpenseReport />
+      <ExpenseReport v-if="width > 750" />
     </div>
+
     <div class="row">
       <BarChart type="guest" />
-      <BarChart type="room" />
+      <div class="subgroup">
+        <BarChart
+          type="room"
+          :style="width > 750 ? {} : { marginTop: '25px' }"
+        />
+        <ExpenseReport v-if="width <= 750" />
+      </div>
     </div>
+
     <div class="row">
-      <PieChart />
-      <PieChart />
+      <PieChart type="service" />
+      <PieChart type="food" />
     </div>
+
     <div class="row">
       <BookingReport />
       <LateEmployee />
@@ -60,6 +72,7 @@
   import ProfitGraph from "../components/ProfitGraph";
   import AbsentReport from "../components/AbsentReport";
   import PieChart from "../components/PieChart";
+  import { useScreenWidth } from "../composables/useScreenWidth";
 
   export default {
     name: "BusinessAnalysis",
@@ -74,10 +87,14 @@
       AbsentReport,
       PieChart,
     },
+    setup() {
+      const { width } = useScreenWidth();
+      return { width };
+    },
     data() {
       return {
-        earningAmount: 100000,
-        earningProgress: 100,
+        earningAmount: 0,
+        earningProgress: 0,
         bookingAmount: 0,
         bookingProgress: 0,
         orderAmount: 0,
@@ -108,6 +125,12 @@
     display: flex;
     justify-content: space-between;
   }
+  .subgroup {
+    display: flex;
+    width: 31%;
+    justify-content: space-between;
+    padding-left: 5px;
+  }
   @media (max-width: 1000px) {
     h3 {
       margin: 40px 0 20px 0;
@@ -120,12 +143,10 @@
     }
     .row {
       flex-direction: column;
-      margin: 10px;
     }
-  }
-  @media (max-width: 550px) {
-    .row {
-      margin: 10px 5px;
+    .subgroup {
+      width: 100%;
+      height: 270px;
     }
   }
 </style>

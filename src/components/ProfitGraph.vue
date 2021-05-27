@@ -1,7 +1,13 @@
 <template>
   <div class="graph-container">
-    <div>
+    <div class="header">
       <p>Profit Summary in</p>
+      <CustomSelect
+        type="Transparent"
+        :options="searchRange"
+        @selection="graphRange"
+        :style="{ margin: '0 0 0 10px' }"
+      />
     </div>
 
     <apexchart
@@ -20,11 +26,14 @@
 
   export default {
     name: "ProfitGraph",
+    components: { CustomSelect },
     data() {
       return {
         income: [20, 25, 30, 35, 15, 24, 56, 30, 35, 15, 24, 56],
         expense: [12, 11, 14, 18, 17, 13, 13, 18, 17, 13, 13, 12],
         profit: [],
+        searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        displayRange: null,
         series: [
           {
             name: "Earning",
@@ -121,6 +130,11 @@
         },
       };
     },
+    methods: {
+      graphRange(value) {
+        this.displayRange = value;
+      },
+    },
   };
 </script>
 
@@ -132,9 +146,18 @@
     border-radius: 4px;
     padding-top: 20px;
   }
+  .header {
+    display: flex;
+    align-items: center;
+  }
   p {
     margin: 0 0 0 15px;
     font-size: 16px;
     color: var(--grey-text);
+  }
+  @media (max-width: 750px) {
+    .graph-container {
+      margin: 5px auto;
+    }
   }
 </style>

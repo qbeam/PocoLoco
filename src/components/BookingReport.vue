@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <p class="title">Booking amount in xxxx</p>
+    <p class="title">Booking amount in</p>
 
     <div class="seasons">
       <button class="season-button" v-for="(season, i) in seasons" :key="i">
@@ -95,18 +95,20 @@
     align-items: center;
   }
   .title {
-    font-size: 14px;
+    font-size: 16px;
     margin: 10px 0;
   }
 
   .seasons {
     height: 250px;
+    width: 95%;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
   }
   .season-button {
-    width: 230px;
+    align-self: center;
+    width: 100%;
     display: flex;
     background: #ebebeb;
     margin: 3px 0;
