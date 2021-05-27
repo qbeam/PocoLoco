@@ -518,7 +518,7 @@ export default {
 
     converDateToQuery(date) {
       var datearray = date.split("/");
-      if (datearray.length != 3) {
+      if (datearray.length != 3 || date.length != 10) {
         alert("Date format should be dd/mm/yyyy");
       }
       var newdate = datearray[2] + "-" + datearray[1] + "-" + datearray[0];

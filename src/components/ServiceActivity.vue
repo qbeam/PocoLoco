@@ -19,13 +19,8 @@
         :style="{ marginRight: '20px' }"
         @selection="selectionFilter"
       />
-      <CustomSelect
-        type="Sort by"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionSort"
-      />
-      <DefaultButton @click="searchActivity" type="small">
+
+      <DefaultButton @click="searchData" type="small">
         Search
       </DefaultButton>
     </div>
@@ -35,10 +30,17 @@
 
   <table v-if="history_db.length !== 0">
     <tr>
-      <th>Date</th>
-      <th>Room</th>
-      <th>Spending Total</th>
-      <th>View</th>
+      <th v-for="(colName, i) in colNames" :key="i">
+        <div class="tb-head">
+          {{ colName }}
+          <SortingArrow
+            :active="activeArrow == i ? true : false"
+            @click="setActiveArrow(i)"
+            @sortReturn="sortReturn"
+          />
+        </div>
+      </th>
+      <th>Manage</th>
     </tr>
 
     <tr
@@ -140,9 +142,11 @@ import { useScreenHeight } from "../composables/useScreenHeight";
 import PaginationBar from "../components/PaginationBar";
 import Popup from "../components/Popup";
 import SearchError from "../components/SearchError";
+import SortingArrow from "../components/SortingArrow";
 import axios from "axios";
 
-const selectOption = ["Default", "Date", "Room"];
+const selectOption = ["Room No.", "Date"];
+const colNames = ["Date", "Room Number", "Spending Total"];
 
 export default {
   name: "ServiceActivity",
@@ -152,6 +156,7 @@ export default {
     PaginationBar,
     Popup,
     SearchError,
+    SortingArrow,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -161,6 +166,7 @@ export default {
   data() {
     return {
       selectOption,
+      colNames,
       currentPage: 1,
       viewVisible: false,
       room: null,
@@ -172,8 +178,9 @@ export default {
 
       search: "",
       searchSent: "",
-      filter: "all",
-      sort: "all",
+      filter: "roomID",
+      sort: "Date",
+      sortDirection: "up",
       errorSearching: false,
     };
   },
@@ -204,6 +211,23 @@ export default {
         i = i + 1;
       }
       return sum;
+    },
+    setActiveArrow(clickedArrow) {
+      this.activeArrow = clickedArrow;
+      this.setSort(clickedArrow);
+      this.searchData();
+    },
+    sortReturn(direction) {
+      this.sortDirection = direction;
+    },
+    setSort(click) {
+      if (click == 0) {
+        this.sort = "date";
+      } else if (click == 1) {
+        this.sort = "roomID";
+      } else if (click == 2) {
+        this.sort = "total";
+      }
     },
 
     // ORDER_DB (Popup)
@@ -239,7 +263,7 @@ export default {
         );
     },
 
-    searchActivity() {
+    searchData() {
       if (this.filter == "date") {
         this.searchSent = this.converDateToQuery(this.search);
       } else {
@@ -251,6 +275,7 @@ export default {
           search: this.searchSent,
           filter: this.filter,
           sort: this.sort,
+          direction: this.sortDirection,
         })
         .then(
           function(res) {
@@ -264,26 +289,12 @@ export default {
         );
     },
 
-    selectionSort(value) {
-      if (value === selectOption[0]) {
-        this.sort = "all";
-      }
-      if (value === selectOption[1]) {
-        this.sort = "date";
-      }
-      if (value === selectOption[2]) {
-        this.sort = "roomID";
-      }
-    },
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "all";
+        this.filter = "roomID";
       }
       if (value === selectOption[1]) {
         this.filter = "date";
-      }
-      if (value === selectOption[2]) {
-        this.filter = "roomID";
       }
     },
 
@@ -294,15 +305,14 @@ export default {
     },
 
     converDateToQuery(date) {
+      console.log("length", date.length);
       var datearray = date.split("/");
-      if (datearray.length != 3) {
+      if (datearray.length != 3 || date.length != 10) {
         alert("Date format should be dd/mm/yyyy");
       }
       var newdate = datearray[2] + "-" + datearray[1] + "-" + datearray[0];
       return newdate;
     },
-
-    
   },
 };
 </script>
@@ -352,6 +362,11 @@ th {
   background-color: #eeeeee;
   border-bottom: 1px solid black;
 }
+.tb-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 td {
   height: 35px;
   text-align: center;
@@ -378,6 +393,7 @@ td {
   margin-bottom: 25px;
   font-weight: bold;
 }
+p,
 h4 {
   margin: 10px 0;
 }
