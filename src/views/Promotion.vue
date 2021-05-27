@@ -21,12 +21,6 @@
         :style="{ marginRight: '20px' }"
         @selection="selectionFilter"
       />
-      <CustomSelect
-        type="Sort by"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionSort"
-      />
       <DefaultButton
         @click="searchData()"
         type="small"
@@ -47,13 +41,17 @@
     <SearchError v-if="errorSearching" />
     <table v-if="promotion_db.length !== 0">
       <tr>
-        <th>Promotion Name</th>
-        <th>Season</th>
-        <th>Room Type</th>
-        <th>Discount</th>
-        <th>Start</th>
-        <th>End</th>
-        <th>Edit</th>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
+          </div>
+        </th>
+        <th>Manage</th>
       </tr>
 
       <tr
@@ -68,8 +66,8 @@
         <td>{{ promotion.seasonName }}</td>
         <td>{{ promotion.roomType }}</td>
         <td>{{ promotion.discount }}%</td>
-        <td>{{ promotion.startDate }}</td>
-        <td>{{ promotion.endDate }}</td>
+        <td>{{ convertDate(promotion.startDate) }}</td>
+        <td>{{ convertDate(promotion.endDate) }}</td>
         <td>
           <div class="manage">
             <button
@@ -171,7 +169,7 @@
           <div class="flex x-full">
             <v-date-picker
               v-model="form.startDate"
-              :masks="{ input: ['YYYY-MM-DD'] }"
+              :masks="{ input: ['DD/MM/YYYY'] }"
               :model-config="startDateConfig"
               mode="single"
               class="flex-grow"
@@ -196,7 +194,7 @@
           <div class="flex x-full">
             <v-date-picker
               v-model="form.endDate"
-              :masks="{ input: ['YYYY-MM-DD'] }"
+              :masks="{ input: ['DD/MM/YYYY'] }"
               :model-config="endDateConfig"
               mode="single"
               class="flex-grow"
@@ -232,17 +230,27 @@ import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
+import SortingArrow from "../components/SortingArrow";
 import axios from "axios";
 
 const selectOption = [
-  "Default",
-  "Season",
   "Promotion",
+  "Season",
   "Room Type",
   "Discount",
-  "Start",
-  "End",
+  "Start Date",
+  "End Date",
 ];
+
+const colNames = [
+  "Promotion Name",
+  "Season",
+  "Room Type",
+  "Discount",
+  "Start Date",
+  "End Date",
+];
+
 export default {
   name: "Promotion",
   components: {
@@ -253,6 +261,7 @@ export default {
     Popup,
     CustomSelect,
     SearchError,
+    SortingArrow,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -262,11 +271,13 @@ export default {
   data() {
     return {
       selectOption,
+      colNames,
       currentPage: 1,
       editVisible: false,
       errorSearching: false,
-      sort: "all",
-      filter: "all",
+      sortDirection: "down",
+      sort: "promotionName",
+      filter: "promotionName",
       search: "",
       promotion_db: "",
       season_db: "",
@@ -307,6 +318,30 @@ export default {
       this.editVisible = value;
       this.updateData();
     },
+    setActiveArrow(clickedArrow) {
+      this.activeArrow = clickedArrow;
+      this.setSort(clickedArrow);
+      this.searchData();
+    },
+    sortReturn(direction) {
+      this.sortDirection = direction;
+    },
+    setSort(click) {
+      if (click == 0) {
+        this.sort = "promotionName";
+      } else if (click == 1) {
+        this.sort = "seasonName";
+      } else if (click == 2) {
+        this.sort = "roomType";
+      } else if (click == 3) {
+        this.sort = "discount";
+      } else if (click == 4) {
+        this.sort = "startDate";
+      } else if (click == 5) {
+        this.sort = "endDate";
+      }
+    },
+
     getPromotion() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
@@ -358,12 +393,18 @@ export default {
         );
     },
     searchData() {
+      if (this.filter == "startDate" || this.filter == "endDate") {
+        this.searchSent = this.converDateToQuery(this.search);
+      } else {
+        this.searchSent = this.search;
+      }
       axios
         .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
           action: "searchData",
-          search: this.search,
+          search: this.searchSent,
           filter: this.filter,
           sort: this.sort,
+          direction: this.sortDirection,
         })
         .then(
           function(res) {
@@ -428,49 +469,24 @@ export default {
           );
       }
     },
-    selectionSort(value) {
-      if (value === selectOption[0]) {
-        this.sort = "all";
-      }
-      if (value === selectOption[1]) {
-        this.sort = "seasonName";
-      }
-      if (value === selectOption[2]) {
-        this.sort = "promotionName";
-      }
-      if (value === selectOption[3]) {
-        this.sort = "roomType";
-      }
-      if (value === selectOption[4]) {
-        this.sort = "discount";
-      }
-      if (value === selectOption[5]) {
-        this.sort = "startDate";
-      }
-      if (value === selectOption[6]) {
-        this.sort = "endDate";
-      }
-    },
+
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "all";
+        this.filter = "promotionName";
       }
       if (value === selectOption[1]) {
         this.filter = "seasonName";
       }
       if (value === selectOption[2]) {
-        this.filter = "promotionName";
-      }
-      if (value === selectOption[3]) {
         this.filter = "roomType";
       }
-      if (value === selectOption[4]) {
+      if (value === selectOption[3]) {
         this.filter = "discount";
       }
-      if (value === selectOption[5]) {
+      if (value === selectOption[4]) {
         this.filter = "startDate";
       }
-      if (value === selectOption[6]) {
+      if (value === selectOption[5]) {
         this.filter = "endDate";
       }
     },
@@ -492,6 +508,21 @@ export default {
       this.form.discount = "";
       this.form.startDate = "";
       this.form.endDate = "";
+    },
+
+    convertDate(date) {
+      var datearray = date.split("-");
+      var newdate = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
+      return newdate;
+    },
+
+    converDateToQuery(date) {
+      var datearray = date.split("/");
+      if (datearray.length != 3) {
+        alert("Date format should be dd/mm/yyyy");
+      }
+      var newdate = datearray[2] + "-" + datearray[1] + "-" + datearray[0];
+      return newdate;
     },
   },
 };
@@ -594,6 +625,11 @@ th {
   text-align: center;
   background-color: #eeeeee;
   border-bottom: 1px solid black;
+}
+.tb-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 td {
   text-align: center;
