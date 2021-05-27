@@ -218,7 +218,6 @@ export default {
       this.sortDirection = direction;
     },
     setSort(click) {
-      console.log("click", click);
       if (click == 0) {
         this.sort = "roomID";
       } else if (click == 1) {
@@ -265,7 +264,6 @@ export default {
     },
 
     updateData() {
-      console.log(this.form.roomType);
       this.check =
         this.form.roomType != "" &&
         this.form.roomPrice != "" &&
@@ -290,9 +288,6 @@ export default {
       }
     },
     searchData() {
-      console.log("di", this.sortDirection);
-      console.log("filter", this.filter);
-      console.log("sort", this.sort);
       axios
         .post("http://localhost:8080/PocoLoco_db/api_room.php", {
           action: "searchData",
@@ -303,7 +298,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res);
             this.room_db = res.data;
             if (this.room_db != "") {
               this.errorSearching = false;
