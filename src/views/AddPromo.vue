@@ -405,6 +405,8 @@ export default {
                 alert(res.data.message);
                 this.backToPromo();
                 this.resetData();
+              } else {
+                alert(res.data.message);
               }
             }.bind(this)
           );
