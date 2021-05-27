@@ -154,7 +154,15 @@
     },
     data() {
       return {
-        expenseType: ["Electricity", "Maintenance", "Cleaning", "Ingredients"],
+        expenseType: [
+          "Advertisement",
+          "Electricity",
+          "Entertainment",
+          "Housekeeping",
+          "Kitchen",
+          "Maintenance",
+          "Water",
+        ],
         employeeIDError: true,
         roomNumberError: true,
         detailError: true,
