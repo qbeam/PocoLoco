@@ -21,12 +21,7 @@
         :style="{ marginRight: '20px' }"
         @selection="selectionFilter"
       />
-      <CustomSelect
-        type="Sort by"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionSort"
-      />
+
       <DefaultButton
         @click="searchData"
         type="small"
@@ -39,11 +34,16 @@
     <SearchError v-if="errorSearching" />
     <table v-if="room_db.length !== 0">
       <tr>
-        <th>Room No.</th>
-        <th>Room Type</th>
-        <th>Price</th>
-        <th>Capacity</th>
-        <th>Size</th>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
+          </div>
+        </th>
         <th>Edit</th>
       </tr>
 
@@ -147,8 +147,10 @@ import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
 import axios from "axios";
+import SortingArrow from "../components/SortingArrow";
 
-const selectOption = ["Default", "Room No.", "Room Type", "Room Price"];
+const selectOption = ["Room No.", "Room Type", "Room Price"];
+const colNames = ["Room No.", "Room Type", "Price", "Capacity", "Size"];
 
 export default {
   name: "Promotion",
@@ -160,6 +162,7 @@ export default {
     Popup,
     CustomSelect,
     SearchError,
+    SortingArrow,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -168,6 +171,9 @@ export default {
   },
   data() {
     return {
+      colNames,
+      activeArrow: 0, // sort by which column
+      sortDirection: "down", // direction of currently active arrow
       currentPage: 1,
       editVisible: false,
       errorSearching: false,
@@ -175,8 +181,8 @@ export default {
       room_db: "",
       type_db: "",
       search: "",
-      sort: "all",
-      filter: "all",
+      sort: "roomID",
+      filter: "roomID",
       check: false,
       form: {
         roomID: "",
@@ -202,6 +208,28 @@ export default {
     submit(value) {
       this.editVisible = value;
       this.updateData();
+    },
+    setActiveArrow(clickedArrow) {
+      this.activeArrow = clickedArrow;
+      this.setSort(clickedArrow);
+      this.searchData();
+    },
+    sortReturn(direction) {
+      this.sortDirection = direction;
+    },
+    setSort(click) {
+      console.log("click", click);
+      if (click == 0) {
+        this.sort = "roomID";
+      } else if (click == 1) {
+        this.sort = "roomType";
+      } else if (click == 2) {
+        this.sort = "roomPrice";
+      } else if (click == 3) {
+        this.sort = "capacity";
+      } else if (click == 4) {
+        this.sort = "size";
+      }
     },
     getAllRoom() {
       axios
@@ -262,15 +290,20 @@ export default {
       }
     },
     searchData() {
+      console.log("di", this.sortDirection);
+      console.log("filter", this.filter);
+      console.log("sort", this.sort);
       axios
         .post("http://localhost:8080/PocoLoco_db/api_room.php", {
           action: "searchData",
           search: this.search,
           sort: this.sort,
           filter: this.filter,
+          direction: this.sortDirection,
         })
         .then(
           function(res) {
+            console.log(res);
             this.room_db = res.data;
             if (this.room_db != "") {
               this.errorSearching = false;
@@ -287,31 +320,15 @@ export default {
       this.form.capacity = "";
       this.form.size = "";
     },
-    selectionSort(value) {
-      if (value === selectOption[0]) {
-        this.sort = "all";
-      }
-      if (value === selectOption[1]) {
-        this.sort = "roomID";
-      }
-      if (value === selectOption[2]) {
-        this.sort = "roomType";
-      }
-      if (value === selectOption[3]) {
-        this.sort = "roomPrice";
-      }
-    },
+
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "all";
-      }
-      if (value === selectOption[1]) {
         this.filter = "roomID";
       }
-      if (value === selectOption[2]) {
+      if (value === selectOption[1]) {
         this.filter = "roomType";
       }
-      if (value === selectOption[3]) {
+      if (value === selectOption[2]) {
         this.filter = "roomPrice";
       }
     },
@@ -411,6 +428,11 @@ th {
   text-align: center;
   background-color: #eeeeee;
   border-bottom: 1px solid black;
+}
+.tb-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 td {
   width: 50px;

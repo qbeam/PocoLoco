@@ -3,11 +3,17 @@
     <div class="form-header">
       <h2>Add Booking</h2>
     </div>
-    <!-- ปจเองจ้า -->
+
     <InnerFormContainer :style="{ height: '560px', position: 'relative' }">
       <h3>Booking ID: {{ bookingID }}</h3>
       <div class="input-group">
-        <h4>Customer ID</h4>
+        <div v-if="error">
+          <h4 style="color:red">Customer ID</h4>
+        </div>
+        <div v-else>
+          <h4>Customer ID</h4>
+        </div>
+
         <input
           v-model="customerID"
           type="number"
@@ -15,15 +21,15 @@
         />
         <h4 style="color: red">{{ message }}</h4>
         <!-- Add Booking Detail -->
-        <!-- <AddButton
+        <AddButton
           @click="
             $router.push({
               name: 'AddBookingDetail',
               params: { bookingID },
             })
           "
-        ></AddButton> -->
-        <AddButton @click="goToAddBookingDetail()"></AddButton>
+        ></AddButton>
+        <!-- <AddButton @click="goToAddBookingDetail()"></AddButton> -->
       </div>
 
       <!-- Table -->
@@ -121,6 +127,7 @@ export default {
       customerID: "",
       bookingDetail_db: "",
       message: "",
+      error: false,
     };
   },
 
@@ -144,7 +151,7 @@ export default {
           action: "getBookingID",
         })
         .then(
-          function (res) {
+          function(res) {
             this.bookingID = res.data;
             this.getBookingDetail();
           }.bind(this)
@@ -158,7 +165,7 @@ export default {
           bookingID: this.bookingID,
         })
         .then(
-          function (res) {
+          function(res) {
             this.bookingDetail_db = res.data;
           }.bind(this)
         );
@@ -172,7 +179,7 @@ export default {
             bookingDetail: id,
           })
           .then(
-            function (res) {
+            function(res) {
               if (res.data.success == true) {
                 this.getBookingDetail();
               }
@@ -190,11 +197,12 @@ export default {
             customerID: this.customerID,
           })
           .then(
-            function (res) {
+            function(res) {
               console.log(res);
               if (res.data.success == true) {
                 this.getBookingID();
                 alert("Booking Saved Successful");
+                this.error = false;
               } else {
                 this.message = res.data.message;
               }
@@ -202,7 +210,7 @@ export default {
             }.bind(this)
           );
       } else {
-        this.message = "Please fill Customer ID";
+        this.error = true;
       }
     },
 

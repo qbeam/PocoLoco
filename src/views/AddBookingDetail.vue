@@ -306,6 +306,7 @@ export default {
           roomNumber: this.details.roomNumber,
           checkIn: this.details.checkIn,
           checkOut: this.details.checkOut,
+          roomType: this.details.roomType,
         })
         .then(
           function(res) {
