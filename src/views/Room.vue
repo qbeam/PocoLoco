@@ -149,7 +149,7 @@ import SearchError from "../components/SearchError";
 import axios from "axios";
 import SortingArrow from "../components/SortingArrow";
 
-const selectOption = ["Default", "Room No.", "Room Type", "Room Price"];
+const selectOption = ["Room No.", "Room Type", "Room Price"];
 const colNames = ["Room No.", "Room Type", "Price", "Capacity", "Size"];
 
 export default {
@@ -181,8 +181,8 @@ export default {
       room_db: "",
       type_db: "",
       search: "",
-      sort: "all",
-      filter: "all",
+      sort: "roomID",
+      filter: "roomID",
       check: false,
       form: {
         roomID: "",
@@ -211,10 +211,25 @@ export default {
     },
     setActiveArrow(clickedArrow) {
       this.activeArrow = clickedArrow;
+      this.setSort(clickedArrow);
+      this.searchData();
     },
     sortReturn(direction) {
       this.sortDirection = direction;
-      console.log(this.sortDirection);
+    },
+    setSort(click) {
+      console.log("click", click);
+      if (click == 0) {
+        this.sort = "roomID";
+      } else if (click == 1) {
+        this.sort = "roomType";
+      } else if (click == 2) {
+        this.sort = "roomPrice";
+      } else if (click == 3) {
+        this.sort = "capacity";
+      } else if (click == 4) {
+        this.sort = "size";
+      }
     },
     getAllRoom() {
       axios
@@ -275,15 +290,20 @@ export default {
       }
     },
     searchData() {
+      console.log("di", this.sortDirection);
+      console.log("filter", this.filter);
+      console.log("sort", this.sort);
       axios
         .post("http://localhost:8080/PocoLoco_db/api_room.php", {
           action: "searchData",
           search: this.search,
           sort: this.sort,
           filter: this.filter,
+          direction: this.sortDirection,
         })
         .then(
           function(res) {
+            console.log(res);
             this.room_db = res.data;
             if (this.room_db != "") {
               this.errorSearching = false;
@@ -300,31 +320,15 @@ export default {
       this.form.capacity = "";
       this.form.size = "";
     },
-    selectionSort(value) {
-      if (value === selectOption[0]) {
-        this.sort = "all";
-      }
-      if (value === selectOption[1]) {
-        this.sort = "roomID";
-      }
-      if (value === selectOption[2]) {
-        this.sort = "roomType";
-      }
-      if (value === selectOption[3]) {
-        this.sort = "roomPrice";
-      }
-    },
+
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "all";
-      }
-      if (value === selectOption[1]) {
         this.filter = "roomID";
       }
-      if (value === selectOption[2]) {
+      if (value === selectOption[1]) {
         this.filter = "roomType";
       }
-      if (value === selectOption[3]) {
+      if (value === selectOption[2]) {
         this.filter = "roomPrice";
       }
     },
