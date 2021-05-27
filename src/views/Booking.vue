@@ -10,11 +10,6 @@
         <input class="search-field" type="text" placeholder="search" />
       </div>
       <CustomSelect
-        type="Sort by"
-        :options="['A', 'B', 'C', 'Good Night']"
-        :style="{ marginRight: '20px' }"
-      />
-      <CustomSelect
         type="Filter"
         :options="['A', 'B', 'C', 'Sleep tight']"
         :style="{ marginRight: '20px' }"
@@ -33,10 +28,16 @@
 
     <table v-if="sampleBooking.length !== 0" style="margin-top: 50px;">
       <tr>
-        <th>BookingID</th>
-        <th>Customer Name</th>
-        <th>Phone</th>
-        <th>Email</th>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
+          </div>
+        </th>
         <th>Manage</th>
       </tr>
 
@@ -241,6 +242,7 @@ import Popup from "../components/Popup.vue";
 import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
+import SortingArrow from "../components/SortingArrow";
 
 const sampleBooking = [
   {
@@ -287,6 +289,8 @@ const sampleBookingDetail = [
   { id: 1023654802, room: 1505, status: "Check IN" },
 ];
 
+const colNames = ["BookingID", "Customer Name", "Phone", "Phone"];
+
 export default {
   name: "Booking",
   components: {
@@ -296,6 +300,7 @@ export default {
     AddButton,
     Popup,
     CustomSelect,
+    SortingArrow,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -306,6 +311,7 @@ export default {
     return {
       sampleBookingDetail,
       sampleBooking,
+      colNames,
       currentPage: 1,
       visible: false,
       switchPop: false,
@@ -316,6 +322,8 @@ export default {
       checkInDate: "",
       checkOutDate: "",
       status: "",
+      activeArrow: 0,
+      sortDirection: "down",
     };
   },
 
@@ -333,6 +341,12 @@ export default {
     submit(value) {
       this.switchPop = value;
       this.visible = !value;
+    },
+    setActiveArrow(clickedArrow) {
+      this.activeArrow = clickedArrow;
+    },
+    sortReturn(direction) {
+      this.sortDirection = direction;
     },
     getRecord(id, phone, name, lastname) {
       this.visible = !this.visible;
@@ -391,6 +405,11 @@ table {
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;
+}
+.tb-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .manage {
   height: 35px;
