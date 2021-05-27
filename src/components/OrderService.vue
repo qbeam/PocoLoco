@@ -280,6 +280,7 @@ export default {
     clearBasket() {
       this.roomID = "";
       this.orders = [];
+      this.getAllService();
     },
 
     loopInsert() {
@@ -310,11 +311,14 @@ export default {
               this.count_success++;
               if (this.count_success == this.orders.length) {
                 alert(res.data.message);
+                this.search = "";
+                this.clearBasket();
               }
             } else {
               this.count_fail++;
               if (this.count_fail == this.orders.length) {
                 alert(res.data.message);
+                this.clearBasket();
               }
             }
           }.bind(this)

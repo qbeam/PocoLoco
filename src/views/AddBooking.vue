@@ -147,7 +147,7 @@ export default {
     },
     getBookingID() {
       axios
-        .post("http://localhost:8080/PocoLoco_db//api_booking.php", {
+        .post("http://localhost:8080/PocoLoco_db//api_addBooking.php", {
           action: "getBookingID",
         })
         .then(
@@ -160,7 +160,7 @@ export default {
 
     getBookingDetail() {
       axios
-        .post("http://localhost:8080/PocoLoco_db//api_booking.php", {
+        .post("http://localhost:8080/PocoLoco_db//api_addBooking.php", {
           action: "getBookingDetail",
           bookingID: this.bookingID,
         })
@@ -174,7 +174,7 @@ export default {
     deleteDetail(id) {
       if (confirm("Do you want to delete ID " + id + "?")) {
         axios
-          .post("http://localhost:8080/PocoLoco_db//api_booking.php", {
+          .post("http://localhost:8080/PocoLoco_db//api_addBooking.php", {
             action: "deleteBookingdetail",
             bookingDetail: id,
           })
@@ -191,7 +191,7 @@ export default {
     addBooking() {
       if (this.customerID != "") {
         axios
-          .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
+          .post("http://localhost:8080/PocoLoco_db/api_addBooking.php", {
             action: "addBooking",
             bookingID: this.bookingID,
             customerID: this.customerID,
