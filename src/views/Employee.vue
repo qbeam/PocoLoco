@@ -19,11 +19,11 @@
       </div>
 
       <div class="inner-container">
-          
+        <AllEmployee v-if="selected == menus[0]" />
       </div>
     </div>
-    <div v-if="role === 'Receptionist'">
-      <div class="menu-bar">
+    
+      <div class="menu-bar" v-if="role === 'Receptionist'">
         <div>
           <span class="icon-wrap">
             <i class="fa fa-search fa-1x"></i>
@@ -48,7 +48,7 @@
         />
       </div>
 
-      <table v-if="sampleEmployee.length !== 0">
+      <table v-if="sampleEmployee.length !== 0 && role === 'Receptionist'">
         <tr>
           <th v-for="(colName, i) in colNames" :key="i">
             <div class="tb-head">
@@ -219,11 +219,11 @@
           </label>
         </div>
       </Popup>
-    </div>
   </TablePage>
 </template>
 
 <script>
+import AllEmployee from "../components/AllEmployee";
 import TablePage from "../components/TablePage";
 import DefaultButton from "../components/DefaultButton.vue";
 import PaginationBar from "../components/PaginationBar.vue";
@@ -308,6 +308,7 @@ const sampleEmployee = [
 export default {
   name: "Employee",
   components: {
+    AllEmployee,
     DefaultButton,
     TablePage,
     PaginationBar,
@@ -333,7 +334,7 @@ export default {
       currentPage: 1,
       activeArrow: 0,
       sortDirection: "down",
-      role: "Business Owner",
+      role: "Receptionist",
     };
   },
   methods: {
