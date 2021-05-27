@@ -40,6 +40,7 @@
         class="row"
       >
         <td>{{ sampleBookingDetail.id }}</td>
+        <td>{{sampleBookingDetail.room}}</td>
         <td>
           {{ sampleBookingDetail.guestFname }}
           {{ sampleBookingDetail.guestLname }}
@@ -190,6 +191,7 @@ import SortingArrow from "../components/SortingArrow";
 const sampleBookingDetail = [
   {
     id: 1023654800,
+    room: 1006,
     guestFname: "Ying",
     guestLname: "Supa",
     checkIn: "01/01/2021",
@@ -198,6 +200,7 @@ const sampleBookingDetail = [
   },
   {
     id: 1023654800,
+    room: 1006,
     guestFname: "Beam",
     guestLname: "Nat",
     checkIn: "01/01/2021",
@@ -206,6 +209,7 @@ const sampleBookingDetail = [
   },
   {
     id: 1023654800,
+    room: 1006,
     guestFname: "Pung",
     guestLname: "Jung",
     checkIn: "01/01/2021",
@@ -214,6 +218,7 @@ const sampleBookingDetail = [
   },
   {
     id: 1023654800,
+    room: 1006,
     guestFname: "Pan",
     guestLname: "Pan",
     checkIn: "01/01/2021",
@@ -222,6 +227,7 @@ const sampleBookingDetail = [
   },
   {
     id: 1023654800,
+    room: 1006,
     guestFname: "Mly",
     guestLname: "Mly",
     checkIn: "01/01/2021",
@@ -230,6 +236,7 @@ const sampleBookingDetail = [
   },
   {
     id: 1023654800,
+    room: 1006,
     guestFname: "Pra",
     guestLname: "Yut",
     checkIn: "01/01/2021",
@@ -238,6 +245,7 @@ const sampleBookingDetail = [
   },
   {
     id: 1023654800,
+    room: 1006,
     guestFname: "Na",
     guestLname: "Sus",
     checkIn: "01/01/2021",
@@ -246,7 +254,7 @@ const sampleBookingDetail = [
   },
 ];
 
-const colNames = ["Booking Detail ID", "Guest Name", "Check IN", "Check OUT", "Status"];
+const colNames = ["BookingID", "Room Number", "Guest Name", "Check IN", "Check OUT", "Status"];
 
 export default {
   name: "BooikingDatail",
