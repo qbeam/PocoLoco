@@ -12,16 +12,13 @@
     >
       <div class="button-content">
         <label :class="dropdownLabel">{{ label ? label : options[0] }}</label>
-        <i
-          class="fa fa-caret-down fa-2x"
-          :style="type == 'Transparent' ? { color: 'var(--button-blue)' } : {}"
-        ></i>
+        <i class="fa fa-caret-down fa-2x" :style="{ color: arrowColor }"></i>
       </div>
     </div>
     <div
       class="dropdown-list"
       v-if="dropdownVisible"
-      :style="type == 'Transparent' ? { width: '74px' } : {}"
+      :style="{ width: optionsWidth }"
     >
       <div
         class="option-item"
@@ -52,6 +49,8 @@
         dropdownVisible: false,
         selection: null,
         label: null,
+        arrowColor: "white",
+        optionsWidth: "120px",
       };
     },
     methods: {
@@ -68,7 +67,14 @@
     mounted() {
       if (this.type == "Transparent") {
         this.dropdownType = "transparent-dropdown";
-        this.dropdownLabel = "transparent-label";
+        this.dropdownLabel = "dark-label";
+        this.arrowColor = "var(--button-blue)";
+        this.optionsWidth = "74px";
+      } else if (this.type == "Grey") {
+        this.dropdownType = "grey-dropdown";
+        this.dropdownLabel = "dark-label";
+        this.arrowColor = "var(--button-blue)";
+        this.optionsWidth = "150px";
       }
     },
   };
@@ -101,6 +107,16 @@
     border: 2px solid var(--button-blue);
     cursor: pointer;
   }
+  .grey-dropdown {
+    width: 150px;
+    height: 40px;
+    background: #eeeeee;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+  }
   .button-content {
     width: 100%;
     display: flex;
@@ -112,7 +128,7 @@
     padding-left: 5px;
     z-index: 1;
   }
-  .transparent-label {
+  .dark-label {
     color: var(--grey-text);
     margin: 0 auto;
   }
