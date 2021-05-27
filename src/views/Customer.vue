@@ -51,7 +51,7 @@
             />
           </div>
         </th>
-        <th>Edit</th>
+        <th>Manage</th>
       </tr>
 
       <tr
