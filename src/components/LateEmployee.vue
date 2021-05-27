@@ -1,6 +1,15 @@
 <template>
   <div class="chart-container">
-    <p>Employee Punctuality in xxxx</p>
+    <div class="header">
+      <p :style="{ fontSize: '16px' }">Punctuality in</p>
+      <CustomSelect
+        type="Transparent"
+        :options="searchRange"
+        @selection="graphRange"
+        :style="{ margin: '0 0 0 10px' }"
+      />
+    </div>
+
     <div class="vl"></div>
     <div class="list">
       <div class="item" v-for="(record, i) in lateSummary" :key="i">
@@ -27,6 +36,8 @@
 </template>
 
 <script>
+  import CustomSelect from "./CustomSelect";
+
   const lateSummary = [
     { id: 123456, name: "Pungkung Carrot", role: "owner", late: 100 },
     { id: 123456, name: "Pungkung Turtle", role: "receptionist", late: 80 },
@@ -38,23 +49,37 @@
   ];
   export default {
     name: "LateEmployee",
+    components: { CustomSelect },
+
     data() {
       return {
         lateSummary,
+        searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        displayRange: null,
       };
+    },
+    methods: {
+      graphRange(value) {
+        this.displayRange = value;
+      },
     },
   };
 </script>
 
 <style scoped>
   .chart-container {
-    width: 30%;
+    width: 33%;
     height: 310px;
     display: flex;
     flex-direction: column;
     background: white;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 4px;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .list {
     display: flex;
@@ -123,10 +148,11 @@
     margin: -12px 0 0 10px;
     font-size: 10px;
   }
-  @media (max-width: 550px) {
+
+  @media (max-width: 750px) {
     .chart-container {
       width: 100%;
-      height: 400px;
+      height: 350px;
       margin: 15px 0;
     }
     .progress-bar {

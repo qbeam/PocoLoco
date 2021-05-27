@@ -1,6 +1,14 @@
 <template>
   <div class="chart-container">
-    <p class="title">Booking amount in</p>
+    <div class="header">
+      <p class="title">Booking in</p>
+      <CustomSelect
+        type="Transparent"
+        :options="searchRange"
+        @selection="graphRange"
+        :style="{ margin: '0 0 0 10px' }"
+      />
+    </div>
 
     <div class="seasons">
       <button class="season-button" v-for="(season, i) in seasons" :key="i">
@@ -19,6 +27,8 @@
 </template>
 
 <script>
+  import CustomSelect from "./CustomSelect";
+
   const seasons = [
     {
       date: "25-27",
@@ -74,17 +84,25 @@
 
   export default {
     name: "BookingReport",
+    components: { CustomSelect },
     data() {
       return {
         seasons,
+        searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        displayRange: null,
       };
+    },
+    methods: {
+      graphRange(value) {
+        this.displayRange = value;
+      },
     },
   };
 </script>
 
 <style scoped>
   .chart-container {
-    width: 30%;
+    width: 31%;
     height: 300px;
     display: flex;
     flex-direction: column;
@@ -92,6 +110,10 @@
     padding: 5px 10px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 4px;
+    align-items: center;
+  }
+  .header {
+    display: flex;
     align-items: center;
   }
   .title {
@@ -155,7 +177,7 @@
   }
   @media (max-width: 750px) {
     .chart-container {
-      width: 95%;
+      width: 47%;
     }
   }
 </style>

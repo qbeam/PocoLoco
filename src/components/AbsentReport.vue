@@ -1,8 +1,15 @@
 <template>
   <div class="chart-container">
-    <div class="head">
-      <p>Employee Absence in xxxx</p>
+    <div class="header">
+      <p :style="{ fontSize: '16px' }">Absence in</p>
+      <CustomSelect
+        type="Transparent"
+        :options="searchRange"
+        @selection="graphRange"
+        :style="{ margin: '0 0 0 10px' }"
+      />
     </div>
+
     <div class="vl"></div>
     <div class="list">
       <div class="item" v-for="(record, i) in absenceSum" :key="i">
@@ -12,7 +19,7 @@
           <b>{{ record.month }}</b>
         </div>
         <div class="detail">
-          <p :style="{ fontSize: '12px' }">Number of Employee</p>
+          <p :style="{ fontSize: '12px', margin: 0 }">No. of Employee</p>
           <b :style="{ fontSize: '24px' }">{{ record.count }}</b>
         </div>
       </div>
@@ -21,6 +28,8 @@
 </template>
 
 <script>
+  import CustomSelect from "./CustomSelect";
+
   const absenceSum = [
     { date: "16", month: "APR", count: "65" },
     { date: "12", month: "APR", count: "50" },
@@ -31,17 +40,25 @@
   ];
   export default {
     name: "AbsentReport",
+    components: { CustomSelect },
     data() {
       return {
         absenceSum,
+        searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        displayRange: null,
       };
+    },
+    methods: {
+      graphRange(value) {
+        this.displayRange = value;
+      },
     },
   };
 </script>
 
 <style scoped>
   .chart-container {
-    width: 30%;
+    width: 31%;
     height: 310px;
     display: flex;
     flex-direction: column;
@@ -49,8 +66,10 @@
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 4px;
   }
-  .head {
-    padding: 15px;
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .vl {
     width: 100%;
@@ -87,7 +106,6 @@
     font-size: 12px;
   }
   p {
-    margin: 0;
     font-size: 14px;
     color: var(--grey-text);
   }
@@ -95,5 +113,10 @@
     display: flex;
     flex-direction: column;
     padding-left: 15px;
+  }
+  @media (max-width: 750px) {
+    .chart-container {
+      width: 47%;
+    }
   }
 </style>

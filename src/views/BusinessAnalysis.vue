@@ -54,10 +54,13 @@
       <PieChart type="food" />
     </div>
 
-    <div class="row">
+    <div class="reports">
       <BookingReport />
-      <LateEmployee />
+      <LateEmployee v-if="width > 750" />
       <AbsentReport />
+    </div>
+    <div class="row">
+      <LateEmployee v-if="width <= 750" />
     </div>
   </TablePage>
 </template>
@@ -121,6 +124,11 @@
     width: 100%;
   }
   .row {
+    margin: 10px 5px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .reports {
     margin: 10px 5px;
     display: flex;
     justify-content: space-between;
