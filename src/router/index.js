@@ -17,6 +17,7 @@ import Promotion from "../views/Promotion.vue";
 import Room from "../views/Room.vue";
 import Services from "../views/Services.vue";
 import BusinessAnalysis from "../views/BusinessAnalysis.vue";
+import FloorPlan from "../views/FloorPlan.vue";
 
 const routes = [
   {
@@ -108,6 +109,11 @@ const routes = [
     path: "/BusinessAnalysis",
     name: "BusinessAnalysis",
     component: BusinessAnalysis,
+  },
+  {
+    path: "/FloorPlan",
+    name: "FloorPlan",
+    component: FloorPlan,
   },
 ];
 
