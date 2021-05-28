@@ -126,6 +126,8 @@ const routes = [
     path: "/FloorPlan",
     name: "FloorPlan",
     component: FloorPlan,
+  },
+  {
     path: "/AddOrderChef",
     name: "AddOrderChef",
     component: AddOrderChef,
