@@ -1,226 +1,233 @@
 <template>
   <TablePage>
     <h3>Employee</h3>
-      <div v-if="role === 'Business Owner'">
-        <button
-          class="menu-button"
-          v-for="(menu, i) in menus"
-          :key="i"
-          @click="selectMenu(menu)"
-          :style="
-            menu == selected
-              ? { borderBottom: '5px solid var(--primary-blue)' }
-              : {}
-          "
-        >
-          {{ menu }}
-        </button>
-      </div>
-
-      <div class="inner-container" v-if="role === 'Business Owner'">
-        <AllEmployee v-if="selected == menus[0]" />
-      </div>
-    
-      <div class="menu-bar" v-if="role === 'Receptionist'">
-        <div>
-          <span class="icon-wrap">
-            <i class="fa fa-search fa-1x"></i>
-          </span>
-
-          <input class="search-field" type="text" placeholder="search" />
-        </div>
-        <CustomSelect
-          type="Filter"
-          :options="['A', 'B', 'C', 'Sleep tight']"
-          :style="{ marginRight: '20px' }"
-        />
-        <DefaultButton type="small">Search</DefaultButton>
-
-        <AddButton
-          :style="
-            width < 800
-              ? { position: 'fixed', right: '5%', top: '80px' }
-              : { position: 'fixed', right: '5%', top: '170px' }
-          "
-          @click="goToEmployeeReg()"
-        />
-      </div>
-
-      <table v-if="sampleEmployee.length !== 0 && role === 'Receptionist'">
-        <tr>
-          <th v-for="(colName, i) in colNames" :key="i">
-            <div class="tb-head">
-              {{ colName }}
-              <SortingArrow
-                :active="activeArrow == i ? true : false"
-                @click="setActiveArrow(i)"
-                @sortReturn="sortReturn"
-              />
-            </div>
-          </th>
-          <th>Manage</th>
-        </tr>
-
-        <tr
-          v-for="(sampleEmployee, i) in sampleEmployee.slice(
-            currentPage * tableRow - tableRow,
-            currentPage * tableRow
-          )"
-          :key="i"
-          class="row"
-        >
-          <td>{{ sampleEmployee.id }}</td>
-          <td>{{ sampleEmployee.firstname }} {{ sampleEmployee.lastname }}</td>
-          <td>{{ sampleEmployee.salary }}</td>
-          <td>{{ sampleEmployee.status }}</td>
-          <td>
-            <div class="manage">
-              <button
-                class="manage-button"
-                @click="getSearchRecord(sampleEmployee)"
-              >
-                <i class="fa fa-search fa-2x"></i>
-              </button>
-              <div class="vl"></div>
-              <button
-                class="manage-button"
-                @click="getEditRecord(sampleEmployee)"
-              >
-                <i class="fa fa-pencil fa-2x"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </table>
-
-      <PaginationBar
-        :pageCount="Math.ceil(sampleEmployee.length / tableRow)"
-        :paginationVisible="sampleEmployee.length > tableRow"
-        @pageReturn="pageReturn"
+    <div v-if="role === 'Business Owner'">
+      <button
+        class="menu-button"
+        v-for="(menu, i) in menus"
+        :key="i"
+        @click="selectMenu(menu)"
         :style="
-          width <= 1000
-            ? {
-                position: 'fixed',
-                bottom: '50px',
-                margin: '0 auto',
-                right: '0',
-                left: '60px',
-              }
-            : {
-                position: 'fixed',
-                bottom: '50px',
-                margin: '0 auto',
-                right: '0',
-                left: '200px',
-              }
+          menu == selected
+            ? { borderBottom: '5px solid var(--primary-blue)' }
+            : {}
         "
+      >
+        {{ menu }}
+      </button>
+    </div>
+
+    <div class="inner-container" v-if="role === 'Business Owner'">
+      <AllEmployee v-if="selected == menus[0]" />
+      <AllEmployeeRole v-if="selected == menus[1]" />
+    </div>
+
+    <div class="menu-bar" v-if="role === 'Receptionist'">
+      <div>
+        <span class="icon-wrap">
+          <i class="fa fa-search fa-1x"></i>
+        </span>
+
+        <input class="search-field" type="text" placeholder="search" />
+      </div>
+      <CustomSelect
+        type="Filter"
+        :options="['A', 'B', 'C', 'Sleep tight']"
+        :style="{ marginRight: '20px' }"
       />
+      <DefaultButton type="small">Search</DefaultButton>
 
-      <Popup :visible="searchVisible" @popReturn="popReturn">
-        <div class="popup-head">
-          <div class="group-row">
-            <div class="group-item">
-              <div class="group-row">
-                <div class="group-item-left">
-                  <div class="circle">
-                    <img src="../assets/receptionist.png" />
-                  </div>
-                </div>
-                <div class="group-item-left" style="margin-top: 7px">
-                  {{ employee.id }}
-                </div>
-              </div>
-            </div>
-            <div class="group-item">
-              <div style="font-size: 20px">
-                {{ employee.firstname }} {{ employee.lastname }}
-              </div>
-              <div style="font-weight: normal; font-size: 18px">
-                {{ employee.role }}
-              </div>
-            </div>
+      <AddButton
+        :style="
+          width < 800
+            ? { position: 'fixed', right: '5%', top: '80px' }
+            : { position: 'fixed', right: '5%', top: '170px' }
+        "
+        @click="goToEmployeeReg()"
+      />
+    </div>
+
+    <table v-if="sampleEmployee.length !== 0 && role === 'Receptionist'">
+      <tr>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
           </div>
-        </div>
+        </th>
+        <th>Manage</th>
+      </tr>
 
+      <tr
+        v-for="(sampleEmployee, i) in sampleEmployee.slice(
+          currentPage * tableRow - tableRow,
+          currentPage * tableRow
+        )"
+        :key="i"
+        class="row"
+      >
+        <td>{{ sampleEmployee.id }}</td>
+        <td>
+          <div>
+            <p>{{ sampleEmployee.firstname }} {{ sampleEmployee.lastname }}</p>
+            <!-- <p class="sub-row">{{ sampleEmployee.role }}</p> -->
+          </div>
+        </td>
+        <td>{{ sampleEmployee.salary }}</td>
+        <td>{{ sampleEmployee.status }}</td>
+        <td>
+          <div class="manage">
+            <button
+              class="manage-button"
+              @click="getSearchRecord(sampleEmployee)"
+            >
+              <i class="fa fa-search fa-2x"></i>
+            </button>
+            <div class="vl"></div>
+            <button
+              class="manage-button"
+              @click="getEditRecord(sampleEmployee)"
+            >
+              <i class="fa fa-pencil fa-2x"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <PaginationBar
+      :pageCount="Math.ceil(sampleEmployee.length / tableRow)"
+      :paginationVisible="sampleEmployee.length > tableRow"
+      @pageReturn="pageReturn"
+      :style="
+        width <= 1000
+          ? {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '60px',
+            }
+          : {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '200px',
+            }
+      "
+    />
+
+    <Popup :visible="searchVisible" @popReturn="popReturn">
+      <div class="popup-head">
         <div class="group-row">
           <div class="group-item">
-            <p>Department: {{ employee.department }}</p>
-            <p>Working time: {{ employee.workingTime }}</p>
-            <p>Identification: {{ employee.identification }}</p>
-            <p>Gender: {{ employee.gender }}</p>
-            <p>Email: {{ employee.email }}</p>
+            <div class="group-row">
+              <div class="group-item-left">
+                <div class="circle">
+                  <img src="../assets/receptionist.png" />
+                </div>
+              </div>
+              <div class="group-item-left" style="margin-top: 7px">
+                {{ employee.id }}
+              </div>
+            </div>
           </div>
           <div class="group-item">
-            <p>Salary: {{ employee.salary }}</p>
-            <p>Start Date: {{ employee.startDate }}</p>
-            <p>&nbsp;</p>
-            <p>Date of Birth: {{ employee.DOB }}</p>
-            <p>Phone: {{ employee.phone }}</p>
-          </div>
-        </div>
-      </Popup>
-      <Popup
-        :visible="editVisible"
-        :buttons="true"
-        @popReturn="popReturn"
-        @submit="submit"
-      >
-        <div class="popup-head">
-          <div class="group-row">
-            <div class="group-item">
-              <div class="group-row">
-                <div class="group-item-left">
-                  <div class="circle">
-                    <img src="../assets/receptionist.png" />
-                  </div>
-                </div>
-                <div class="group-item-left" style="margin-top: 7px">
-                  {{ employee.id }}
-                </div>
-              </div>
+            <div style="font-size: 20px">
+              {{ employee.firstname }} {{ employee.lastname }}
             </div>
-            <div class="group-item">
-              <div style="font-size: 20px">
-                {{ employee.firstname }} {{ employee.lastname }}
-              </div>
-              <div style="font-weight: normal; font-size: 18px">
-                {{ employee.role }}
-              </div>
+            <div style="font-weight: normal; font-size: 18px">
+              {{ employee.role }}
             </div>
           </div>
         </div>
+      </div>
 
-        <h4 style="margin-bottom: 35px;">Shift</h4>
-        <CustomSelect
-          type="Grey"
-          :options="['05:00 - 13:00', '13:00 - 21:00', '21:00 - 05:00']"
-          :style="{ marginRight: '20px' }"
-        />
-
-        <h4>Work status</h4>
-        <div class="choices">
-          <label class="container1">
-            Employed
-            <input type="radio" value="Employed" v-model="employee.status" />
-            <span class="checkmark"></span>
-          </label>
-          <label class="container2"
-            >Suspended
-            <input type="radio" value="Suspended" v-model="employee.status" />
-            <span class="checkmark"></span>
-          </label>
-          <label class="container3"
-            >Quited
-            <input type="radio" value="Quited" v-model="employee.status" />
-            <span class="checkmark"></span>
-          </label>
+      <div class="group-row">
+        <div class="group-item">
+          <p>Department: {{ employee.department }}</p>
+          <p>Working time: {{ employee.workingTime }}</p>
+          <p>Identification: {{ employee.identification }}</p>
+          <p>Gender: {{ employee.gender }}</p>
+          <p>Email: {{ employee.email }}</p>
         </div>
-      </Popup>
+        <div class="group-item">
+          <p>Salary: {{ employee.salary }}</p>
+          <p>Start Date: {{ employee.startDate }}</p>
+          <p>&nbsp;</p>
+          <p>Date of Birth: {{ employee.DOB }}</p>
+          <p>Phone: {{ employee.phone }}</p>
+        </div>
+      </div>
+    </Popup>
+    <Popup
+      :visible="editVisible"
+      :buttons="true"
+      @popReturn="popReturn"
+      @submit="submit"
+    >
+      <div class="popup-head">
+        <div class="group-row">
+          <div class="group-item">
+            <div class="group-row">
+              <div class="group-item-left">
+                <div class="circle">
+                  <img src="../assets/receptionist.png" />
+                </div>
+              </div>
+              <div class="group-item-left" style="margin-top: 7px">
+                {{ employee.id }}
+              </div>
+            </div>
+          </div>
+          <div class="group-item">
+            <div style="font-size: 20px">
+              {{ employee.firstname }} {{ employee.lastname }}
+            </div>
+            <div style="font-weight: normal; font-size: 18px">
+              {{ employee.role }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h4 style="margin-bottom: 35px">Shift</h4>
+      <CustomSelect
+        type="Grey"
+        :options="['05:00 - 13:00', '13:00 - 21:00', '21:00 - 05:00']"
+        :style="{ marginRight: '20px' }"
+      />
+
+      <h4>Work status</h4>
+      <div class="choices">
+        <label class="container1">
+          Employed
+          <input type="radio" value="Employed" v-model="employee.status" />
+          <span class="checkmark"></span>
+        </label>
+        <label class="container2"
+          >Suspended
+          <input type="radio" value="Suspended" v-model="employee.status" />
+          <span class="checkmark"></span>
+        </label>
+        <label class="container3"
+          >Quited
+          <input type="radio" value="Quited" v-model="employee.status" />
+          <span class="checkmark"></span>
+        </label>
+      </div>
+    </Popup>
   </TablePage>
 </template>
 
 <script>
 import AllEmployee from "../components/AllEmployee";
+import AllEmployeeRole from "../components/AllEmployeeRole";
 import TablePage from "../components/TablePage";
 import DefaultButton from "../components/DefaultButton.vue";
 import PaginationBar from "../components/PaginationBar.vue";
@@ -306,6 +313,7 @@ export default {
   name: "Employee",
   components: {
     AllEmployee,
+    AllEmployeeRole,
     DefaultButton,
     TablePage,
     PaginationBar,
@@ -378,6 +386,9 @@ h3 {
 h4 {
   font-size: 18px;
   margin-bottom: 15px;
+}
+.sub-row {
+  font-size: 12px;
 }
 .menu-button {
   width: 200px;

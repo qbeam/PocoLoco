@@ -86,7 +86,11 @@
     :paginationVisible="sampleEmployee.length > tableRow"
     @pageReturn="pageReturn"
   />
-  <Popup :visible="searchVisible" @popReturn="popReturn" :style="{ top: '0', left: '0', margin: '0' }">
+  <Popup
+    :visible="searchVisible"
+    @popReturn="popReturn"
+    :style="{ top: '0', left: '0', margin: '0' }"
+  >
     <div class="popup-head">
       <div class="group-row">
         <div class="group-item">
@@ -718,5 +722,5 @@ input[type="number"] {
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
-} 
+}
 </style>
