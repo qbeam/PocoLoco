@@ -25,6 +25,7 @@ import ShowOrderChef from "../views/ShowOrderChef.vue";
 import ShowOrderMaid from "../views/ShowOrderMaid.vue";
 import ShowPayment from "../views/ShowPayment.vue";
 import ShowBookingDetail from "../views/ShowBookingDetail.vue";
+import Order from "../views/Order.vue";
 
 const routes = [
   {
@@ -156,6 +157,11 @@ const routes = [
     path: "/ShowBookingDetail",
     name: "ShowBookingDetail",
     component: ShowBookingDetail,
+  },
+  {
+    path: "/Order",
+    name: "Order",
+    component: Order,
   },
 ];
 

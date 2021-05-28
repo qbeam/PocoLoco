@@ -34,6 +34,7 @@
       <router-link :to="{ name: 'Promotion' }">Promotion</router-link>
       <router-link :to="{ name: 'Room' }">Room</router-link>
       <router-link :to="{ name: 'Services' }">Services</router-link>
+      <router-link :to="{ name: 'Order' }">Order</router-link>
     </div>
     <button class="logout-button" v-if="visible || width > 1000">
       <div class="logout-text">
