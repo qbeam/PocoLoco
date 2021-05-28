@@ -2,28 +2,25 @@
   <h2>My Role</h2>
   <br />
 
-<div v-for="(account, index) in account_db" v-bind:key="index">
+  <div v-for="(account, index) in account_db" v-bind:key="index">
+    <h4>Role</h4>
+    <h3>{{ account.roleName }}</h3>
 
-  <h4>Role</h4>
-  <h3>{{ account.roleName }}</h3>
-
-  <h4>Salary</h4>
+    <h4>Salary</h4>
     <h3>{{ account.salary }}</h3>
 
-  <h4>Start Date</h4>
-  <h3>{{ account.startDate }}</h3>
+    <h4>Start Date</h4>
+    <h3>{{ account.startDate }}</h3>
 
-  <h4>Department</h4>  
-  <h3>{{ account.departmentName }}</h3>
+    <h4>Department</h4>
+    <h3>{{ account.departmentName }}</h3>
 
-<h4>Working Time</h4>
-  <h3>{{ account.shift }}</h3>
+    <h4>Working Time</h4>
+    <h3>{{ account.shift }}</h3>
 
-  <h4>Bonus Rate</h4>
+    <h4>Bonus Rate</h4>
     <h3>{{ account.bonusRate }}</h3>
-
-</div>
-
+  </div>
 </template>
 
 <script>
@@ -55,7 +52,7 @@ export default {
   methods: {
     getAccountRole() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_myAccountRole.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_myAccount.php", {
           action: "getAll",
         })
         .then(
@@ -68,4 +65,3 @@ export default {
   },
 };
 </script>
-

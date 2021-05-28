@@ -1,11 +1,11 @@
 <template>
   <div>
     <h2>Personal Information</h2>
-    <button @click="editAccountProfile(account)">Edit</button>
   </div>
   <br />
 
   <div v-for="(account, index) in account_db" v-bind:key="index">
+    <button @click="editAccountProfile(account)">Edit</button>
     <h4>Name</h4>
     <h3>{{ account.em_firstname }} {{ account.em_lastname }}</h3>
 
@@ -27,9 +27,9 @@
 
   <!-- Edit -->
   <h2 align="center">EDIT</h2>
-  <!-- <div>
+  <div>
     {{ form }}
-  </div> -->
+  </div>
 
   <div>
     <h4>Name</h4>
@@ -93,7 +93,7 @@ export default {
   methods: {
     getAccountProfile() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_myAccountProfile.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_myAccount.php", {
           action: "getAll",
         })
         .then(
@@ -109,7 +109,7 @@ export default {
 
       this.form.employeeID = account.employeeID;
       this.form.em_firstname = account.em_firstname;
-      this.form.em_lastname = account.guestFirstName;
+      this.form.em_lastname = account.em_lastname;
       this.form.phone = account.phone;
       this.form.email = account.email;
     },
@@ -119,7 +119,7 @@ export default {
 
       if (this.check && this.form.isEdit) {
         axios
-          .post("http://localhost:8080/PocoLoco_db/api_myAccountProfile.php", {
+          .post("http://localhost:8080/PocoLoco_db/api_myAccount.php", {
             action: "updateData",
             employeeID: this.form.employeeID,
             em_firstname: this.form.em_firstname,
