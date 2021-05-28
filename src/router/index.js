@@ -17,6 +17,7 @@ import Promotion from "../views/Promotion.vue";
 import Room from "../views/Room.vue";
 import Services from "../views/Services.vue";
 import ServicesMaid from "../views/ServicesMaid.vue";
+import ServicesChef from "../views/ServicesChef.vue";
 import BookingDetail from "../views/BookingDetail.vue";
 import BusinessAnalysis from "../views/BusinessAnalysis.vue";
 import FloorPlan from "../views/FloorPlan.vue";
@@ -125,6 +126,11 @@ const routes = [
     component: ServicesMaid,
   },
   {
+    path: "/ServicesChef",
+    name: "ServicesChef",
+    component: ServicesChef,
+  },
+  {
     path: "/BusinessAnalysis",
     name: "BusinessAnalysis",
     component: BusinessAnalysis,
@@ -143,7 +149,7 @@ const routes = [
     path: "/AddOrderMaid",
     name: "AddOrderMaid",
     component: AddOrderMaid,
-  }, 
+  },
   {
     path: "/ShowPayment",
     name: "ShowPayment",
