@@ -30,6 +30,7 @@
                 ? { alignSelf: 'center', marginLeft: '10px' }
                 : { margin: '-10px 0 30px 0' }
             "
+            @selection="selectionType"
           />
         </div>
       </div>
@@ -133,218 +134,252 @@
 </template>
 
 <script>
-  import FormContainer from "../components/FormContainer.vue";
-  import DefaultButton from "../components/DefaultButton.vue";
-  import InnerFormContainer from "../components/InnerFormContainer.vue";
-  import CustomSelect from "../components/CustomSelect";
-  import { useScreenWidth } from "../composables/useScreenWidth";
-  import axios from "axios";
+import FormContainer from "../components/FormContainer.vue";
+import DefaultButton from "../components/DefaultButton.vue";
+import InnerFormContainer from "../components/InnerFormContainer.vue";
+import CustomSelect from "../components/CustomSelect";
+import { useScreenWidth } from "../composables/useScreenWidth";
+import axios from "axios";
 
-  export default {
-    name: "AddExpense",
-    components: {
-      FormContainer,
-      DefaultButton,
-      InnerFormContainer,
-      CustomSelect,
-    },
-    setup() {
-      const { width } = useScreenWidth();
-      return { width };
-    },
-    data() {
-      return {
-        expenseType: [
-          "Advertisement",
-          "Electricity",
-          "Entertainment",
-          "Housekeeping",
-          "Kitchen",
-          "Maintenance",
-          "Water",
-        ],
-        employeeIDError: true,
-        roomNumberError: true,
-        detailError: true,
-        expenseError: true,
-        expenseDateError: true,
-        check: false,
-        form: {
-          employeeID: "",
-          roomNumber: "",
-          detail: "",
-          expenseDate: "",
-          expense: "",
-        },
-        dateConfig: {
-          type: "string",
-          mask: "YYYY-MM-DD",
-        },
-      };
-    },
-    methods: {
-      backToExpenses() {
-        this.$router.push("/HotelExpenses");
+const expenseType = [
+  "Maintenance",
+  "Housekeeping",
+  "Kitchen",
+  "Electricity",
+  "Water",
+  "Advertisement",
+  "Entertainment",
+  "Other",
+];
+
+export default {
+  name: "AddExpense",
+  components: {
+    FormContainer,
+    DefaultButton,
+    InnerFormContainer,
+    CustomSelect,
+  },
+  setup() {
+    const { width } = useScreenWidth();
+    return { width };
+  },
+  data() {
+    return {
+      expenseType,
+      employeeIDError: true,
+      roomNumberError: true,
+      detailError: true,
+      expenseError: true,
+      expenseDateError: true,
+      check: false,
+      form: {
+        employeeID: "",
+        roomNumber: "",
+        detail: "",
+        expenseDate: "",
+        expense: "",
+        type: "",
       },
-      saveData(e) {
-        console.log(this.form.employeeID);
-        e.preventDefault();
-        this.validate();
-        if (this.check) {
-          axios
-            .post("http://localhost:8080/PocoLoco_db/api_hotelExpense.php", {
-              action: "saveData",
-              employeeID: this.form.employeeID,
-              roomNumber: this.form.roomNumber,
-              detail: this.form.detail,
-              expenseDate: this.form.expenseDate,
-              expense: this.form.expense,
-            })
-            .then(
-              function(res) {
-                console.log(res);
-                if (res.data.success == true) {
-                  alert("Saved Successful");
-                  this.resetData();
-                } else {
-                  this.message = res.data.message;
-                }
-              }.bind(this)
-            );
-        }
+      dateConfig: {
+        type: "string",
+        mask: "YYYY-MM-DD",
       },
+    };
+  },
+  methods: {
+    backToExpenses() {
+      this.$router.push("/HotelExpenses");
+    },
 
-      validate() {
-        this.check =
-          this.form.roomNumber != "" &&
-          this.form.detail != "" &&
-          this.form.expense != "" &&
-          this.form.expenseDate != "";
+    selectionType(value) {
+      if (value === expenseType[0]) {
+        this.form.type = 1;
+      }
+      if (value === expenseType[1]) {
+        this.form.type = 2;
+      }
+      if (value === expenseType[2]) {
+        this.form.type = 3;
+      }
+      if (value === expenseType[3]) {
+        this.form.type = 4;
+      }
+      if (value === expenseType[4]) {
+        this.form.type = 5;
+      }
+      if (value === expenseType[5]) {
+        this.form.type = 6;
+      }
+      if (value === expenseType[6]) {
+        this.form.type = 7;
+      }
+      if (value === expenseType[7]) {
+        this.form.type = 8;
+      }
+    },
 
-        if (this.form.employeeID == "") {
-          this.employeeIDError = false;
-        }
-        if (this.form.roomNumber == "") {
-          this.roomNumberError = false;
-        }
-        if (this.form.detail == "") {
-          this.detailError = false;
-        }
-        if (this.form.expense == "") {
-          this.expenseError = false;
-        }
-        if (this.form.expenseDate == "") {
-          this.expenseDateError = false;
-        }
-        if (this.form.employeeID != "") {
-          this.employeeIDError = true;
-        }
-        if (this.form.roomNumber != "") {
-          this.roomNumberError = true;
-        }
-        if (this.form.detail != "") {
-          this.detailError = true;
-        }
-        if (this.form.expense != "") {
-          this.expenseError = true;
-        }
-        if (this.form.expenseDate != "") {
-          this.expenseDateError = true;
-        }
-      },
+    saveData() {
+      console.log("5555");
+      this.validate();
+      if (this.check) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_hotelExpense.php", {
+            action: "saveData",
+            employeeID: this.form.employeeID,
+            roomNumber: this.form.roomNumber,
+            detail: this.form.detail,
+            expenseDate: this.form.expenseDate,
+            expense: this.form.expense,
+            type: this.form.type,
+          })
+          .then(
+            function(res) {
+              console.log(res.data);
+              if (res.data.success == true) {
+                alert("Saved Successful");
+                this.resetData();
+              } else {
+                this.message = res.data.message;
+              }
+            }.bind(this)
+          );
+      }
+    },
 
-      resetData(e) {
-        this.form.roomNumber = "";
-        this.form.detail = "";
-        this.form.expense = "";
-        this.form.expenseDate = "";
-        this.employeeID = true;
-        this.expenseDateError = true;
-        this.roomNumberError = true;
+    validate() {
+      this.check =
+        this.form.employeeID != "" &&
+        this.form.type != "" &&
+        this.form.detail != "" &&
+        this.form.expense != "" &&
+        this.form.expenseDate != "";
+      console.log("check", this.check);
+      if (this.form.employeeID == "") {
+        this.employeeIDError = false;
+      }
+      if (this.form.type == "") {
+        this.typeError = false;
+      }
+      if (this.form.detail == "") {
+        this.detailError = false;
+      }
+      if (this.form.expense == "") {
+        this.expenseError = false;
+      }
+      if (this.form.expenseDate == "") {
+        this.expenseDateError = false;
+      }
+      if (this.form.employeeID != "") {
+        this.employeeIDError = true;
+      }
+      if (this.form.type != "") {
+        this.typeError = true;
+      }
+      if (this.form.detail != "") {
         this.detailError = true;
+      }
+      if (this.form.expense != "") {
         this.expenseError = true;
-      },
+      }
+      if (this.form.expenseDate != "") {
+        this.expenseDateError = true;
+      }
     },
-  };
+
+    resetData(e) {
+      this.form.roomNumber = "";
+      this.form.detail = "";
+      this.form.expense = "";
+      this.form.expenseDate = "";
+      this.employeeID = true;
+      this.expenseDateError = true;
+      this.typeError = true;
+      this.typeError = true;
+      this.detailError = true;
+      this.expenseError = true;
+    },
+  },
+};
 </script>
 
 <style scoped>
-  .form-header {
-    padding: 90px 0 10px 10%;
-  }
-  h2 {
-    color: white;
-    font-size: 36px;
-    margin-bottom: 10px;
-  }
+.form-header {
+  padding: 90px 0 10px 10%;
+}
+h2 {
+  color: white;
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+.input-group {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+input {
+  width: 150px;
+  height: 35px;
+  margin: 10px 0 35px 20px;
+  padding-left: 10px;
+}
+textarea {
+  width: 100%;
+  height: 250px;
+  margin: 20px 0 35px 35px;
+  padding: 10px;
+}
+.unit {
+  padding: 5px 40px 0 10px;
+}
+.two-inline {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 45px 0;
+}
+i {
+  color: var(--primary-blue);
+  margin: 15px 0 0 -35px;
+}
+*:focus {
+  outline: 0;
+}
+@media (max-width: 1000px) {
   .input-group {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
+    flex-direction: column;
+  }
+  .form-header {
+    padding: 20px 0 10px 10%;
   }
   input {
-    width: 150px;
-    height: 35px;
-    margin: 10px 0 35px 20px;
-    padding-left: 10px;
+    margin: 0 0 35px 0;
+  }
+  .two-inline {
+    flex-direction: column;
+  }
+  i {
+    margin: 5px 0 0 -35px;
   }
   textarea {
-    width: 100%;
-    height: 250px;
-    margin: 20px 0 35px 35px;
+    height: 200px;
+    margin: 0 0 35px 0;
     padding: 10px;
   }
   .unit {
-    padding: 5px 40px 0 10px;
+    padding: 0 40px 0 10px;
   }
-  .two-inline {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-  }
-  .buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    margin: 45px 0;
-  }
-  i {
-    color: var(--primary-blue);
-    margin: 15px 0 0 -35px;
-  }
-  *:focus {
-    outline: 0;
-  }
-  @media (max-width: 1000px) {
-    .input-group {
-      flex-direction: column;
-    }
-    .form-header {
-      padding: 20px 0 10px 10%;
-    }
-    input {
-      margin: 0 0 35px 0;
-    }
-    .two-inline {
-      flex-direction: column;
-    }
-    i {
-      margin: 5px 0 0 -35px;
-    }
-    textarea {
-      height: 200px;
-      margin: 0 0 35px 0;
-      padding: 10px;
-    }
-    .unit {
-      padding: 0 40px 0 10px;
-    }
-  }
-  input[type="number"] {
-    -moz-appearance: textfield;
-  }
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
 </style>
