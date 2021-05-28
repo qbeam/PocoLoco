@@ -21,12 +21,6 @@
         :style="{ marginRight: '20px' }"
         @selection="selectionFilter"
       />
-      <CustomSelect
-        type="Sort by"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionSort"
-      />
       <DefaultButton
         @click="searchData"
         type="small"
@@ -47,11 +41,16 @@
     <SearchError v-if="errorSearching" />
     <table v-if="expenseDetail_db.length !== 0">
       <tr>
-        <th>Informer</th>
-        <th>Room Number</th>
-        <th>Room Type</th>
-        <th>Expense</th>
-        <th>Date</th>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
+          </div>
+        </th>
         <th>Manage</th>
       </tr>
 
@@ -64,11 +63,10 @@
         class="row"
       >
         <td>{{ expense.em_firstname }} {{ expense.em_lastname }}</td>
-        <td>{{ expense.roomID }}</td>
-        <td>{{ expense.roomType }}</td>
+        <td>{{ expense.type }}</td>
 
         <td>{{ expense.expense }}</td>
-        <td>{{ expense.expenseDate }}</td>
+        <td>{{ convertDate(expense.expenseDate) }}</td>
         <td>
           <div class="manage">
             <!--View-->
@@ -123,24 +121,19 @@
       <div class="popup-head">
         <div class="user-pic">
           <div class="user-icon">
-            <!-- แก้เรื่องรูป -->
-            <!-- <img :src="require(`../assets/${role}.png`)" /> -->
-            <img :src="require(`../assets/logo.png`)" />
+            <img :src="require(`../assets/${form.picName}.png`)" />
           </div>
           <h4>{{ form.employeeID }}</h4>
         </div>
         <div>
           <h4>{{ form.em_firstname }} {{ form.em_lastname }}</h4>
-          <p class="subscript-text">{{ form.employeeRole }}</p>
+          <p class="subscript-text">{{ form.roleName }}</p>
         </div>
       </div>
 
       <div class="view-group">
-        <div class="view-item">
-          <p><b>Room No: </b>{{ form.roomID }}</p>
-        </div>
         <div>
-          <p><b>Room Type: </b>{{ form.roomType }}</p>
+          <p><b>Type: </b>{{ form.type }}</p>
         </div>
       </div>
       <p :style="{ textAlign: 'justify' }"><b>Detail: </b>{{ form.detail }}</p>
@@ -157,7 +150,7 @@
           </p>
         </div>
         <div>
-          <p><b>Date: </b>{{ form.expenseDate }}</p>
+          <p><b>Date: </b>{{ convertDate(form.expenseDate) }}</p>
         </div>
       </div>
     </Popup>
@@ -172,21 +165,25 @@
       <div class="popup-head">
         <div class="user-pic">
           <div class="user-icon">
-            <!-- แก้เรื่องรูป -->
-            <!-- <img :src="require(`../assets/${role}.png`)" /> -->
-            <img :src="require(`../assets/logo.png`)" />
+            <img :src="require(`../assets/${form.picName}.png`)" />
           </div>
           <h4>{{ form.employeeID }}</h4>
         </div>
         <div>
           <h4>{{ form.em_firstname }} {{ form.em_lastname }}</h4>
-          <p class="subscript-text">{{ form.role }}</p>
+          <p class="subscript-text">{{ form.roleName }}</p>
         </div>
       </div>
 
-      <div class="input-group">
-        <b :style="{ margin: '8px 10px 0 0' }">Room Number</b>
-        <input v-model="form.roomID" type="text" :placeholder="room" />
+      <div class="input-group" :style="{ margin: '30px 0 -10px 0' }">
+        <b>Expense Type</b>
+        <CustomSelect
+          type="Grey"
+          :defaultChoice="form.type"
+          :options="expenseType"
+          @selection="selectionType"
+          :style="{ margin: '-10px 0 30px 10px' }"
+        />
       </div>
 
       <div class="input-group">
@@ -256,17 +253,22 @@ import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
+import SortingArrow from "../components/SortingArrow";
 import axios from "axios";
 
-const selectOption = [
-  "Default",
-  "Informer",
-  "Room No.",
-  "Room Type",
-  "Expense",
-  "Date",
-];
+const selectOption = ["Name", "Type", "Expense", "Date"];
 
+const colNames = ["Employee Name", "Type", "Expense", "Date"];
+const expenseType = [
+  "Housekeeping",
+  "Kitchen",
+  "Maintenance",
+  "Electricity",
+  "Water",
+  "Advertisement",
+  "Entertainment",
+  "Other",
+];
 export default {
   name: "HotelExpenses",
   components: {
@@ -277,6 +279,7 @@ export default {
     Popup,
     CustomSelect,
     SearchError,
+    SortingArrow,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -286,39 +289,34 @@ export default {
   data() {
     return {
       selectOption,
+      colNames,
+      expenseType,
       currentPage: 1,
       viewVisible: false,
       editVisible: false,
       errorSearching: false,
       check: false,
       search: "",
-      sort: "all",
-      filter: "all",
+      sortDirection: "up",
+      sort: "expenseDate",
+      filter: "em_firstName",
       expenseDetail_db: "",
       form: {
         expenseID: "",
         employeeID: "",
+        roleName: "",
         em_firstname: "",
         em_lastname: "",
         employeeRole: "",
-        roomID: "",
-        roomType: "",
+        type: "",
         detail: "",
         expense: "",
         expenseDate: "",
+        picName: "",
         status: "save",
         isEdit: false,
       },
 
-      informer: null,
-      room: null,
-      roomType: null,
-      expenseAmount: null,
-      date: null,
-      employeeID: null,
-      role: null,
-      detail: null,
-      newExpenseDate: null,
       dateConfig: {
         type: "string",
         mask: "YYYY-MM-DD",
@@ -343,6 +341,25 @@ export default {
       this.editVisible = value;
       this.updateData();
     },
+    setActiveArrow(clickedArrow) {
+      this.activeArrow = clickedArrow;
+      this.setSort(clickedArrow);
+      this.searchData();
+    },
+    sortReturn(direction) {
+      this.sortDirection = direction;
+    },
+    setSort(click) {
+      if (click == 0) {
+        this.sort = "em_firstName";
+      } else if (click == 1) {
+        this.sort = "type";
+      } else if (click == 2) {
+        this.sort = "expense";
+      } else if (click == 3) {
+        this.sort = "expenseDate";
+      }
+    },
     getExpenseData(type, expense) {
       if (type === "view") {
         this.viewVisible = !this.viewVisible;
@@ -353,25 +370,37 @@ export default {
 
       this.form.expenseID = expense.expenseID;
       this.form.employeeID = expense.employeeID;
+      this.form.roleName = expense.roleName;
       this.form.em_firstname = expense.em_firstname;
       this.form.em_lastname = expense.em_lastname;
       this.form.employeeRole = expense.employeeRole;
-      this.form.roomType = expense.roomType;
-      this.form.roomID = expense.roomID;
+      this.form.type = expense.type;
       this.form.detail = expense.detail;
       this.form.expense = expense.expense;
       this.form.expenseDate = expense.expenseDate;
+
+      if (expense.roleName == "Admin") {
+        expense.roleName = "Owner";
+      }
+      this.form.picName = expense.roleName + expense.gender;
     },
+
     goToAddExpense() {
       this.$router.push("/AddExpense");
     },
     searchData() {
+      if (this.filter == "expenseDate") {
+        this.searchSent = this.converDateToQuery(this.search);
+      } else {
+        this.searchSent = this.search;
+      }
       axios
         .post("http://localhost:8080/PocoLoco_db/api_hotelExpense.php", {
           action: "searchData",
-          search: this.search,
+          search: this.searchSent,
           sort: this.sort,
           filter: this.filter,
+          direction: this.sortDirection,
         })
         .then(
           function(res) {
@@ -388,7 +417,6 @@ export default {
     updateData() {
       this.check =
         this.form.employeeID != "" &&
-        this.form.roomID != "" &&
         this.form.detail != "" &&
         this.form.expense != "" &&
         this.form.expenseDate != "";
@@ -399,13 +427,15 @@ export default {
             action: "update",
             employeeID: this.form.employeeID,
             expenseID: this.form.expenseID,
-            roomID: this.form.roomID,
+            type: this.form.type,
             detail: this.form.detail,
             expense: this.form.expense,
             expenseDate: this.form.expenseDate,
+            
           })
           .then(
             function(res) {
+            console.log(this.form.type);
               if (res.data.success == true) {
                 alert(res.data.message);
                 this.resetData();
@@ -424,8 +454,6 @@ export default {
       this.form.em_firstname = "";
       this.form.em_lastname = "";
       this.form.employeeRole = "";
-      this.form.roomID = "";
-      this.form.roomType = "";
       this.form.detail = "";
       this.form.expense = "";
       this.form.expenseDate = "";
@@ -465,45 +493,60 @@ export default {
           );
       }
     },
-    selectionSort(value) {
-      if (value === selectOption[0]) {
-        this.sort = "all";
+    selectionType(value) {
+      if (value === expenseType[0]) {
+        this.form.type = 1;
       }
-      if (value === selectOption[1]) {
-        this.sort = "em_firstname";
+      if (value === expenseType[1]) {
+        this.form.type = 2;
       }
-      if (value === selectOption[2]) {
-        this.sort = "roomID";
+      if (value === expenseType[2]) {
+        this.form.type = 3;
       }
-      if (value === selectOption[3]) {
-        this.sort = "roomType";
+      if (value === expenseType[3]) {
+        this.form.type = 4;
       }
-      if (value === selectOption[4]) {
-        this.sort = "expense";
+      if (value === expenseType[4]) {
+        this.form.type = 5;
       }
-      if (value === selectOption[5]) {
-        this.sort = "expenseDate";
+      if (value === expenseType[5]) {
+        this.form.type = 6;
+      }
+      if (value === expenseType[6]) {
+        this.form.type = 7;
+      }
+      if (value === expenseType[7]) {
+        this.form.type = 8;
       }
     },
+
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "all";
-      }
-      if (value === selectOption[1]) {
         this.filter = "em_firstname";
       }
+      if (value === selectOption[1]) {
+        this.filter = "type";
+      }
       if (value === selectOption[2]) {
-        this.filter = "roomID";
-      }
-      if (value === selectOption[3]) {
-        this.filter = "roomType";
-      }
-      if (value === selectOption[4]) {
         this.filter = "expense";
       }
-      if (value === selectOption[5]) {
+      if (value === selectOption[3]) {
         this.filter = "expenseDate";
       }
+    },
+    convertDate(date) {
+      var datearray = date.split("-");
+      var newdate = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
+      return newdate;
+    },
+
+    converDateToQuery(date) {
+      var datearray = date.split("/");
+      if (datearray.length != 3 || date.length != 10) {
+        alert("Date format should be dd/mm/yyyy");
+      }
+      var newdate = datearray[2] + "-" + datearray[1] + "-" + datearray[0];
+      return newdate;
     },
   },
 };
@@ -642,6 +685,11 @@ th {
   text-align: center;
   background-color: #eeeeee;
   border-bottom: 1px solid black;
+}
+.tb-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 td {
   text-align: center;
