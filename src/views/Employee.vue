@@ -1,8 +1,7 @@
 <template>
   <TablePage>
     <h3>Employee</h3>
-    <div v-if="role === 'Business Owner'">
-      <div>
+      <div v-if="role === 'Business Owner'">
         <button
           class="menu-button"
           v-for="(menu, i) in menus"
@@ -18,10 +17,9 @@
         </button>
       </div>
 
-      <div class="inner-container">
+      <div class="inner-container" v-if="role === 'Business Owner'">
         <AllEmployee v-if="selected == menus[0]" />
       </div>
-    </div>
     
       <div class="menu-bar" v-if="role === 'Receptionist'">
         <div>
@@ -192,13 +190,12 @@
           </div>
         </div>
 
-        <h4>Shift</h4>
-        <select v-model="employee.workingTime">
-          <option value="" disabled selected>Select</option>
-          <option value="1">05.00 - 13.00</option>
-          <option value="2">13.00 - 21.00</option>
-          <option value="3">21.00 - 05.00</option>
-        </select>
+        <h4 style="margin-bottom: 35px;">Shift</h4>
+        <CustomSelect
+          type="Grey"
+          :options="['05:00 - 13:00', '13:00 - 21:00', '21:00 - 05:00']"
+          :style="{ marginRight: '20px' }"
+        />
 
         <h4>Work status</h4>
         <div class="choices">
@@ -334,7 +331,7 @@ export default {
       currentPage: 1,
       activeArrow: 0,
       sortDirection: "down",
-      role: "Receptionist",
+      role: "Business Owner",
     };
   },
   methods: {
