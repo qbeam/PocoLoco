@@ -16,6 +16,7 @@ import HotelExpenses from "../views/HotelExpenses.vue";
 import Promotion from "../views/Promotion.vue";
 import Room from "../views/Room.vue";
 import Services from "../views/Services.vue";
+import BookingDetail from "../views/BookingDetail.vue";
 import BusinessAnalysis from "../views/BusinessAnalysis.vue";
 import AddOrderChef from "../views/AddOrderChef.vue";
 import AddOrderMaid from "../views/AddOrderMaid.vue";
@@ -74,6 +75,11 @@ const routes = [
     path: "/AddBooking",
     name: "AddBooking",
     component: AddBooking,
+  },
+  {
+    path: "/BookingDetail",
+    name: "BookingDetail",
+    component: BookingDetail,
   },
   {
     path: "/AddBookingDetail",
