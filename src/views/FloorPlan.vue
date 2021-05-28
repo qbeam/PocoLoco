@@ -2,38 +2,43 @@
   <TablePage>
     <h3>Room Status</h3>
     <div class="menu-bar">
-      <div class="menu-group">
-        <div class="menu">
-          <p class="menu-name">Building</p>
-          <CustomSelect
-            type="Transparent"
-            :options="buildingOption"
-            :style="{ margin: '0' }"
-            defaultChoice="1"
-            @selection="selectBuilding"
-          />
-        </div>
-        <div class="menu">
-          <p class="menu-name">Floor</p>
-          <CustomSelect
-            type="Transparent"
-            :options="floorOption"
-            :style="{ margin: '0' }"
-            defaultChoice="2"
-            @selection="selectFloor"
-          />
-        </div>
+      <div class="menu">
+        <p class="menu-name">Building</p>
+        <CustomSelect
+          type="Transparent"
+          :options="buildingOption"
+          :style="{ margin: '0' }"
+          defaultChoice="1"
+          @selection="selectBuilding"
+        />
       </div>
-      <div class="menu-item">
-        <div class="search-container">
-          <i class="fa fa-search fa-1x"></i>
-          <input
-            v-model="search"
-            class="search-field"
-            type="text"
-            placeholder="search"
-            :style="{ marginBottom: '0' }"
-          />
+      <div class="menu">
+        <p class="menu-name">Floor</p>
+        <CustomSelect
+          type="Transparent"
+          :options="floorOption"
+          :style="{ margin: '0' }"
+          defaultChoice="2"
+          @selection="selectFloor"
+        />
+      </div>
+      <div class="menu">
+        <p class="menu-name">Date</p>
+        <div class="flex x-full">
+          <v-date-picker
+            v-model="pickedDate"
+            :masks="{ input: ['DD/MM/YYYY'] }"
+            :model-config="dateConfig"
+            mode="single"
+            class="flex-grow"
+          >
+            <template v-slot="{ inputValue, inputEvents }">
+              <div :style="{ display: 'flex', flexDirection: 'row' }">
+                <input :value="inputValue" v-on="inputEvents" />
+                <i class="fa fa-calendar"></i>
+              </div>
+            </template>
+          </v-date-picker>
         </div>
       </div>
     </div>
@@ -80,6 +85,11 @@
         building: 1, // set default to b2Floor
         floorOption: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // set default to b1Floor
         floor: 2,
+        pickedDate: null,
+        dateConfig: {
+          type: "string",
+          mask: "YYYY-MM-DD",
+        },
       };
     },
     methods: {
@@ -117,48 +127,27 @@
     align-items: center;
     margin-bottom: 30px;
   }
-  .menu-group {
-    display: flex;
-    width: 50%;
-  }
   .menu {
     display: flex;
-    width: 50%;
+    width: 200px;
   }
   .menu-name {
     font-size: 18px;
-    margin-right: 10px;
+    margin: 2px 10px 0 0;
   }
-  .menu-item {
-    display: flex;
-  }
-  .search-container {
-    position: relative;
-    display: flex;
-  }
-  .icon-wrap {
-    position: absolute;
-    z-index: 0;
-    padding: 5px 20px;
-  }
-  .search-field {
-    width: 250px;
-    height: 30px;
-    padding-left: 45px;
-    font-size: 18px;
-    outline: none;
-    z-index: 1;
-    border: none;
-    border-radius: 50px;
-    margin-left: 5px;
-    color: #5f5f5f;
-  }
-  .fa-search {
-    position: absolute;
-    z-index: 5;
-    margin: 7px 20px;
+  input {
+    width: 120px;
+    color: var(--text-color);
+    height: 28px;
+    padding: 0 0 0 10px;
+    border: 1px solid var(--grey-highlight);
     font-size: 16px;
-    color: #5f5f5f;
+  }
+  .fa-calendar {
+    color: var(--primary-blue);
+    margin: 2px 0 0 -30px;
+    padding-right: 240px;
+    font-size: 24px;
   }
   .fa-circle {
     font-size: 20px;
@@ -186,33 +175,32 @@
     margin-bottom: 10px;
     font-size: 14px;
   }
-  @media (max-width: 1300px) {
-    .menu-group {
-      display: flex;
-      width: 70%;
-    }
-  }
   @media (max-width: 750px) {
     .menu-bar {
-      display: flex;
-      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
     }
-    .menu-group {
-      display: flex;
-      width: 100%;
+    .menu {
+      width: fit-content;
+      max-width: 200px;
     }
-    .icon-wrap {
-      padding: 30px 20px;
+    .menu-name {
+      font-size: 14px;
+      margin: 5px 2px 0 5px;
     }
-    .search-field {
-      width: 250px;
-      margin: 25px 0;
+    input {
+      width: 100px;
+      color: var(--text-color);
+      height: 28px;
+      padding: 0 0 0 10px;
+      border: 1px solid var(--grey-highlight);
+      font-size: 14px;
     }
-    .menu-item {
-      width: 100%;
-    }
-    .fa-search {
-      margin: 32px 15px;
+    .fa-calendar {
+      color: var(--primary-blue);
+      margin: 5px 0 0 -25px;
+      padding-right: 240px;
+      font-size: 20px;
     }
   }
 </style>
