@@ -207,7 +207,7 @@ import SortingArrow from "../components/SortingArrow";
 import axios from "axios";
 
 const selectOption = ["Rank", "ID", "Name", "No. of visit"];
-const colNames = ["Rank", "ID", "Name", "Phone", "Number of visit"];
+const colNames = ["Rank", "Customer ID", "Name", "Phone", "Number of visit"];
 
 export default {
   name: "Customer",
