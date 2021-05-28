@@ -86,6 +86,7 @@ export default {
   z-index: 10;
   border-radius: 24px;
   padding: 10px 50px 35px 50px;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 .exit-button {
