@@ -18,7 +18,7 @@
       <i class="fa fa-bars fa-2x" v-if="!visible"></i>
     </button>
     <div class="circle" v-if="visible || width > 1000">
-      <img src="../assets/owner.png" />
+      <img src="../assets/OwnerM.png" />
     </div>
     <div class="info" v-if="visible || width > 1000">
       <b>Role Name</b>
@@ -30,6 +30,7 @@
       <router-link :to="{ name: 'Customer' }">Customer</router-link>
       <router-link :to="{ name: 'HotelExpenses' }">Hotel Expenses</router-link>
       <router-link :to="{ name: 'Booking' }">Booking</router-link>
+      <router-link :to="{ name: 'BookingDetail' }">BookingDetail</router-link>
       <router-link :to="{ name: 'Promotion' }">Promotion</router-link>
       <router-link :to="{ name: 'Room' }">Room</router-link>
       <router-link :to="{ name: 'Services' }">Services</router-link>

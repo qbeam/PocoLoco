@@ -90,6 +90,7 @@
     </InnerFormContainer>
     <div class="buttons">
       <DefaultButton
+        @click="backToBooking"
         :style="{
           background: 'none',
           marginRight: '110px',
@@ -144,6 +145,9 @@ export default {
     goToAddBookingDetail() {
       this.$store.state.customerID = this.customerID;
       this.$router.push("/AddBookingDetail");
+    },
+    backToBooking() {
+      this.$router.push("/Booking");
     },
     getBookingID() {
       axios
