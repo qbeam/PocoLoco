@@ -1,6 +1,8 @@
 <template>
   <TablePage>
-    <h3>Employee</h3>
+    <h3>Employee
+      <p class="countQuery">(62)</p>
+    </h3>
     <div v-if="role === 'Business Owner'">
       <button
         class="menu-button"
@@ -76,7 +78,12 @@
         <td>{{ sampleEmployee.salary }}</td>
         <td>
           <div>
-            <p>{{ sampleEmployee.status }}</p>
+            <p style="margin-top: 5px; margin-bottom: 2px;">
+              <i v-if="sampleEmployee.status == 'Employed'" class="fa fa-circle" :style="{ color: '#24BA45' }" />
+              <i v-if="sampleEmployee.status == 'Suspended'" class="fa fa-circle" :style="{ color: '#FFC42E' }" />
+              <i v-if="sampleEmployee.status == 'Quited'" class="fa fa-circle" :style="{ color: '#FF0000' }" />
+              {{ sampleEmployee.status }}
+            </p>
             <p class="sub-row">2 year</p>
           </div>
         </td>
@@ -341,7 +348,7 @@ export default {
       currentPage: 1,
       activeArrow: 0,
       sortDirection: "down",
-      role: "Business Owner",
+      role: "Receptionist",
     };
   },
   methods: {
@@ -385,16 +392,17 @@ h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
 }
+.countQuery {
+  display: inline-block;
+  font-size: 25px;
+}
 h4 {
   font-size: 18px;
   margin-bottom: 15px;
 }
-p {
-  margin: 5px 0 5px;
-}
 .sub-row {
   font-size: 12px;
-  margin-bottom: 15px;
+  margin-top: 2px
 }
 .menu-button {
   width: 200px;
@@ -466,6 +474,10 @@ table {
   align-self: center;
   border-radius: 50%;
   overflow: hidden;
+}
+.fa-circle {
+  font-size: 10px;
+  margin-right: 5px;
 }
 .fa-pencil:hover,
 .fa-search:hover {

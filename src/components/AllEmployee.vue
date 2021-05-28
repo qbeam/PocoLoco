@@ -63,8 +63,13 @@
         <td>{{ sampleEmployee.salary }}</td>
         <td>
           <div>
-            <p>{{ sampleEmployee.status }}</p>
-            <p class="sub-row">2 year</p>
+            <p style="margin-top: 5px; margin-bottom: 2px;">
+              <i v-if="sampleEmployee.status == 'Employed'" class="fa fa-circle" :style="{ color: '#24BA45' }" />
+              <i v-if="sampleEmployee.status == 'Suspended'" class="fa fa-circle" :style="{ color: '#FFC42E' }" />
+              <i v-if="sampleEmployee.status == 'Quited'" class="fa fa-circle" :style="{ color: '#FF0000' }" />
+              {{ sampleEmployee.status }}
+            </p>
+            <p class="sub-row">2 years</p>
           </div>
         </td>
         <td>
@@ -190,8 +195,6 @@
           onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107 && event.keyCode !== 110 && event.keyCode !== 190"
           :placeholder="phone"
         />
-        <!-- <p>Email</p>
-        <input type="text" :placeholder="email" /> -->
       </div>
       <div class="group-item">
         <p>Surname</p>
@@ -547,12 +550,9 @@ td {
   justify-content: center;
   align-items: center;
 }
-p {
-  margin: 5px 0 5px;
-}
 .sub-row {
   font-size: 12px;
-  margin-bottom: 15px;
+  margin-top: 2px
 }
 .row:hover {
   cursor: pointer;
@@ -642,6 +642,10 @@ p {
   align-self: center;
   border-radius: 50%;
   overflow: hidden;
+}
+.fa-circle {
+  font-size: 10px;
+  margin-right: 5px;
 }
 .fa-pencil:hover,
 .fa-trash:hover,
