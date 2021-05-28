@@ -133,7 +133,7 @@ export default {
     },
     getOrderChef() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_showOrderChef.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_OrderChef.php", {
           action: "getAll",
         })
         .then(
@@ -156,7 +156,7 @@ export default {
         )
       ) {
         axios
-          .post("http://localhost:8080/PocoLoco_db/api_showOrderChef.php", {
+          .post("http://localhost:8080/PocoLoco_db/api_OrderChef.php", {
             action: "finishOrderChef",
             DATETIME: order.DATETIME,
             serviceID: order.serviceID,

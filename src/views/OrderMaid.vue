@@ -136,7 +136,7 @@ export default {
 
     getOrderMaid() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_showOrderMaid.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_OrderMaid.php", {
           action: "getAll",
         })
         .then(
@@ -159,7 +159,7 @@ export default {
         )
       ) {
         axios
-          .post("http://localhost:8080/PocoLoco_db/api_showOrderMaid.php", {
+          .post("http://localhost:8080/PocoLoco_db/api_OrderMaid.php", {
             action: "finishOrderMaid",
             DATETIME: order.DATETIME,
             serviceID: order.serviceID,
