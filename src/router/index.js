@@ -17,7 +17,16 @@ import Promotion from "../views/Promotion.vue";
 import Room from "../views/Room.vue";
 import Services from "../views/Services.vue";
 import Employee from "../views/Employee.vue";
+import ServicesMaid from "../views/ServicesMaid.vue";
+import ServicesChef from "../views/ServicesChef.vue";
+import BookingDetail from "../views/BookingDetail.vue";
 import BusinessAnalysis from "../views/BusinessAnalysis.vue";
+import FloorPlan from "../views/FloorPlan.vue";
+import ShowPayment from "../views/ShowPayment.vue";
+import MyAccountRole from "../views/MyAccountRole.vue";
+import MyAccountProfile from "../views/MyAccountProfile.vue";
+import OrderMaid from "../views/OrderMaid.vue";
+import OrderChef from "../views/OrderChef.vue";
 
 const routes = [
   {
@@ -76,6 +85,11 @@ const routes = [
     component: AddBooking,
   },
   {
+    path: "/BookingDetail",
+    name: "BookingDetail",
+    component: BookingDetail,
+  },
+  {
     path: "/AddBookingDetail",
     name: "AddBookingDetail",
     component: AddBookingDetail,
@@ -111,9 +125,49 @@ const routes = [
     component: Services,
   },
   {
+    path: "/ServicesMaid",
+    name: "ServicesMaid",
+    component: ServicesMaid,
+  },
+  {
+    path: "/ServicesChef",
+    name: "ServicesChef",
+    component: ServicesChef,
+  },
+  {
     path: "/BusinessAnalysis",
     name: "BusinessAnalysis",
     component: BusinessAnalysis,
+  },
+  {
+    path: "/FloorPlan",
+    name: "FloorPlan",
+    component: FloorPlan,
+  },
+  {
+    path: "/ShowPayment",
+    name: "ShowPayment",
+    component: ShowPayment,
+  },
+  {
+    path: "/MyAccountRole",
+    name: "MyAccountRole",
+    component: MyAccountRole,
+  },
+  {
+    path: "/MyAccountProfile",
+    name: "MyAccountProfile",
+    component: MyAccountProfile,
+  },
+  {
+    path: "/OrderMaid",
+    name: "OrderMaid",
+    component: OrderMaid,
+  },
+  {
+    path: "/OrderChef",
+    name: "OrderChef",
+    component: OrderChef,
   },
 ];
 

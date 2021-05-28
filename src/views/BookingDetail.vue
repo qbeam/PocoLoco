@@ -1,10 +1,6 @@
 <template>
   <TablePage>
-    <h3>
-      Booking
-      <p class="countQuery">({{ countRow }})</p>
-    </h3>
-
+    <h3>Booking Detail</h3>
     <div class="menu-bar">
       <div>
         <span class="icon-wrap">
@@ -12,7 +8,7 @@
         </span>
 
         <input
-          v-model="form.search"
+          v-model="search"
           class="search-field"
           type="text"
           placeholder="search"
@@ -25,19 +21,10 @@
         @selection="selectionFilter"
       />
       <DefaultButton @click="searchData" type="small">Search</DefaultButton>
-
-      <AddButton
-        :style="
-          width < 800
-            ? { position: 'fixed', right: '5%', top: '80px' }
-            : { position: 'fixed', right: '5%', top: '170px' }
-        "
-        @click="goToAddBooking()"
-      />
     </div>
 
     <SearchError v-if="errorSearching" />
-    <table v-if="booking_db.length !== 0" style="margin-top: 50px;">
+    <table v-if="booking_db.length !== 0">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
@@ -60,14 +47,19 @@
         :key="i"
         class="row"
       >
-        <td>{{ booking.bookingID }}</td>
-        <td>{{ booking.customerName }}</td>
-        <td>{{ booking.phone }}</td>
-        <td>{{ booking.email }}</td>
+        <td>{{ booking.bookingDetailID }}</td>
+        <td>{{ booking.roomID }}</td>
         <td>
-          <div class="manage">
-            <button class="manage-button" @click="getRecord(booking)">
-              <i class="fa fa-search fa-2x"></i>
+          {{ booking.guestFirstName }}
+          {{ booking.guestLastName }}
+        </td>
+        <td>{{ convertDate(booking.checkIn) }}</td>
+        <td>{{ convertDate(booking.checkOut) }}</td>
+        <td>{{ booking.status }}</td>
+        <td>
+          <div v-if="booking.status != 'Check Out'" class="manage">
+            <button class="manage-button" @click="getBookingDetail(booking)">
+              <i class="fa fa-pencil fa-2x"></i>
             </button>
           </div>
         </td>
@@ -97,59 +89,19 @@
       "
     />
 
-    <Popup v-bind:visible="visible" @popReturn="popReturn">
-      <div class="popup-head1">Booking ID: {{ bookingID }}</div>
-      <div class="popup-head">
-        <div>Name: {{ customerName }}</div>
-        <div>Phone: {{ phone }}</div>
-      </div>
-      <table v-if="bookingDetail_db.length !== 0" style="magin-top: 10px;">
-        <tr>
-          <th>Booking Detail ID</th>
-          <th>Room Number</th>
-          <th>Status</th>
-          <th>Manage</th>
-        </tr>
-
-        <tr
-          v-for="(detail, i) in bookingDetail_db.slice(
-            currentPage * tableRow - tableRow,
-            currentPage * tableRow
-          )"
-          :key="i"
-          class="row"
-        >
-          <td>{{ detail.bookingDetailID }}</td>
-          <td>{{ detail.roomID }}</td>
-          <td>{{ convertStatus(detail.status) }}</td>
-          <td>
-            <div class="manage">
-              <button
-                class="manage-button"
-                @click="editDetail(detail.bookingDetailID)"
-              >
-                <i class="fa fa-pencil fa-2x"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </Popup>
-
     <Popup
-      v-bind:visible="switchPop"
+      :visible="visible"
       :buttons="true"
-      :pop2="true"
-      @pop2Return="pop2Return"
-      @submit="submit"
+      @popReturn="popReturn"
+      @submit="updateData"
     >
       <div class="group-row">
         <div class="group-item">
           <p>Guest Name</p>
           <input
             type="text"
-            v-model="form.guestFirstname"
-            :placeholder="name"
+            v-model="form.guestFirstName"
+            :placeholder="firstname"
           />
         </div>
 
@@ -157,7 +109,7 @@
           <p>Last Name</p>
           <input
             type="text"
-            v-model="form.guestLastname"
+            v-model="form.guestLastName"
             :placeholder="lastname"
           />
         </div>
@@ -165,12 +117,12 @@
 
       <div class="group-row">
         <div class="group-item">
-          <p>Check IN</p>
+          <p>Check In</p>
           <div class="flex x-full">
             <v-date-picker
               v-model="form.checkIn"
               :masks="{ input: ['DD/MM/YYYY'] }"
-              :model-config="startDateConfig"
+              :model-config="checkInDateConfig"
               mode="single"
               class="flex-grow"
             >
@@ -184,12 +136,12 @@
           </div>
         </div>
         <div class="group-item">
-          <p>Check OUT</p>
+          <p>Check Out</p>
           <div class="flex x-full">
             <v-date-picker
               v-model="form.checkOut"
               :masks="{ input: ['DD/MM/YYYY'] }"
-              :model-config="endDateConfig"
+              :model-config="checkOutDateConfig"
               mode="single"
               class="flex-grow"
             >
@@ -203,22 +155,23 @@
           </div>
         </div>
       </div>
+
       <div>
         <p>Status</p>
         <div class="choices">
           <label class="container1">
             Reserve
-            <input type="radio" value="R" v-model="form.statusRoom" />
+            <input type="radio" value="Reserve" v-model="form.status" />
             <span class="checkmark"></span>
           </label>
           <label class="container2"
-            >Check IN
-            <input type="radio" value="I" v-model="form.statusRoom" />
+            >Check In
+            <input type="radio" value="Check In" v-model="form.status" />
             <span class="checkmark"></span>
           </label>
           <label class="container3"
             >Cancel
-            <input type="radio" value="C" v-model="form.statusRoom" />
+            <input type="radio" value="Cancel" v-model="form.status" />
             <span class="checkmark"></span>
           </label>
         </div>
@@ -240,11 +193,26 @@ import SortingArrow from "../components/SortingArrow";
 import SearchError from "../components/SearchError";
 import axios from "axios";
 
-const selectOption = ["BookingID", "Name", "Phone", "Email"];
-const colNames = ["Booking ID", "Customer Name", "Phone", "Email"];
+const selectOption = [
+  "Detail ID",
+  "Room No.",
+  "Name",
+  "Check In",
+  "Check Out",
+  "Status",
+];
+
+const colNames = [
+  "Booking Detail ID",
+  "Room Number",
+  "Guest Name",
+  "Check In",
+  "Check Out",
+  "Status",
+];
 
 export default {
-  name: "Booking",
+  name: "BooikingDatail",
   components: {
     DefaultButton,
     TablePage,
@@ -262,50 +230,40 @@ export default {
   },
   data() {
     return {
-      colNames,
       currentPage: 1,
       visible: false,
-      switchPop: false,
-      status: "",
-      errorSearching: false,
+      checkInDateConfig: {
+        type: "string",
+        mask: "YYYY-MM-DD",
+      },
+      checkOutDateConfig: {
+        type: "string",
+        mask: "YYYY-MM-DD",
+      },
       activeArrow: 0,
+      errorSearching: false,
       sortDirection: "down",
-      bookingID: "",
-      customerName: "",
-      phone: "",
       selectOption,
+      colNames,
+      search: "",
       booking_db: "",
-      bookingDetail_db: "",
-      message: "Booking",
       check: false,
-      statusR: false,
-      statusC: false,
-      statusI: false,
-      sort: "bookingID",
-      filter: "bookingID",
-      countRow: "",
+      filter: "bookingDetailID",
+      sort: "bookingDetailID",
       form: {
-        search: "",
-        bookingID: "",
         bookingDetailID: "",
-        customerName: "",
-        phone: "",
-        email: "",
-
-        guestFirstname: "",
-        guestLastname: "",
+        guestFirstName: "",
+        guestLastName: "",
         checkIn: "",
         checkOut: "",
-        statusRoom: "",
-
-        status: "save",
+        status: "",
         isEdit: false,
       },
     };
   },
 
   created() {
-    this.getAllBooking();
+    this.getallBookingDetail();
   },
 
   methods: {
@@ -315,52 +273,55 @@ export default {
     popReturn(value) {
       this.visible = value;
     },
-    pop2Return(value) {
-      this.switchPop = value;
-      this.visible = !value;
-    },
-
     setActiveArrow(clickedArrow) {
       this.activeArrow = clickedArrow;
       this.setSort(clickedArrow);
       this.searchData();
     },
-
     sortReturn(direction) {
       this.sortDirection = direction;
     },
 
     setSort(click) {
       if (click == 0) {
-        this.sort = "bookingID";
+        this.sort = "bookingDetailID";
       } else if (click == 1) {
-        this.sort = "customerName";
+        this.sort = "roomID";
       } else if (click == 2) {
-        this.sort = "phone";
+        this.sort = "guestFirstName";
       } else if (click == 3) {
-        this.sort = "email";
+        this.sort = "checkIn";
+      } else if (click == 4) {
+        this.sort = "checkOut";
+      } else if (click == 5) {
+        this.sort = "status";
       }
     },
 
-    getRecord(booking) {
-      this.visible = !this.visible;
-      this.bookingID = booking.bookingID;
-      this.customerName = booking.customerName;
-      this.phone = booking.phone;
-      this.getBookingDetail(booking.bookingID);
-    },
-
-    goToAddBooking() {
-      this.$router.push("/AddBooking");
+    getallBookingDetail() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
+          action: "getAll",
+        })
+        .then(
+          function(res) {
+            this.booking_db = res.data;
+          }.bind(this)
+        );
     },
 
     searchData() {
+      if (this.filter == "checkIn" || this.filter == "checkOut") {
+        this.searchSent = this.converDateToQuery(this.search);
+      } else {
+        this.searchSent = this.search;
+      }
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
-          search: this.form.search,
-          sort: this.sort,
+        .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
+          action: "searchBookingDetail",
+          search: this.searchSent,
           filter: this.filter,
-          action: "SearchData",
+          sort: this.sort,
           direction: this.sortDirection,
         })
         .then(
@@ -368,148 +329,103 @@ export default {
             this.booking_db = res.data;
             if (this.booking_db != "") {
               this.errorSearching = false;
-              this.countRow = this.booking_db.pop();
             } else {
               this.errorSearching = true;
-              this.countRow = 0;
             }
           }.bind(this)
         );
     },
-    selectionFilter(value) {
-      if (value === selectOption[0]) {
-        this.filter = "bookingID";
-      }
-      if (value === selectOption[1]) {
-        this.filter = "customerName";
-      }
-      if (value === selectOption[2]) {
-        this.filter = "phone";
-      }
-      if (value === selectOption[3]) {
-        this.filter = "email";
-      }
+
+    getBookingDetail(booking) {
+      this.visible = !this.visible;
+      this.form.bookingDetailID = booking.bookingDetailID;
+      this.form.guestFirstName = booking.guestFirstName;
+      this.form.guestLastName = booking.guestLastName;
+      this.form.checkIn = booking.checkIn;
+      this.form.checkOut = booking.checkOut;
+      this.form.status = booking.status;
     },
 
-    convertStatus(status) {
-      var fullStatus;
-      if (status == "R") {
-        fullStatus = "Reserve";
-      } else if (status == "I") {
-        fullStatus = "Check IN";
-      } else if (status == "C") {
-        fullStatus = "Cancel";
-      }
-      return fullStatus;
-    },
-
-    submit(value) {
-      this.switchPop = value;
-      this.visible = !value;
-      this.check =
-        this.form.guestFirstname != "" && this.form.guestLastname != "";
-
-      if (this.check && this.form.isEdit) {
+    updateData(value) {
+      this.validate();
+      this.visible = value;
+      if (this.check) {
         axios
-          .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
+          .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
+            action: "updateData",
             bookingDetailID: this.form.bookingDetailID,
-            guestFirstname: this.form.guestFirstname,
-            guestLastname: this.form.guestLastname,
+            guestFirstName: this.form.guestFirstName,
+            guestLastName: this.form.guestLastName,
             checkIn: this.form.checkIn,
             checkOut: this.form.checkOut,
-            statusRoom: this.form.statusRoom,
-            action: "update",
+            status: this.form.status,
           })
           .then(
             function(res) {
-              alert(res.data.message);
-              this.resetData();
-              this.getAllBooking();
-              this.getBookingDetail(this.bookingID);
+              if (res.data.success == true) {
+                alert(res.data.message);
+                this.resetData();
+                this.getallBookingDetail();
+              } else {
+                alert(res.data.message);
+              }
             }.bind(this)
           );
       }
     },
 
+    validate() {
+      this.check =
+        this.form.guestFirstName != "" &&
+        this.form.guestLastName != "" &&
+        this.form.checkIn != "" &&
+        this.form.checkOut != "" &&
+        this.form.status != "";
+    },
+
     resetData() {
-      this.bookingID = "";
-      this.customerName = "";
-      this.phone = "";
-      this.form.guestFirstname = "";
-      this.form.guestLastname = "";
+      this.form.bookingDetailID = "";
+      this.form.guestFirstName = "";
+      this.form.guestLastName = "";
       this.form.checkIn = "";
       this.form.checkOut = "";
-      this.form.statusRoom = "";
-      this.form.bookingID = "";
-      this.form.bookingDetailID = "";
-      this.form.customerName = "";
-      this.form.phone = "";
-      this.form.email = "";
-      this.form.isEdit = false;
-      this.statusR = false;
-      this.statusI = false;
-      this.statusC = false;
+      this.form.status = "";
     },
 
-    getAllBooking() {
-      axios
-        .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
-          action: "getAll",
-        })
-        .then(
-          function(res) {
-            this.countRow = res.data.pop();
-            this.booking_db = res.data;
-          }.bind(this)
-        );
+    selectionFilter(value) {
+      if (value === selectOption[0]) {
+        this.filter = "bookingDetailID";
+      }
+      if (value === selectOption[1]) {
+        this.filter = "roomID";
+      }
+      if (value === selectOption[2]) {
+        this.filter = "guestFirstName";
+      }
+      if (value === selectOption[3]) {
+        this.filter = "checkIn";
+      }
+      if (value === selectOption[4]) {
+        this.filter = "checkOut";
+      }
+      if (value === selectOption[5]) {
+        this.filter = "status";
+      }
     },
 
-    getBookingDetail(id) {
-      axios
-        .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
-          action: "getBookingDetail",
-          bookingID: id,
-        })
-        .then(
-          function(res) {
-            this.bookingDetail_db = res.data;
-          }.bind(this)
-        );
+    convertDate(date) {
+      var datearray = date.split("-");
+      var newdate = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
+      return newdate;
     },
-    editDetail(id) {
-      this.visible = !this.visible;
-      this.switchPop = !this.switchPop;
-      this.form.isEdit = true;
-      axios
-        .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
-          action: "getEditDetail",
-          bookingDetailID: id,
-        })
-        .then(
-          function(res) {
-            this.form.bookingDetailID = res.data.bookingDetailID;
-            this.form.guestFirstname = res.data.guestFirstname;
-            this.form.guestLastname = res.data.guestLastname;
-            this.form.checkIn = res.data.checkIn;
-            this.form.checkOut = res.data.checkOut;
-            this.form.statusRoom = res.data.statusRoom;
-            if (this.form.statusRoom == "R") {
-              this.statusR = true;
-              this.statusI = false;
-              this.statusC = false;
-            }
-            if (this.form.statusRoom == "C") {
-              this.statusC = true;
-              this.statusR = false;
-              this.statusI = false;
-            }
-            if (this.form.statusRoom == "I") {
-              this.statusI = true;
-              this.statusR = false;
-              this.statusC = false;
-            }
-          }.bind(this)
-        );
+
+    converDateToQuery(date) {
+      var datearray = date.split("/");
+      if (datearray.length != 3 || date.length != 10) {
+        alert("Date format should be dd/mm/yyyy");
+      }
+      var newdate = datearray[2] + "-" + datearray[1] + "-" + datearray[0];
+      return newdate;
     },
   },
 };
@@ -519,10 +435,6 @@ export default {
 h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
-}
-.countQuery {
-  display: inline-block;
-  font-size: 25px;
 }
 .icon-wrap {
   position: absolute;
@@ -552,7 +464,7 @@ i {
 table {
   width: 100%;
   max-width: 1000;
-  /* margin-top: 50px; */
+  margin-top: 50px;
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;
@@ -586,7 +498,7 @@ table {
 .vl {
   border-left: 3px solid #eeeeee;
   height: 25px;
-  margin: 0 5px;
+  margin: 0 10px;
 }
 .popup-head1 {
   display: flex;
@@ -606,6 +518,15 @@ table {
   margin-bottom: 25px;
   font-weight: bold;
 }
+.status {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: yellow;
+  border-radius: 50%;
+}
 .choices {
   display: flex;
   justify-content: flex-start;
@@ -619,7 +540,6 @@ table {
   padding: 0 0 0 35px;
   margin: 0 0 15px 0;
   cursor: pointer;
-
   user-select: none;
   background: none;
   width: 150px;
@@ -687,6 +607,7 @@ th {
   border-bottom: 1px solid black;
 }
 td {
+  height: 35px;
   text-align: center;
   justify-content: center;
   align-items: center;

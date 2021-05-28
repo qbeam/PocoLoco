@@ -146,7 +146,7 @@ import axios from "axios";
 
 const selectOption = ["Name", "Role ID", "Department", "Salary", "Borate Rate"];
 
-const colNames = ["RoleID", "Department", "Name", "Salary", "Bonus Rate"];
+const colNames = ["Role ID", "Department", "Name", "Salary", "Bonus Rate"];
 
 export default {
   name: "Role",
