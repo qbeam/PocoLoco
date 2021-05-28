@@ -17,6 +17,12 @@ import Promotion from "../views/Promotion.vue";
 import Room from "../views/Room.vue";
 import Services from "../views/Services.vue";
 import BusinessAnalysis from "../views/BusinessAnalysis.vue";
+import AddOrderChef from "../views/AddOrderChef.vue";
+import AddOrderMaid from "../views/AddOrderMaid.vue";
+import ShowOrderChef from "../views/ShowOrderChef.vue";
+import ShowOrderMaid from "../views/ShowOrderMaid.vue";
+import ShowPayment from "../views/ShowPayment.vue";
+import ShowBookingDetail from "../views/ShowBookingDetail.vue";
 
 const routes = [
   {
@@ -108,6 +114,36 @@ const routes = [
     path: "/BusinessAnalysis",
     name: "BusinessAnalysis",
     component: BusinessAnalysis,
+  },
+  {
+    path: "/AddOrderChef",
+    name: "AddOrderChef",
+    component: AddOrderChef,
+  },
+  {
+    path: "/AddOrderMaid",
+    name: "AddOrderMaid",
+    component: AddOrderMaid,
+  },
+  {
+    path: "/ShowOrderChef",
+    name: "ShowOrderChef",
+    component: ShowOrderChef,
+  },
+  {
+    path: "/ShowOrderMaid",
+    name: "ShowOrderMaid",
+    component: ShowOrderMaid,
+  },
+  {
+    path: "/ShowPayment",
+    name: "ShowPayment",
+    component: ShowPayment,
+  },
+  {
+    path: "/ShowBookingDetail",
+    name: "ShowBookingDetail",
+    component: ShowBookingDetail,
   },
 ];
 
