@@ -1,6 +1,10 @@
 <template>
   <TablePage>
-    <h3>Booking</h3>
+    <h3>
+      Booking
+      <p class="countQuery">({{ countRow }})</p>
+    </h3>
+
     <div class="menu-bar">
       <div>
         <span class="icon-wrap">
@@ -279,6 +283,7 @@ export default {
       statusI: false,
       sort: "bookingID",
       filter: "bookingID",
+      countRow: "",
       form: {
         search: "",
         bookingID: "",
@@ -363,8 +368,10 @@ export default {
             this.booking_db = res.data;
             if (this.booking_db != "") {
               this.errorSearching = false;
+              this.countRow = this.booking_db.pop();
             } else {
               this.errorSearching = true;
+              this.countRow = 0;
             }
           }.bind(this)
         );
@@ -403,7 +410,6 @@ export default {
         this.form.guestFirstname != "" && this.form.guestLastname != "";
 
       if (this.check && this.form.isEdit) {
-        //Update Data
         axios
           .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
             bookingDetailID: this.form.bookingDetailID,
@@ -452,6 +458,7 @@ export default {
         })
         .then(
           function(res) {
+            this.countRow = res.data.pop();
             this.booking_db = res.data;
           }.bind(this)
         );
@@ -512,6 +519,10 @@ export default {
 h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
+}
+.countQuery {
+  display: inline-block;
+  font-size: 25px;
 }
 .icon-wrap {
   position: absolute;
