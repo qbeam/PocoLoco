@@ -142,9 +142,9 @@ import { useScreenWidth } from "../composables/useScreenWidth";
 import axios from "axios";
 
 const expenseType = [
-  "Maintenance",
   "Housekeeping",
   "Kitchen",
+  "Maintenance",
   "Electricity",
   "Water",
   "Advertisement",
@@ -220,7 +220,6 @@ export default {
     },
 
     saveData() {
-      console.log("5555");
       this.validate();
       if (this.check) {
         axios
