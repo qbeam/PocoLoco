@@ -3,39 +3,69 @@
     <h3>Order</h3>
     <div class="menu-bar">
       <AddButton
-        :style="
-          width < 800
-            ? { position: 'fixed', right: '5%', top: '80px' }
-            : { position: 'fixed', right: '5%', top: '170px' }
-        "
+        :style="{ position: 'fixed', right: '5%', top: '80px' }"
         @click="goToAddBooking()"
       />
     </div>
 
-    <table v-if="sampleOrder.length !== 0" style="margin-top: 50px;">
-        <tr>
+    <table v-if="sampleOrder.length !== 0" style="margin-top: 20px">
+      <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
             {{ colName }}
-            <SortingArrow
-              :active="activeArrow == i ? true : false"
-              @click="setActiveArrow(i)"
-              @sortReturn="sortReturn"
-            />
           </div>
         </th>
         <th>Manage</th>
       </tr>
 
-      <tr v-for="(sampleBookingDetail, i) in sampleBookingDetail.slice(
+      <tr
+        v-for="(sampleOrder, i) in sampleOrder.slice(
           currentPage * tableRow - tableRow,
           currentPage * tableRow
         )"
         :key="i"
-        class="row">  
-
+        class="row"
+      >
+        <td>{{ sampleOrder.room }}</td>
+        <td>{{ sampleOrder.detail }}</td>
+        <td>{{ sampleOrder.amount }}</td>
+        <div class="manage">
+          <DefaultButton
+            type="small"
+            @click="confirmOrder()"
+            :style="
+              width > 700
+                ? { width: '90px', height: '25px' }
+                : { width: '60px', height: '25px' }
+            "
+          >
+            OK
+          </DefaultButton>
+        </div>
       </tr>
     </table>
+    <PaginationBar
+      :pageCount="Math.ceil(sampleOrder.length / tableRow)"
+      :paginationVisible="sampleOrder.length > tableRow"
+      @pageReturn="pageReturn"
+      :style="
+        width <= 1000
+          ? {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '60px',
+            }
+          : {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '200px',
+            }
+      "
+    />
   </TablePage>
 </template>
 
@@ -48,32 +78,31 @@ import Popup from "../components/Popup.vue";
 import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
-import SortingArrow from "../components/SortingArrow";
 
 const colNames = ["Room Number", "Detail", "Amount"];
 const sampleOrder = [
   {
-    id: 1120,
+    room: 1120,
     detail: "xxxxxxxxxxxxxxxxx",
     amount: "3",
   },
   {
-    id: 1120,
+    room: 1120,
     detail: "xxxxxxxxxxxxxxxxx",
     amount: "3",
   },
   {
-    id: 1120,
+    room: 1120,
     detail: "xxxxxxxxxxxxxxxxx",
     amount: "3",
   },
   {
-    id: 1120,
+    room: 1120,
     detail: "xxxxxxxxxxxxxxxxx",
     amount: "3",
   },
   {
-    id: 1120,
+    room: 1120,
     detail: "xxxxxxxxxxxxxxxxx",
     amount: "3",
   },
@@ -88,7 +117,6 @@ export default {
     AddButton,
     Popup,
     CustomSelect,
-    SortingArrow,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -107,11 +135,8 @@ export default {
     };
   },
   methods: {
-      pageReturn(page) {
+    pageReturn(page) {
       this.currentPage = page;
-    },
-    popReturn(value) {
-      this.visible = value;
     },
     setActiveArrow(clickedArrow) {
       this.activeArrow = clickedArrow;
@@ -119,8 +144,9 @@ export default {
     sortReturn(direction) {
       this.sortDirection = direction;
     },
+    confirmOrder() {},
     goToAddOrder() {
-    //   this.$router.push("/AddBooking");
+      //   this.$router.push("/AddBooking");
     },
   },
 };
