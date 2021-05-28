@@ -152,7 +152,7 @@ import SearchError from "../components/SearchError";
 import axios from "axios";
 
 export default {
-  name: "AddOrderMaid",
+  name: "OrderServiceMaid",
   components: { DefaultButton, PaginationBar, DefaultButton },
   setup() {
     const { width } = useScreenWidth();
@@ -198,7 +198,7 @@ export default {
 
     getAllService() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_addOrderMaid.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_orderServiceMaid.php", {
           action: "getAllService",
         })
         .then(
@@ -210,7 +210,7 @@ export default {
 
     searchService() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_addOrderMaid.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_orderServiceMaid.php", {
           action: "searchService",
           search: this.search,
         })
@@ -280,6 +280,7 @@ export default {
     clearBasket() {
       this.roomID = "";
       this.orders = [];
+      this.getAllService();
     },
 
     loopInsert() {
@@ -296,7 +297,7 @@ export default {
 
     confirmService() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_addOrderMaid.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_orderServiceMaid.php", {
           action: "confirmService",
           serviceID: this.serviceID_insert,
           amount: this.amount_insert,
@@ -310,11 +311,14 @@ export default {
               this.count_success++;
               if (this.count_success == this.orders.length) {
                 alert(res.data.message);
+                this.search = "";
+                this.clearBasket();
               }
             } else {
               this.count_fail++;
               if (this.count_fail == this.orders.length) {
                 alert(res.data.message);
+                this.clearBasket();
               }
             }
           }.bind(this)

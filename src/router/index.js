@@ -21,8 +21,6 @@ import ServicesChef from "../views/ServicesChef.vue";
 import BookingDetail from "../views/BookingDetail.vue";
 import BusinessAnalysis from "../views/BusinessAnalysis.vue";
 import FloorPlan from "../views/FloorPlan.vue";
-import AddOrderChef from "../views/AddOrderChef.vue";
-import AddOrderMaid from "../views/AddOrderMaid.vue";
 import ShowPayment from "../views/ShowPayment.vue";
 import MyAccountRole from "../views/MyAccountRole.vue";
 import MyAccountProfile from "../views/MyAccountProfile.vue";
@@ -139,16 +137,6 @@ const routes = [
     path: "/FloorPlan",
     name: "FloorPlan",
     component: FloorPlan,
-  },
-  {
-    path: "/AddOrderChef",
-    name: "AddOrderChef",
-    component: AddOrderChef,
-  },
-  {
-    path: "/AddOrderMaid",
-    name: "AddOrderMaid",
-    component: AddOrderMaid,
   },
   {
     path: "/ShowPayment",

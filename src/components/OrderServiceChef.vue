@@ -21,7 +21,7 @@
   </div>
 
   <SearchError v-if="errorSearching" />
-  <table class="search-table">
+  <table v-if="service_db.length !== 0" class="search-table">
     <tr>
       <th v-if="width > 700">Service ID</th>
       <th>Name</th>
@@ -152,7 +152,7 @@ import SearchError from "../components/SearchError";
 import axios from "axios";
 
 export default {
-  name: "AddOrderChef",
+  name: "OrderServiceChef",
   components: { DefaultButton, PaginationBar, DefaultButton },
   setup() {
     const { width } = useScreenWidth();
@@ -168,6 +168,7 @@ export default {
       roomID: "",
       search: "",
       service_db: "",
+      errorSearching: false,
       amount: [],
       totalPrice: 0,
       amount_insert: 0,
@@ -198,7 +199,7 @@ export default {
 
     getAllService() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_addOrderChef.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_orderServiceChef.php", {
           action: "getAllService",
         })
         .then(
@@ -210,13 +211,19 @@ export default {
 
     searchService() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_addOrderChef.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_orderServiceChef.php", {
           action: "searchService",
           search: this.search,
         })
         .then(
           function(res) {
+            console.log(res);
             this.service_db = res.data;
+            if (this.service_db != "") {
+              this.errorSearching = false;
+            } else {
+              this.errorSearching = true;
+            }
           }.bind(this)
         );
     },
@@ -280,6 +287,7 @@ export default {
     clearBasket() {
       this.roomID = "";
       this.orders = [];
+      this.getAllService();
     },
 
     loopInsert() {
@@ -296,7 +304,7 @@ export default {
 
     confirmService() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_addOrderChef.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_orderServiceChef.php", {
           action: "confirmService",
           serviceID: this.serviceID_insert,
           amount: this.amount_insert,
@@ -310,11 +318,14 @@ export default {
               this.count_success++;
               if (this.count_success == this.orders.length) {
                 alert(res.data.message);
+                this.search = "";
+                this.clearBasket();
               }
             } else {
               this.count_fail++;
               if (this.count_fail == this.orders.length) {
                 alert(res.data.message);
+                this.clearBasket();
               }
             }
           }.bind(this)
