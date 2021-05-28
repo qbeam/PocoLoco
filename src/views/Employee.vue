@@ -612,5 +612,8 @@ td {
     width: 150px;
     font-size: 16px;
   }
+  .inner-container {
+    margin-bottom: 20px;
+  }
 }
 </style>
