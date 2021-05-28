@@ -8,7 +8,8 @@
       />
     </div>
 
-    <table v-if="sampleOrder.length !== 0" style="margin-top: 20px">
+    <NoOrderMaid v-if="noOrder" />
+    <table v-if="order_db.length !== 0" style="margin-top: 20px">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
@@ -19,20 +20,20 @@
       </tr>
 
       <tr
-        v-for="(sampleOrder, i) in sampleOrder.slice(
+        v-for="(order, i) in order_db.slice(
           currentPage * tableRow - tableRow,
           currentPage * tableRow
         )"
         :key="i"
         class="row"
       >
-        <td>{{ sampleOrder.room }}</td>
-        <td>{{ sampleOrder.detail }}</td>
-        <td>{{ sampleOrder.amount }}</td>
+        <td>{{ order.roomID }}</td>
+        <td>{{ order.serviceName }}</td>
+        <td>{{ order.amount }}</td>
         <div class="manage">
           <DefaultButton
             type="small"
-            @click="confirmOrder()"
+            @click="finishOrderMaid(order)"
             :style="
               width > 700
                 ? { width: '90px', height: '25px' }
@@ -44,9 +45,10 @@
         </div>
       </tr>
     </table>
+
     <PaginationBar
-      :pageCount="Math.ceil(sampleOrder.length / tableRow)"
-      :paginationVisible="sampleOrder.length > tableRow"
+      :pageCount="Math.ceil(order_db.length / tableRow)"
+      :paginationVisible="order_db.length > tableRow"
       @pageReturn="pageReturn"
       :style="
         width <= 1000
@@ -78,38 +80,13 @@ import Popup from "../components/Popup.vue";
 import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
+import NoOrderMaid from "../components/NoOrderMaid";
+import axios from "axios";
 
 const colNames = ["Room Number", "Detail", "Amount"];
-const sampleOrder = [
-  {
-    room: 1120,
-    detail: "xxxxxxxxxxxxxxxxx",
-    amount: "3",
-  },
-  {
-    room: 1120,
-    detail: "xxxxxxxxxxxxxxxxx",
-    amount: "3",
-  },
-  {
-    room: 1120,
-    detail: "xxxxxxxxxxxxxxxxx",
-    amount: "3",
-  },
-  {
-    room: 1120,
-    detail: "xxxxxxxxxxxxxxxxx",
-    amount: "3",
-  },
-  {
-    room: 1120,
-    detail: "xxxxxxxxxxxxxxxxx",
-    amount: "3",
-  },
-];
 
 export default {
-  name: "Order",
+  name: "OrderMaid",
   components: {
     DefaultButton,
     TablePage,
@@ -117,6 +94,7 @@ export default {
     AddButton,
     Popup,
     CustomSelect,
+    NoOrderMaid,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -126,14 +104,21 @@ export default {
   data() {
     return {
       colNames,
-      sampleOrder,
       order: [],
       currentPage: 1,
       visible: false,
       activeArrow: 0,
       sortDirection: "down",
+      order_db: "",
+      check: false,
+      noOrder: false,
     };
   },
+
+  created() {
+    this.getOrderMaid();
+  },
+
   methods: {
     pageReturn(page) {
       this.currentPage = page;
@@ -147,6 +132,52 @@ export default {
     confirmOrder() {},
     goToAddOrder() {
       //   this.$router.push("/AddBooking");
+    },
+
+    getOrderMaid() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_showOrderMaid.php", {
+          action: "getAll",
+        })
+        .then(
+          function(res) {
+            this.order_db = res.data;
+            if (this.order_db != "") {
+              this.noOrder = false;
+            } else {
+              this.noOrder = true;
+            }
+            console.log(res);
+          }.bind(this)
+        );
+    },
+
+    finishOrderMaid(order) {
+      if (
+        confirm(
+          "Are you done " + order.serviceName + " of Room " + order.roomID + "?"
+        )
+      ) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_showOrderMaid.php", {
+            action: "finishOrderMaid",
+            DATETIME: order.DATETIME,
+            serviceID: order.serviceID,
+            roomID: order.roomID,
+            serviceName: order.serviceName,
+            STATUS: order.STATUS,
+          })
+          .then(
+            function(res) {
+              console.log(res.data);
+              if (res.data.success == true) {
+                this.getOrderMaid();
+              } else {
+                alert(res.data.message);
+              }
+            }.bind(this)
+          );
+      }
     },
   },
 };

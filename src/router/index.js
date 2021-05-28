@@ -16,6 +16,7 @@ import HotelExpenses from "../views/HotelExpenses.vue";
 import Promotion from "../views/Promotion.vue";
 import Room from "../views/Room.vue";
 import Services from "../views/Services.vue";
+import ServicesMaid from "../views/ServicesMaid.vue";
 import BookingDetail from "../views/BookingDetail.vue";
 import BusinessAnalysis from "../views/BusinessAnalysis.vue";
 import FloorPlan from "../views/FloorPlan.vue";
@@ -27,7 +28,8 @@ import ShowPayment from "../views/ShowPayment.vue";
 import ShowBookingDetail from "../views/ShowBookingDetail.vue";
 import MyAccountRole from "../views/MyAccountRole.vue";
 import MyAccountProfile from "../views/MyAccountProfile.vue";
-import Order from "../views/Order.vue";
+import OrderMaid from "../views/OrderMaid.vue";
+import OrderChef from "../views/OrderChef.vue";
 
 const routes = [
   {
@@ -121,6 +123,11 @@ const routes = [
     component: Services,
   },
   {
+    path: "/ServicesMaid",
+    name: "ServicesMaid",
+    component: ServicesMaid,
+  },
+  {
     path: "/BusinessAnalysis",
     name: "BusinessAnalysis",
     component: BusinessAnalysis,
@@ -171,9 +178,14 @@ const routes = [
     component: MyAccountProfile,
   },
   {
-    path: "/Order",
-    name: "Order",
-    component: Order,
+    path: "/OrderMaid",
+    name: "OrderMaid",
+    component: OrderMaid,
+  },
+  {
+    path: "/OrderChef",
+    name: "OrderChef",
+    component: OrderChef,
   },
 ];
 
