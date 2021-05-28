@@ -7,16 +7,24 @@
           <i class="fa fa-search fa-1x"></i>
         </span>
 
-        <input class="search-field" type="text" placeholder="search" />
+        <input
+          v-model="search"
+          class="search-field"
+          type="text"
+          placeholder="search"
+        />
       </div>
       <CustomSelect
         type="Filter"
-        :options="['A', 'B', 'C', 'Sleep tight']"
+        :options="selectOption"
         :style="{ marginRight: '20px' }"
+        @selection="selectionFilter"
       />
-      <DefaultButton type="small">Search</DefaultButton>
+      <DefaultButton @click="searchData" type="small">Search</DefaultButton>
     </div>
-    <table v-if="sampleBookingDetail.length !== 0">
+
+    <SearchError v-if="errorSearching" />
+    <table v-if="booking_db.length !== 0">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
@@ -32,44 +40,26 @@
       </tr>
 
       <tr
-        v-for="(sampleBookingDetail, i) in sampleBookingDetail.slice(
+        v-for="(booking, i) in booking_db.slice(
           currentPage * tableRow - tableRow,
           currentPage * tableRow
         )"
         :key="i"
         class="row"
       >
-        <td>{{ sampleBookingDetail.id }}</td>
-        <td>{{sampleBookingDetail.room}}</td>
+        <td>{{ booking.bookingDetailID }}</td>
+        <td>{{ booking.roomID }}</td>
         <td>
-          {{ sampleBookingDetail.guestFname }}
-          {{ sampleBookingDetail.guestLname }}
+          {{ booking.guestFirstName }}
+          {{ booking.guestLastName }}
         </td>
-        <td>{{ sampleBookingDetail.checkIn }}</td>
-        <td>{{ sampleBookingDetail.checkOut }}</td>
-        <td>{{ sampleBookingDetail.status }}</td>
+        <td>{{ convertDate(booking.checkIn) }}</td>
+        <td>{{ convertDate(booking.checkOut) }}</td>
+        <td>{{ booking.status }}</td>
         <td>
-          <div class="manage">
-            <button
-              class="manage-button"
-              @click="
-                getRecord(
-                  sampleBookingDetail.guestFname,
-                  sampleBookingDetail.guestLname,
-                  sampleBookingDetail.checkIn,
-                  sampleBookingDetail.checkOut,
-                  sampleBookingDetail.status
-                )
-              "
-            >
+          <div v-if="booking.status != 'Check Out'" class="manage">
+            <button class="manage-button" @click="getBookingDetail(booking)">
               <i class="fa fa-pencil fa-2x"></i>
-            </button>
-            <div class="vl"></div>
-            <button
-              class="manage-button"
-              @click="deleteData(sampleBookingDetail)"
-            >
-              <i class="fa fa-trash fa-2x"></i>
             </button>
           </div>
         </td>
@@ -77,8 +67,8 @@
     </table>
 
     <PaginationBar
-      :pageCount="Math.ceil(sampleBookingDetail.length / tableRow)"
-      :paginationVisible="sampleBookingDetail.length > tableRow"
+      :pageCount="Math.ceil(booking_db.length / tableRow)"
+      :paginationVisible="booking_db.length > tableRow"
       @pageReturn="pageReturn"
       :style="
         width <= 1000
@@ -99,25 +89,38 @@
       "
     />
 
-    <Popup :visible="visible" :buttons="true" @popReturn="popReturn" @submit="submit">
+    <Popup
+      :visible="visible"
+      :buttons="true"
+      @popReturn="popReturn"
+      @submit="updateData"
+    >
       <div class="group-row">
         <div class="group-item">
           <p>Guest Name</p>
-          <input type="text" v-model="firstname" :placeholder="firstname" />
+          <input
+            type="text"
+            v-model="form.guestFirstName"
+            :placeholder="firstname"
+          />
         </div>
 
         <div class="group-item">
           <p>Last Name</p>
-          <input type="text" v-model="lastname" :placeholder="lastname" />
+          <input
+            type="text"
+            v-model="form.guestLastName"
+            :placeholder="lastname"
+          />
         </div>
       </div>
 
       <div class="group-row">
         <div class="group-item">
-          <p>Check IN</p>
+          <p>Check In</p>
           <div class="flex x-full">
             <v-date-picker
-              v-model="checkInDate"
+              v-model="form.checkIn"
               :masks="{ input: ['DD/MM/YYYY'] }"
               :model-config="checkInDateConfig"
               mode="single"
@@ -133,10 +136,10 @@
           </div>
         </div>
         <div class="group-item">
-          <p>Check OUT</p>
+          <p>Check Out</p>
           <div class="flex x-full">
             <v-date-picker
-              v-model="checkOutDate"
+              v-model="form.checkOut"
               :masks="{ input: ['DD/MM/YYYY'] }"
               :model-config="checkOutDateConfig"
               mode="single"
@@ -158,17 +161,17 @@
         <div class="choices">
           <label class="container1">
             Reserve
-            <input type="radio" value="Reserve" v-model="status" />
+            <input type="radio" value="Reserve" v-model="form.status" />
             <span class="checkmark"></span>
           </label>
           <label class="container2"
-            >Check IN
-            <input type="radio" value="Check IN" v-model="status" />
+            >Check In
+            <input type="radio" value="Check In" v-model="form.status" />
             <span class="checkmark"></span>
           </label>
           <label class="container3"
             >Cancel
-            <input type="radio" value="Cancel" v-model="status" />
+            <input type="radio" value="Cancel" v-model="form.status" />
             <span class="checkmark"></span>
           </label>
         </div>
@@ -187,74 +190,26 @@ import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 import SortingArrow from "../components/SortingArrow";
+import SearchError from "../components/SearchError";
+import axios from "axios";
 
-const sampleBookingDetail = [
-  {
-    id: 1023654800,
-    room: 1006,
-    guestFname: "Ying",
-    guestLname: "Supa",
-    checkIn: "01/01/2021",
-    checkOut: "05/01/2021",
-    status: "Reserve",
-  },
-  {
-    id: 1023654800,
-    room: 1006,
-    guestFname: "Beam",
-    guestLname: "Nat",
-    checkIn: "01/01/2021",
-    checkOut: "05/01/2021",
-    status: "Cancel",
-  },
-  {
-    id: 1023654800,
-    room: 1006,
-    guestFname: "Pung",
-    guestLname: "Jung",
-    checkIn: "01/01/2021",
-    checkOut: "05/01/2021",
-    status: "Reserve",
-  },
-  {
-    id: 1023654800,
-    room: 1006,
-    guestFname: "Pan",
-    guestLname: "Pan",
-    checkIn: "01/01/2021",
-    checkOut: "05/01/2021",
-    status: "Check IN",
-  },
-  {
-    id: 1023654800,
-    room: 1006,
-    guestFname: "Mly",
-    guestLname: "Mly",
-    checkIn: "01/01/2021",
-    checkOut: "05/01/2021",
-    status: "Check IN",
-  },
-  {
-    id: 1023654800,
-    room: 1006,
-    guestFname: "Pra",
-    guestLname: "Yut",
-    checkIn: "01/01/2021",
-    checkOut: "05/01/2021",
-    status: "Check IN",
-  },
-  {
-    id: 1023654800,
-    room: 1006,
-    guestFname: "Na",
-    guestLname: "Sus",
-    checkIn: "01/01/2021",
-    checkOut: "05/01/2021",
-    status: "Cancel",
-  },
+const selectOption = [
+  "Detail ID",
+  "Room No.",
+  "Name",
+  "Check In",
+  "Check Out",
+  "Status",
 ];
 
-const colNames = ["BookingID", "Room Number", "Guest Name", "Check IN", "Check OUT", "Status"];
+const colNames = [
+  "Booking Detail ID",
+  "Room Number",
+  "Guest Name",
+  "Check In",
+  "Check Out",
+  "Status",
+];
 
 export default {
   name: "BooikingDatail",
@@ -266,6 +221,7 @@ export default {
     Popup,
     CustomSelect,
     SortingArrow,
+    SearchError,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -274,27 +230,42 @@ export default {
   },
   data() {
     return {
-      sampleBookingDetail,
-      colNames,
       currentPage: 1,
       visible: false,
-      firstname: "",
-      lastname: "",
-      checkInDate: "",
       checkInDateConfig: {
         type: "string",
         mask: "YYYY-MM-DD",
       },
-      checkOutDate: "",
       checkOutDateConfig: {
         type: "string",
         mask: "YYYY-MM-DD",
       },
-      status: "",
       activeArrow: 0,
+      errorSearching: false,
       sortDirection: "down",
+      selectOption,
+      colNames,
+      search: "",
+      booking_db: "",
+      check: false,
+      filter: "bookingDetailID",
+      sort: "bookingDetailID",
+      form: {
+        bookingDetailID: "",
+        guestFirstName: "",
+        guestLastName: "",
+        checkIn: "",
+        checkOut: "",
+        status: "",
+        isEdit: false,
+      },
     };
   },
+
+  created() {
+    this.getallBookingDetail();
+  },
+
   methods: {
     pageReturn(page) {
       this.currentPage = page;
@@ -302,25 +273,160 @@ export default {
     popReturn(value) {
       this.visible = value;
     },
-    submit(value) {
-      this.visible = value;
-    },
     setActiveArrow(clickedArrow) {
       this.activeArrow = clickedArrow;
+      this.setSort(clickedArrow);
+      this.searchData();
     },
     sortReturn(direction) {
       this.sortDirection = direction;
-      console.log(this.sortDirection);
     },
-    getRecord(fname, lname, checkIn, checkOut, status) {
+
+    setSort(click) {
+      if (click == 0) {
+        this.sort = "bookingDetailID";
+      } else if (click == 1) {
+        this.sort = "roomID";
+      } else if (click == 2) {
+        this.sort = "guestFirstName";
+      } else if (click == 3) {
+        this.sort = "checkIn";
+      } else if (click == 4) {
+        this.sort = "checkOut";
+      } else if (click == 5) {
+        this.sort = "status";
+      }
+    },
+
+    getallBookingDetail() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
+          action: "getAll",
+        })
+        .then(
+          function(res) {
+            this.booking_db = res.data;
+          }.bind(this)
+        );
+    },
+
+    searchData() {
+      if (this.filter == "checkIn" || this.filter == "checkOut") {
+        this.searchSent = this.converDateToQuery(this.search);
+      } else {
+        this.searchSent = this.search;
+      }
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
+          action: "searchBookingDetail",
+          search: this.searchSent,
+          filter: this.filter,
+          sort: this.sort,
+          direction: this.sortDirection,
+        })
+        .then(
+          function(res) {
+            this.booking_db = res.data;
+            if (this.booking_db != "") {
+              this.errorSearching = false;
+            } else {
+              this.errorSearching = true;
+            }
+          }.bind(this)
+        );
+    },
+
+    getBookingDetail(booking) {
       this.visible = !this.visible;
-      this.firstname = fname;
-      this.lastname = lname;
-      this.checkInDate = checkIn;
-      this.checkOutDate = checkOut;
-      this.status = status;
+      this.form.bookingDetailID = booking.bookingDetailID;
+      this.form.guestFirstName = booking.guestFirstName;
+      this.form.guestLastName = booking.guestLastName;
+      this.form.checkIn = booking.checkIn;
+      this.form.checkOut = booking.checkOut;
+      this.form.status = booking.status;
     },
-    deleteData() {},
+
+    updateData(value) {
+      this.validate();
+      this.visible = value;
+      if (this.check) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
+            action: "updateData",
+            bookingDetailID: this.form.bookingDetailID,
+            guestFirstName: this.form.guestFirstName,
+            guestLastName: this.form.guestLastName,
+            checkIn: this.form.checkIn,
+            checkOut: this.form.checkOut,
+            status: this.form.status,
+          })
+          .then(
+            function(res) {
+              if (res.data.success == true) {
+                alert(res.data.message);
+                this.resetData();
+                this.getallBookingDetail();
+              } else {
+                alert(res.data.message);
+              }
+            }.bind(this)
+          );
+      }
+    },
+
+    validate() {
+      this.check =
+        this.form.guestFirstName != "" &&
+        this.form.guestLastName != "" &&
+        this.form.checkIn != "" &&
+        this.form.checkOut != "" &&
+        this.form.status != "";
+    },
+
+    resetData() {
+      this.form.bookingDetailID = "";
+      this.form.guestFirstName = "";
+      this.form.guestLastName = "";
+      this.form.checkIn = "";
+      this.form.checkOut = "";
+      this.form.status = "";
+    },
+
+    selectionFilter(value) {
+      if (value === selectOption[0]) {
+        this.filter = "bookingDetailID";
+      }
+      if (value === selectOption[1]) {
+        this.filter = "roomID";
+      }
+      if (value === selectOption[2]) {
+        this.filter = "guestFirstName";
+      }
+      if (value === selectOption[3]) {
+        this.filter = "checkIn";
+      }
+      if (value === selectOption[4]) {
+        this.filter = "checkOut";
+      }
+      if (value === selectOption[5]) {
+        this.filter = "status";
+      }
+    },
+
+    convertDate(date) {
+      var datearray = date.split("-");
+      var newdate = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
+      return newdate;
+    },
+
+    converDateToQuery(date) {
+      var datearray = date.split("/");
+      if (datearray.length != 3 || date.length != 10) {
+        alert("Date format should be dd/mm/yyyy");
+      }
+      var newdate = datearray[2] + "-" + datearray[1] + "-" + datearray[0];
+      return newdate;
+    },
   },
 };
 </script>
@@ -426,7 +532,9 @@ table {
   justify-content: flex-start;
   width: 550px;
 }
-.container1, .container2, .container3 {
+.container1,
+.container2,
+.container3 {
   display: block;
   position: relative;
   padding: 0 0 0 35px;
@@ -436,7 +544,9 @@ table {
   background: none;
   width: 150px;
 }
-.container1 input, .container2 input, .container3 input{
+.container1 input,
+.container2 input,
+.container3 input {
   position: fixed;
   opacity: 0;
   cursor: pointer;
@@ -450,27 +560,33 @@ table {
   background-color: #d3d3d3;
   border-radius: 50%;
 }
-.container1:hover input ~ .checkmark, .container2:hover input ~ .checkmark, .container3:hover input ~ .checkmark {
+.container1:hover input ~ .checkmark,
+.container2:hover input ~ .checkmark,
+.container3:hover input ~ .checkmark {
   background-color: #ccc;
 }
 .container1 input:checked ~ .checkmark {
-  background-color: #FFC42E;
+  background-color: #ffc42e;
 }
 .container2 input:checked ~ .checkmark {
-  background-color: #24BA45;
+  background-color: #24ba45;
 }
 .container3 input:checked ~ .checkmark {
-  background-color: #E11818;
+  background-color: #e11818;
 }
 .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
-.container1 input:checked ~ .checkmark:after, .container2 input:checked ~ .checkmark:after, .container3 input:checked ~ .checkmark:after   {
+.container1 input:checked ~ .checkmark:after,
+.container2 input:checked ~ .checkmark:after,
+.container3 input:checked ~ .checkmark:after {
   display: block;
 }
-.container1 .checkmark:after, .container2 .checkmark:after, .container3 .checkmark:after {
+.container1 .checkmark:after,
+.container2 .checkmark:after,
+.container3 .checkmark:after {
   top: 6px;
   left: 6px;
   width: 8px;
@@ -491,6 +607,7 @@ th {
   border-bottom: 1px solid black;
 }
 td {
+  height: 35px;
   text-align: center;
   justify-content: center;
   align-items: center;
