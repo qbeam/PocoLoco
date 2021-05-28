@@ -18,7 +18,7 @@
       <i class="fa fa-bars fa-2x" v-if="!visible"></i>
     </button>
     <div class="circle" v-if="visible || width > 1000">
-      <img src="../assets/owner.png" />
+      <img src="../assets/OwnerM.png" />
     </div>
     <div class="info" v-if="visible || width > 1000">
       <b>Role Name</b>
