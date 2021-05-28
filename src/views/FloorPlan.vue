@@ -9,6 +9,7 @@
             type="Transparent"
             :options="buildingOption"
             :style="{ margin: '0' }"
+            defaultChoice="1"
             @selection="selectBuilding"
           />
         </div>
@@ -18,6 +19,7 @@
             type="Transparent"
             :options="floorOption"
             :style="{ margin: '0' }"
+            defaultChoice="2"
             @selection="selectFloor"
           />
         </div>
@@ -34,18 +36,6 @@
             :style="{ marginBottom: '0' }"
           />
         </div>
-        <!--<div>
-          <span class="icon-wrap">
-            <i class="fa fa-search fa-1x"></i>
-          </span>
-
-          <input
-            class="search-field"
-            type="text"
-            placeholder="search"
-            v-model="search"
-          />
-        </div>-->
       </div>
     </div>
 
@@ -69,7 +59,7 @@
     </div>
 
     <div class="inner-container">
-      <RoomPlan :floor="floor" />
+      <RoomPlan :floor="floor" :building="building" />
     </div>
   </TablePage>
 </template>
@@ -89,7 +79,7 @@
         buildingOption: [1, 2],
         building: 1, // set default to b2Floor
         floorOption: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // set default to b1Floor
-        floor: 2,
+        floor: 1,
       };
     },
     methods: {
@@ -189,11 +179,10 @@
   }
   .inner-container {
     display: flex;
-    height: 100%;
+    height: fit-content;
     margin: 20px 0;
-    padding: 35px 30px;
+    padding: 80px 30px;
     background: white;
-    justify-content: center;
   }
   @media (max-width: 1300px) {
     .menu-group {
