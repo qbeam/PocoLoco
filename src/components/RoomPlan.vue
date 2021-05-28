@@ -5,7 +5,11 @@
         class="big"
         v-for="(detail, i) in roomStatus.slice(0, 1)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -13,7 +17,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(1, 3)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -23,7 +31,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(3, 5)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -31,7 +43,11 @@
         class="big"
         v-for="(detail, i) in roomStatus.slice(5, 6)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -42,7 +58,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(6, 7)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -51,7 +71,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(7, 8)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -62,7 +86,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(8, 9)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -71,7 +99,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(9, 12)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -80,7 +112,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(12, 13)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -91,7 +127,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(13, 14)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -100,7 +140,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(14, 16)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -110,7 +154,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(16, 17)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -121,7 +169,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(17, 18)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -130,7 +182,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(18, 19)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -141,7 +197,11 @@
         class="big"
         v-for="(detail, i) in roomStatus.slice(19, 20)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -149,7 +209,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(20, 22)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -159,7 +223,11 @@
         class="small"
         v-for="(detail, i) in roomStatus.slice(22, 24)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -167,7 +235,11 @@
         class="big"
         v-for="(detail, i) in roomStatus.slice(24, 25)"
         :key="i"
-        :style="{ background: getBgColor(detail) }"
+        :style="{
+          background: getBgColor(detail),
+          cursor: getCursor(detail.status),
+        }"
+        @click="goToAddBooking(detail.status)"
       >
         {{ detail.roomNumber }}
       </div>
@@ -215,28 +287,40 @@
       getBgColor(detail) {
         if (detail.type == "Standard") {
           if (detail.status == 0) {
-            return "#73B8C8";
+            return "#6A9BA6";
           } else {
             return "#79D7FF";
           }
         } else if (detail.type == "Superior") {
           if (detail.status == 0) {
-            return "#D7BF83";
+            return "#AA986B";
           } else {
             return "#FFC42E";
           }
         } else if (detail.type == "Deluxe") {
           if (detail.status == 0) {
-            return "#D4A3A3";
+            return "#AE7C7C";
           } else {
             return "#FFABAB";
           }
         } else if (detail.type == "Suite") {
           if (detail.status == 0) {
-            return "#8AB994";
+            return "#6E9E79";
           } else {
             return "#95E4A7";
           }
+        }
+      },
+      getCursor(status) {
+        if (status == 0) {
+          return "not-allowed";
+        } else {
+          return "pointer";
+        }
+      },
+      goToAddBooking(status) {
+        if (status == 1) {
+          this.$router.push("/AddBooking");
         }
       },
     },
@@ -261,7 +345,6 @@
     display: flex;
     width: 23%;
     height: 50px;
-    background: red;
     border: 1px solid black;
     justify-content: center;
     align-items: center;
@@ -270,16 +353,9 @@
     display: flex;
     width: 12%;
     height: 50px;
-    background: blue;
     border: 1px solid black;
     justify-content: center;
     align-items: center;
-  }
-  .big:hover,
-  .small:hover {
-    cursor: pointer;
-    font-weight: bold;
-    text-decoration: underline;
   }
   .elevator {
     display: flex;

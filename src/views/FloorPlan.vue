@@ -27,7 +27,6 @@
       <div class="menu-item">
         <div class="search-container">
           <i class="fa fa-search fa-1x"></i>
-
           <input
             v-model="search"
             class="search-field"
@@ -41,24 +40,25 @@
 
     <div class="room-label">
       <div class="room-type">
-        <div class="dot"></div>
+        <i class="fa fa-circle" :style="{ color: '#79D7FF' }" />
         <p>Standard</p>
       </div>
       <div class="room-type">
-        <div class="dot" :style="{ background: '#FFC979' }"></div>
+        <i class="fa fa-circle" :style="{ color: '#FFC979' }" />
         <p>Superior</p>
       </div>
       <div class="room-type">
-        <div class="dot" :style="{ background: '#FFABAB' }"></div>
+        <i class="fa fa-circle" :style="{ color: '#FFABAB' }" />
         <p>Deluxe</p>
       </div>
       <div class="room-type">
-        <div class="dot" :style="{ background: '#95E4A7' }"></div>
+        <i class="fa fa-circle" :style="{ color: '#95E4A7' }" />
         <p>Suite</p>
       </div>
     </div>
 
     <div class="inner-container">
+      <p class="title">Building: {{ building }} Floor: {{ floor }}</p>
       <RoomPlan :floor="floor" :building="building" />
     </div>
   </TablePage>
@@ -79,7 +79,7 @@
         buildingOption: [1, 2],
         building: 1, // set default to b2Floor
         floorOption: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // set default to b1Floor
-        floor: 1,
+        floor: 2,
       };
     },
     methods: {
@@ -153,36 +153,38 @@
     margin-left: 5px;
     color: #5f5f5f;
   }
-  i {
-    color: #5f5f5f;
-  }
   .fa-search {
     position: absolute;
     z-index: 5;
     margin: 7px 20px;
     font-size: 16px;
+    color: #5f5f5f;
   }
+  .fa-circle {
+    font-size: 20px;
+    margin-right: 5px;
+  }
+
   .room-label {
     display: flex;
     justify-content: center;
+    margin-top: 20px;
   }
   .room-type {
     display: flex;
     margin: 0 10px;
   }
-  .dot {
-    width: 15px;
-    height: 15px;
-    background: #79d7ff;
-    border-radius: 50px;
-    margin: 3px;
-  }
   .inner-container {
     display: flex;
     height: fit-content;
     margin: 20px 0;
-    padding: 80px 30px;
+    padding: 30px 30px 40px 30px;
     background: white;
+  }
+  .title {
+    align-self: center;
+    margin-bottom: 10px;
+    font-size: 14px;
   }
   @media (max-width: 1300px) {
     .menu-group {
