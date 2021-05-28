@@ -237,7 +237,7 @@ import SearchError from "../components/SearchError";
 import axios from "axios";
 
 const selectOption = ["BookingID", "Name", "Phone", "Email"];
-const colNames = ["BookingID", "Customer Name", "Phone", "Email"];
+const colNames = ["Booking ID", "Customer Name", "Phone", "Email"];
 
 export default {
   name: "Booking",
