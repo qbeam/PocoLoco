@@ -71,14 +71,16 @@
         class="row"
       >
         <td>{{ sampleEmployee.id }}</td>
+        <td>{{ sampleEmployee.firstname }} {{ sampleEmployee.lastname }}</td>
+        <td>{{ sampleEmployee.role }}</td>
+        <td>{{ sampleEmployee.salary }}</td>
         <td>
           <div>
-            <p>{{ sampleEmployee.firstname }} {{ sampleEmployee.lastname }}</p>
-            <!-- <p class="sub-row">{{ sampleEmployee.role }}</p> -->
+            <p>{{ sampleEmployee.status }}</p>
+            <p class="sub-row">2 year</p>
           </div>
         </td>
-        <td>{{ sampleEmployee.salary }}</td>
-        <td>{{ sampleEmployee.status }}</td>
+
         <td>
           <div class="manage">
             <button
@@ -240,11 +242,11 @@ import SortingArrow from "../components/SortingArrow";
 
 const menus = ["All Employees", "All Employees Roles"];
 
-const colNames = ["EmployeeID", "Name", "Salary", "Status"];
+const colNames = ["EmployeeID", "Name", "Role", "Salary", "Status"];
 
 const sampleEmployee = [
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -260,9 +262,9 @@ const sampleEmployee = [
     status: "Employed",
   },
   {
-    id: 12001,
-    firstname: "Supavadee",
-    lastname: "Phusanam",
+    id: 120001,
+    firstname: "Supavadeesa",
+    lastname: "Phusanamsad",
     role: "Manager",
     department: "Kitchen",
     salary: 30000,
@@ -276,7 +278,7 @@ const sampleEmployee = [
     status: "Employed",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -292,7 +294,7 @@ const sampleEmployee = [
     status: "Suspended",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -387,8 +389,12 @@ h4 {
   font-size: 18px;
   margin-bottom: 15px;
 }
+p {
+  margin: 5px 0 5px;
+}
 .sub-row {
   font-size: 12px;
+  margin-bottom: 15px;
 }
 .menu-button {
   width: 200px;

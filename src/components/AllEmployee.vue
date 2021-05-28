@@ -58,9 +58,15 @@
       >
         <td>{{ sampleEmployee.id }}</td>
         <td>{{ sampleEmployee.firstname }} {{ sampleEmployee.lastname }}</td>
+        <td>{{ sampleEmployee.role }}</td>
         <td>{{ sampleEmployee.department }}</td>
         <td>{{ sampleEmployee.salary }}</td>
-        <td>{{ sampleEmployee.status }}</td>
+        <td>
+          <div>
+            <p>{{ sampleEmployee.status }}</p>
+            <p class="sub-row">2 year</p>
+          </div>
+        </td>
         <td>
           <div class="manage">
             <button
@@ -207,11 +213,18 @@ import PaginationBar from "../components/PaginationBar";
 import Popup from "../components/Popup";
 import SortingArrow from "../components/SortingArrow";
 
-const colNames = ["EmployeeID", "Name", "Department", "Salary", "Status"];
+const colNames = [
+  "EmployeeID",
+  "Name",
+  "Role",
+  "Department",
+  "Salary",
+  "Status",
+];
 
 const sampleEmployee = [
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -227,7 +240,7 @@ const sampleEmployee = [
     status: "Employed",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -243,7 +256,7 @@ const sampleEmployee = [
     status: "Employed",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -259,7 +272,7 @@ const sampleEmployee = [
     status: "Suspended",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -275,7 +288,7 @@ const sampleEmployee = [
     status: "Quited",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -291,7 +304,7 @@ const sampleEmployee = [
     status: "Quited",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -307,7 +320,7 @@ const sampleEmployee = [
     status: "Quited",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -323,7 +336,7 @@ const sampleEmployee = [
     status: "Quited",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -339,7 +352,7 @@ const sampleEmployee = [
     status: "Quited",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -355,7 +368,7 @@ const sampleEmployee = [
     status: "Quited",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -371,7 +384,7 @@ const sampleEmployee = [
     status: "Quited",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -387,7 +400,7 @@ const sampleEmployee = [
     status: "Quited",
   },
   {
-    id: 12001,
+    id: 120001,
     firstname: "Supavadee",
     lastname: "Phusanam",
     role: "Manager",
@@ -427,7 +440,7 @@ export default {
       editVisible: false,
       currentPage: 1,
       activeArrow: 0,
-      tableRow: 10,
+      tableRow: 5,
       sortDirection: "down",
     };
   },
@@ -533,6 +546,13 @@ td {
   text-align: center;
   justify-content: center;
   align-items: center;
+}
+p {
+  margin: 5px 0 5px;
+}
+.sub-row {
+  font-size: 12px;
+  margin-bottom: 15px;
 }
 .row:hover {
   cursor: pointer;
