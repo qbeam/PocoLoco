@@ -138,7 +138,7 @@
             <div class="group-row">
               <div class="group-item-left">
                 <div class="circle">
-                  <img src="../assets/receptionist.png" />
+                  <img src="../assets/ReceptionistF.png" />
                 </div>
               </div>
               <div class="group-item-left" style="margin-top: 7px">
@@ -186,7 +186,7 @@
             <div class="group-row">
               <div class="group-item-left">
                 <div class="circle">
-                  <img src="../assets/receptionist.png" />
+                  <img src="../assets/ReceptionistF.png" />
                 </div>
               </div>
               <div class="group-item-left" style="margin-top: 7px">
