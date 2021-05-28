@@ -21,12 +21,6 @@
         :style="{ marginRight: '20px' }"
         @selection="selectionFilter"
       />
-      <CustomSelect
-        type="Sort by"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionSort"
-      />
       <DefaultButton
         @click="searchData()"
         type="small"
@@ -47,11 +41,16 @@
     <SearchError v-if="errorSearching" />
     <table v-if="customer_db.length !== 0">
       <tr>
-        <th>Rank</th>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Phone</th>
-        <th>Number of visit</th>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
+          </div>
+        </th>
         <th>Manage</th>
       </tr>
 
@@ -63,7 +62,7 @@
         v-bind:key="index"
         class="row"
       >
-        <td>{{ index + 1 }}</td>
+        <td>{{ customer.rank }}</td>
         <td>{{ customer.customerID }}</td>
         <td>{{ customer.firstName }} {{ customer.lastName }}</td>
         <td>{{ customer.phone }}</td>
@@ -119,7 +118,7 @@
     <Popup v-bind:visible="viewVisible" @popReturn="viewReturn">
       <div class="popup-head">
         <div class="ranking">
-          <div class="rank">1</div>
+          <div class="rank">{{ form.rank }}</div>
           <h4>ID: {{ form.customerID }}</h4>
         </div>
 
@@ -204,9 +203,12 @@ import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
+import SortingArrow from "../components/SortingArrow";
 import axios from "axios";
 
-const selectOption = ["Default", "Rank", "ID", "Name", "No. of visit"];
+const selectOption = ["Rank", "ID", "Name", "No. of visit"];
+const colNames = ["Rank", "ID", "Name", "Phone", "Number of visit"];
+
 export default {
   name: "Customer",
   components: {
@@ -217,6 +219,7 @@ export default {
     Popup,
     CustomSelect,
     SearchError,
+    SortingArrow,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -230,14 +233,16 @@ export default {
       errorSearching: false,
       currentPage: 1,
       selectOption,
+      colNames,
 
       search: "",
-      sort: "all",
-      filter: "all",
+      sort: "rank",
+      filter: "rank",
       customer_db: "",
       check: false,
       closeTable: false,
       isSearch: false,
+      sortDirection: "down",
       form: {
         rank: "",
         customerID: "",
@@ -272,37 +277,39 @@ export default {
       this.editVisible = value;
       this.updateData();
     },
-    selectionSort(value) {
-      if (value === selectOption[0]) {
-        this.sort = "all";
-      }
-      if (value === selectOption[1]) {
+    setActiveArrow(clickedArrow) {
+      this.activeArrow = clickedArrow;
+      this.setSort(clickedArrow);
+      this.searchData();
+    },
+    sortReturn(direction) {
+      this.sortDirection = direction;
+    },
+    setSort(click) {
+      if (click == 0) {
         this.sort = "rank";
-      }
-      if (value === selectOption[2]) {
+      } else if (click == 1) {
         this.sort = "customerID";
-      }
-      if (value === selectOption[3]) {
+      } else if (click == 2) {
         this.sort = "firstName";
-      }
-      if (value === selectOption[4]) {
+      } else if (click == 3) {
+        this.sort = "phone";
+      } else if (click == 4) {
         this.sort = "numberVisit";
       }
     },
+
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "all";
-      }
-      if (value === selectOption[1]) {
         this.filter = "rank";
       }
-      if (value === selectOption[2]) {
+      if (value === selectOption[1]) {
         this.filter = "customerID";
       }
-      if (value === selectOption[3]) {
+      if (value === selectOption[2]) {
         this.filter = "firstName";
       }
-      if (value === selectOption[4]) {
+      if (value === selectOption[3]) {
         this.filter = "numberVisit";
       }
     },
@@ -311,7 +318,6 @@ export default {
     },
 
     getCustomerData(type, customer) {
-      console.log(customer);
       if (type === "view") {
         this.viewVisible = !this.viewVisible;
       }
@@ -319,6 +325,8 @@ export default {
         this.editVisible = !this.editVisible;
         this.form.isEdit = true;
       }
+
+      this.form.rank = customer.rank;
       this.form.customerID = customer.customerID;
       this.form.firstName = customer.firstName;
       this.form.lastName = customer.lastName;
@@ -357,6 +365,7 @@ export default {
           search: this.search,
           sort: this.sort,
           filter: this.filter,
+          direction: this.sortDirection,
         })
         .then(
           function(res) {
@@ -372,7 +381,6 @@ export default {
     },
 
     updateData() {
-      console.log("update");
       this.validate();
 
       if (this.check && this.form.isEdit) {
@@ -389,7 +397,6 @@ export default {
           })
           .then(
             function(res) {
-              console.log(res.data);
               if (res.data.success == true) {
                 alert(res.data.message);
                 this.resetData();
@@ -546,6 +553,11 @@ th {
   text-align: center;
   background-color: #eeeeee;
   border-bottom: 1px solid black;
+}
+.tb-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 td {
   text-align: center;

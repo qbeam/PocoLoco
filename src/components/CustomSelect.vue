@@ -1,18 +1,25 @@
 <template>
   <div class="dropdown-container">
     <p v-if="type == 'Filter'">Search by</p>
-    <p v-else>{{ type }}</p>
     <div
-      class="dropdown-button"
+      :class="dropdownType"
       @click="showDropdown"
-      :style="dropdownVisible ? { borderBottom: '2px solid white' } : {}"
+      :style="
+        dropdownVisible && type !== 'Transparent'
+          ? { borderBottom: '2px solid white' }
+          : {}
+      "
     >
       <div class="button-content">
-        <label>{{ label ? label : options[0] }}</label>
-        <i class="fa fa-caret-down fa-2x"></i>
+        <label :class="dropdownLabel">{{ label ? label : options[0] }}</label>
+        <i class="fa fa-caret-down fa-2x" :style="{ color: arrowColor }"></i>
       </div>
     </div>
-    <div class="dropdown-list" v-if="dropdownVisible">
+    <div
+      class="dropdown-list"
+      v-if="dropdownVisible"
+      :style="{ width: optionsWidth }"
+    >
       <div
         class="option-item"
         v-for="(option, i) in options"
@@ -29,16 +36,21 @@
 import { useScreenWidth } from "../composables/useScreenWidth";
 export default {
   name: "CustomSelect",
-  props: ["type", "options"],
+  props: ["type", "options", "defaultChoice"],
   setup() {
     const { width } = useScreenWidth();
     return width;
   },
   data() {
     return {
+      dropdownType: "default-dropdown",
+      dropdownLabel: "default-label",
+      optionStyle: "default-list",
       dropdownVisible: false,
       selection: null,
       label: null,
+      arrowColor: "white",
+      optionsWidth: "120px",
     };
   },
   methods: {
@@ -49,13 +61,24 @@ export default {
       this.selection = selected;
       this.label = selected;
       this.dropdownVisible = !this.dropdownVisible;
-      if (this.type === "Sort by") {
-        this.$emit("selection", this.selection);
-      }
-      if (this.type === "Filter") {
-        this.$emit("selection", this.selection);
-      }
+      this.$emit("selection", this.selection);
     },
+  },
+  mounted() {
+    if (this.defaultChoice) {
+      this.label = this.defaultChoice;
+    }
+    if (this.type == "Transparent") {
+      this.dropdownType = "transparent-dropdown";
+      this.dropdownLabel = "dark-label";
+      this.arrowColor = "var(--button-blue)";
+      this.optionsWidth = "74px";
+    } else if (this.type == "Grey") {
+      this.dropdownType = "grey-dropdown";
+      this.dropdownLabel = "dark-label";
+      this.arrowColor = "var(--button-blue)";
+      this.optionsWidth = "150px";
+    }
   },
 };
 </script>
@@ -68,7 +91,7 @@ export default {
 p {
   margin: 0;
 }
-.dropdown-button {
+.default-dropdown {
   width: 120px;
   height: 30px;
   background: var(--primary-blue);
@@ -77,16 +100,40 @@ p {
   align-items: center;
   cursor: pointer;
 }
+.transparent-dropdown {
+  width: 70px;
+  height: 25px;
+  background: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 2px solid var(--button-blue);
+  cursor: pointer;
+}
+.grey-dropdown {
+  width: 150px;
+  height: 40px;
+  background: #eeeeee;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+}
 .button-content {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-label {
+.default-label {
   color: white;
   padding-left: 5px;
   z-index: 1;
+}
+.dark-label {
+  color: var(--grey-text);
+  margin: 0 auto;
 }
 i {
   color: white;
@@ -95,9 +142,11 @@ i {
 }
 .dropdown-list {
   width: 120px;
+  max-height: 100px;
+  overflow-y: auto;
   background: var(--primary-blue);
   align-self: flex-start;
-  z-index: 10;
+  z-index: 30;
   position: absolute;
 }
 .option-item {

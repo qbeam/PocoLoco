@@ -20,23 +20,17 @@
           <h4 style="color:red">Employee ID</h4>
           <input v-model="form.employeeID" type="number" />
         </div>
-        <!-- Room number -->
-        <div class="input-group" v-if="roomNumberError">
-          <h4>Room Number</h4>
-          <input
-            type="number"
-            v-model="form.roomNumber"
-            onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
-          />
-        </div>
-
-        <!-- Room number Error -->
-        <div class="input-group" v-else>
-          <h4 style="color:red">Room Number</h4>
-          <input
-            type="number"
-            v-model="form.roomNumber"
-            onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
+        <div class="input-group">
+          <h4>Expense Type</h4>
+          <CustomSelect
+            type="Grey"
+            :options="expenseType"
+            :style="
+              width > 1000
+                ? { alignSelf: 'center', marginLeft: '10px' }
+                : { margin: '-10px 0 30px 0' }
+            "
+            @selection="selectionType"
           />
         </div>
       </div>
@@ -143,13 +137,36 @@
 import FormContainer from "../components/FormContainer.vue";
 import DefaultButton from "../components/DefaultButton.vue";
 import InnerFormContainer from "../components/InnerFormContainer.vue";
+import CustomSelect from "../components/CustomSelect";
+import { useScreenWidth } from "../composables/useScreenWidth";
 import axios from "axios";
+
+const expenseType = [
+  "Housekeeping",
+  "Kitchen",
+  "Maintenance",
+  "Electricity",
+  "Water",
+  "Advertisement",
+  "Entertainment",
+  "Other",
+];
 
 export default {
   name: "AddExpense",
-  components: { FormContainer, DefaultButton, InnerFormContainer },
+  components: {
+    FormContainer,
+    DefaultButton,
+    InnerFormContainer,
+    CustomSelect,
+  },
+  setup() {
+    const { width } = useScreenWidth();
+    return { width };
+  },
   data() {
     return {
+      expenseType,
       employeeIDError: true,
       roomNumberError: true,
       detailError: true,
@@ -162,6 +179,7 @@ export default {
         detail: "",
         expenseDate: "",
         expense: "",
+        type: "",
       },
       dateConfig: {
         type: "string",
@@ -173,9 +191,35 @@ export default {
     backToExpenses() {
       this.$router.push("/HotelExpenses");
     },
-    saveData(e) {
-      console.log(this.form.employeeID);
-      e.preventDefault();
+
+    selectionType(value) {
+      if (value === expenseType[0]) {
+        this.form.type = 1;
+      }
+      if (value === expenseType[1]) {
+        this.form.type = 2;
+      }
+      if (value === expenseType[2]) {
+        this.form.type = 3;
+      }
+      if (value === expenseType[3]) {
+        this.form.type = 4;
+      }
+      if (value === expenseType[4]) {
+        this.form.type = 5;
+      }
+      if (value === expenseType[5]) {
+        this.form.type = 6;
+      }
+      if (value === expenseType[6]) {
+        this.form.type = 7;
+      }
+      if (value === expenseType[7]) {
+        this.form.type = 8;
+      }
+    },
+
+    saveData() {
       this.validate();
       if (this.check) {
         axios
@@ -186,10 +230,11 @@ export default {
             detail: this.form.detail,
             expenseDate: this.form.expenseDate,
             expense: this.form.expense,
+            type: this.form.type,
           })
           .then(
             function(res) {
-              console.log(res);
+              console.log(res.data);
               if (res.data.success == true) {
                 alert("Saved Successful");
                 this.resetData();
@@ -203,16 +248,17 @@ export default {
 
     validate() {
       this.check =
-        this.form.roomNumber != "" &&
+        this.form.employeeID != "" &&
+        this.form.type != "" &&
         this.form.detail != "" &&
         this.form.expense != "" &&
         this.form.expenseDate != "";
-
+      console.log("check", this.check);
       if (this.form.employeeID == "") {
         this.employeeIDError = false;
       }
-      if (this.form.roomNumber == "") {
-        this.roomNumberError = false;
+      if (this.form.type == "") {
+        this.typeError = false;
       }
       if (this.form.detail == "") {
         this.detailError = false;
@@ -226,8 +272,8 @@ export default {
       if (this.form.employeeID != "") {
         this.employeeIDError = true;
       }
-      if (this.form.roomNumber != "") {
-        this.roomNumberError = true;
+      if (this.form.type != "") {
+        this.typeError = true;
       }
       if (this.form.detail != "") {
         this.detailError = true;
@@ -247,7 +293,8 @@ export default {
       this.form.expenseDate = "";
       this.employeeID = true;
       this.expenseDateError = true;
-      this.roomNumberError = true;
+      this.typeError = true;
+      this.typeError = true;
       this.detailError = true;
       this.expenseError = true;
     },

@@ -18,13 +18,8 @@
         :style="{ marginRight: '20px' }"
         @selection="selectionFilter"
       />
-      <CustomSelect
-        type="Sort by"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionSort"
-      />
-      <DefaultButton type="small" @click="searchService">
+
+      <DefaultButton type="small" @click="searchData">
         Search
       </DefaultButton>
     </div>
@@ -39,9 +34,16 @@
   <div class="table-container">
     <table v-if="service_db.length !== 0">
       <tr>
-        <th>Service Name</th>
-        <th>Type</th>
-        <th>Price</th>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
+          </div>
+        </th>
         <th>Manage</th>
       </tr>
 
@@ -129,9 +131,12 @@ import { useScreenHeight } from "../composables/useScreenHeight";
 import PaginationBar from "./PaginationBar";
 import Popup from "../components/Popup";
 import SearchError from "../components/SearchError";
+import SortingArrow from "../components/SortingArrow";
 import axios from "axios";
 
-const selectOption = ["Default", "Service Type", "Service Name", "Price"];
+const selectOption = ["Name", "Type", "Price"];
+
+const colNames = ["Name", "Type", "Price"];
 
 export default {
   name: "AllService",
@@ -142,6 +147,7 @@ export default {
     PaginationBar,
     Popup,
     SearchError,
+    SortingArrow,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -153,12 +159,14 @@ export default {
       tableRow: 10,
       editVisible: false,
       selectOption,
+      colNames,
       serviceOptions: ["Room Facility", "Food & Beverage"],
       service_db: "",
       type_db: "",
       search: "",
-      filter: "all",
-      sort: "all",
+      filter: "name",
+      sort: "name",
+      sortDirection: "down",
       errorSearching: false,
       check: false,
       form: {
@@ -187,7 +195,23 @@ export default {
       this.editVisible = value;
       this.updateData();
     },
-
+    setActiveArrow(clickedArrow) {
+      this.activeArrow = clickedArrow;
+      this.setSort(clickedArrow);
+      this.searchData();
+    },
+    sortReturn(direction) {
+      this.sortDirection = direction;
+    },
+    setSort(click) {
+      if (click == 0) {
+        this.sort = "name";
+      } else if (click == 1) {
+        this.sort = "type";
+      } else if (click == 2) {
+        this.sort = "servicePrice";
+      }
+    },
     getAllService() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_allService.php", {
@@ -241,13 +265,15 @@ export default {
           );
       }
     },
-    searchService() {
+    searchData() {
+      console.log("search", this.search);
       axios
         .post("http://localhost:8080/PocoLoco_db/api_allService.php", {
           action: "searchService",
           search: this.search,
           filter: this.filter,
           sort: this.sort,
+          direction: this.sortDirection,
         })
         .then(
           function(res) {
@@ -276,31 +302,15 @@ export default {
       this.filter = "";
       this.sort = "";
     },
-    selectionSort(value) {
-      if (value === selectOption[0]) {
-        this.sort = "all";
-      }
-      if (value === selectOption[1]) {
-        this.sort = "type";
-      }
-      if (value === selectOption[2]) {
-        this.sort = "name";
-      }
-      if (value === selectOption[3]) {
-        this.sort = "servicePrice";
-      }
-    },
+
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "all";
+        this.filter = "name";
       }
       if (value === selectOption[1]) {
         this.filter = "type";
       }
       if (value === selectOption[2]) {
-        this.filter = "name";
-      }
-      if (value === selectOption[3]) {
         this.filter = "servicePrice";
       }
     },
@@ -332,6 +342,7 @@ export default {
 .menu-buttons {
   display: flex;
   align-items: center;
+  margin-top: 10px;
 }
 .search-container {
   position: relative;
@@ -375,6 +386,11 @@ th {
   text-align: center;
   background-color: #eeeeee;
   border-bottom: 1px solid black;
+}
+.tb-head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 td {
   height: 35px;
@@ -426,18 +442,14 @@ input {
   padding-left: 10px;
   margin: 10px 0 20px 0;
 }
-@media (max-width: 1100px) {
-  .search-field {
-    width: 300px;
-  }
+
+@media (max-width: 750px) {
   .menu-bar {
     flex-direction: column;
   }
   .menu-buttons {
     margin-top: 40px;
   }
-}
-@media (max-width: 700px) {
   .search-field {
     width: 180px;
   }
@@ -445,6 +457,7 @@ input {
     height: 450px;
   }
   table {
+    table-layout: fixed;
     margin-top: 30px;
     font-size: 14px;
   }

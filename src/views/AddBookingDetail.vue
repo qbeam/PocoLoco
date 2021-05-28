@@ -257,7 +257,7 @@ export default {
 
     getRoomType() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_addBookingDetail.php", {
           action: "getRoomType",
         })
         .then(
@@ -281,7 +281,7 @@ export default {
 
     getRoomNumber() {
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_addBookingDetail.php", {
           action: "getRoomNumber",
           roomType: this.details.roomType,
           checkIn: this.details.checkIn,
@@ -298,7 +298,7 @@ export default {
     addBookingDetail(e) {
       e.preventDefault();
       axios
-        .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
+        .post("http://localhost:8080/PocoLoco_db/api_addBookingDetail.php", {
           action: "addBookingDetail",
           bookingID: this.details.bookingID,
           guestFirstName: this.details.guestFirstName,
