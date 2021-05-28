@@ -1,6 +1,7 @@
 <template>
   <TablePage>
-    <h3>Employee
+    <h3>
+      Employee
       <p class="countQuery">(62)</p>
     </h3>
     <div v-if="role === 'Business Owner'">
@@ -48,7 +49,6 @@
         @click="goToEmployeeReg()"
       />
     </div>
-
     <table v-if="sampleEmployee.length !== 0 && role === 'Receptionist'">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
@@ -72,16 +72,35 @@
         :key="i"
         class="row"
       >
-        <td>{{ sampleEmployee.id }}</td>
+        <td>
+          <div class="profile">
+            <i class="table-circle">
+              <img src="../assets/ReceptionistF.png" />
+            </i>
+            <p>{{ sampleEmployee.id }}</p>
+          </div>
+        </td>
         <td>{{ sampleEmployee.firstname }} {{ sampleEmployee.lastname }}</td>
         <td>{{ sampleEmployee.role }}</td>
         <td>{{ sampleEmployee.salary }}</td>
         <td>
           <div>
-            <p style="margin-top: 5px; margin-bottom: 2px;">
-              <i v-if="sampleEmployee.status == 'Employed'" class="fa fa-circle" :style="{ color: '#24BA45' }" />
-              <i v-if="sampleEmployee.status == 'Suspended'" class="fa fa-circle" :style="{ color: '#FFC42E' }" />
-              <i v-if="sampleEmployee.status == 'Quited'" class="fa fa-circle" :style="{ color: '#FF0000' }" />
+            <p style="margin-top: 5px; margin-bottom: 2px">
+              <i
+                v-if="sampleEmployee.status == 'Employed'"
+                class="fa fa-circle"
+                :style="{ color: '#24BA45' }"
+              />
+              <i
+                v-if="sampleEmployee.status == 'Suspended'"
+                class="fa fa-circle"
+                :style="{ color: '#FFC42E' }"
+              />
+              <i
+                v-if="sampleEmployee.status == 'Quited'"
+                class="fa fa-circle"
+                :style="{ color: '#FF0000' }"
+              />
               {{ sampleEmployee.status }}
             </p>
             <p class="sub-row">2 year</p>
@@ -348,7 +367,7 @@ export default {
       currentPage: 1,
       activeArrow: 0,
       sortDirection: "down",
-      role: "Receptionist",
+      role: "Business Owner",
     };
   },
   methods: {
@@ -402,7 +421,7 @@ h4 {
 }
 .sub-row {
   font-size: 12px;
-  margin-top: 2px
+  margin-top: 2px;
 }
 .menu-button {
   width: 200px;
@@ -466,6 +485,22 @@ table {
   justify-content: center;
 }
 .circle {
+  width: 25px;
+  height: 25x;
+  background: var(--primary-yellow);
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.profile {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+.table-circle {
   width: 40px;
   height: 40px;
   background: var(--primary-yellow);
@@ -474,6 +509,7 @@ table {
   align-self: center;
   border-radius: 50%;
   overflow: hidden;
+  margin-right: 20px;
 }
 .fa-circle {
   font-size: 10px;

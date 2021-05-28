@@ -56,7 +56,14 @@
         :key="i"
         class="row"
       >
-        <td>{{ sampleEmployee.id }}</td>
+        <td>
+          <div class="profile">
+            <i class="table-circle">
+              <img src="../assets/ReceptionistF.png" />
+            </i>
+            <p>{{ sampleEmployee.id }}</p>
+          </div>
+        </td>
         <td>{{ sampleEmployee.firstname }} {{ sampleEmployee.lastname }}</td>
         <td>{{ sampleEmployee.role }}</td>
         <td>{{ sampleEmployee.department }}</td>
@@ -632,6 +639,23 @@ td {
   height: 8px;
   border-radius: 50%;
   background: white;
+}
+.profile {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+.table-circle {
+  width: 35px;
+  height: 35px;
+  background: var(--primary-yellow);
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 15px;
 }
 .circle {
   width: 40px;
