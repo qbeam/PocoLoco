@@ -175,6 +175,7 @@ export default {
       priceSum: 0,
       history_db: [],
       order_db: [],
+      countRow: "",
 
       search: "",
       searchSent: "",
@@ -249,7 +250,9 @@ export default {
           }.bind(this)
         );
     },
-
+    returnQuery() {
+      this.$emit("countQuery", this.countRow);
+    },
     // HISTORY_DB (table)
     getServiceActivity() {
       axios
@@ -259,6 +262,8 @@ export default {
         .then(
           function(res) {
             this.history_db = res.data;
+            this.countRow = this.history_db.length;
+            this.returnQuery();
           }.bind(this)
         );
     },
@@ -280,6 +285,8 @@ export default {
         .then(
           function(res) {
             this.history_db = res.data;
+            this.countRow = this.history_db.length;
+            this.returnQuery();
             if (this.history_db != "") {
               this.errorSearching = false;
             } else {

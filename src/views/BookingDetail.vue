@@ -1,6 +1,9 @@
 <template>
   <TablePage>
-    <h3>Booking Detail</h3>
+    <h3>
+      Booking Detail
+      <p class="countQuery">({{ countRow }})</p>
+    </h3>
     <div class="menu-bar">
       <div>
         <span class="icon-wrap">
@@ -250,6 +253,7 @@ export default {
       check: false,
       filter: "bookingDetailID",
       sort: "bookingDetailID",
+      countRow: "",
       form: {
         bookingDetailID: "",
         guestFirstName: "",
@@ -306,6 +310,7 @@ export default {
         .then(
           function(res) {
             this.booking_db = res.data;
+            this.countRow = this.booking_db.length;
           }.bind(this)
         );
     },
@@ -327,6 +332,7 @@ export default {
         .then(
           function(res) {
             this.booking_db = res.data;
+            this.countRow = this.booking_db.length;
             if (this.booking_db != "") {
               this.errorSearching = false;
             } else {
@@ -435,6 +441,10 @@ export default {
 h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
+}
+.countQuery {
+  display: inline-block;
+  font-size: 25px;
 }
 .icon-wrap {
   position: absolute;

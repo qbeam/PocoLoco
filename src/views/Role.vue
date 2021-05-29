@@ -1,7 +1,9 @@
 <template>
   <TablePage>
-    <h3>Role</h3>
-    <div class="menu-bar">
+    <h3>
+      Role
+      <p class="countQuery">({{ countRow }})</p>
+    </h3>    <div class="menu-bar">
       <div>
         <span class="icon-wrap">
           <i class="fa fa-search fa-1x"></i>
@@ -168,6 +170,7 @@ export default {
       selectOption,
       colNames,
       errorSearching: false,
+      countRow: "",
 
       role_db: "",
       departmentID: null,
@@ -275,6 +278,7 @@ export default {
         .then(
           function(res) {
             this.role_db = res.data;
+            this.countRow = this.role_db.length;
             if (this.role_db != "") {
               this.errorSearching = false;
             } else {
@@ -360,6 +364,7 @@ export default {
         .then(
           function(res) {
             this.role_db = res.data;
+            this.countRow = this.role_db.length;
           }.bind(this)
         );
     },
@@ -371,6 +376,10 @@ export default {
 h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
+}
+.countQuery {
+  display: inline-block;
+  font-size: 25px;
 }
 .icon-wrap {
   position: absolute;

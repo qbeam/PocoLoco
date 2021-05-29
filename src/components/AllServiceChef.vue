@@ -161,6 +161,7 @@ export default {
       sortDirection: "down",
       errorSearching: false,
       check: false,
+      countRow:"",
       form: {
         serviceID: "",
         type: "",
@@ -204,6 +205,9 @@ export default {
         this.sort = "servicePrice";
       }
     },
+    returnQuery() {
+      this.$emit("countQuery", this.countRow);
+    },
     getAllService() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_allServiceChef.php", {
@@ -212,6 +216,8 @@ export default {
         .then(
           function(res) {
             this.service_db = res.data;
+            this.countRow = this.service_db.length;
+            this.returnQuery();                    
           }.bind(this)
         );
     },
@@ -271,6 +277,8 @@ export default {
           function(res) {
             console.log(res);
             this.service_db = res.data;
+            this.countRow = this.service_db.length;
+            this.returnQuery();                     
             if (this.service_db != "") {
               this.errorSearching = false;
             } else {

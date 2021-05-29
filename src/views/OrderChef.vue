@@ -1,6 +1,9 @@
 <template>
   <TablePage>
-    <h3>Order</h3>
+    <h3>
+      Order
+      <p class="countQuery">({{ countRow }})</p>
+    </h3>
     <div class="menu-bar">
       <AddButton
         :style="{ position: 'fixed', right: '5%', top: '80px' }"
@@ -112,6 +115,7 @@ export default {
       noOrder: false,
       order_db: "",
       check: false,
+      countRow: "",
     };
   },
   created() {
@@ -139,6 +143,7 @@ export default {
         .then(
           function(res) {
             this.order_db = res.data;
+            this.countRow = this.order_db.length;
             if (this.order_db != "") {
               this.noOrder = false;
             } else {
@@ -184,6 +189,10 @@ export default {
 h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
+}
+.countQuery {
+  display: inline-block;
+  font-size: 25px;
 }
 .icon-wrap {
   position: absolute;

@@ -21,7 +21,7 @@
   </div>
 
   <SearchError v-if="errorSearching" />
-  <table class="search-table">
+  <table v-if="service_db.length !== 0" class="search-table">
     <tr>
       <th v-if="width > 700">Service ID</th>
       <th>Name</th>
@@ -168,6 +168,7 @@ export default {
       roomID: "",
       search: "",
       service_db: "",
+      errorSearching: false,
       amount: [],
       totalPrice: 0,
       amount_insert: 0,
@@ -175,6 +176,7 @@ export default {
       total_insert: "",
       count_success: 0,
       count_fail: 0,
+      countRow: "",
       item: {
         id: "",
         name: "",
@@ -195,7 +197,9 @@ export default {
     pageReturn(page) {
       this.currentPage = page;
     },
-
+    returnQuery() {
+      this.$emit("countQuery", this.countRow);
+    },
     getAllService() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_orderServiceMaid.php", {
@@ -204,6 +208,8 @@ export default {
         .then(
           function(res) {
             this.service_db = res.data;
+            this.countRow = this.service_db.length;
+            this.returnQuery(); 
           }.bind(this)
         );
     },
@@ -216,7 +222,15 @@ export default {
         })
         .then(
           function(res) {
+            console.log(res);
             this.service_db = res.data;
+            this.countRow = this.service_db.length;
+            this.returnQuery();            
+            if (this.service_db != "") {
+              this.errorSearching = false;
+            } else {
+              this.errorSearching = true;
+            }
           }.bind(this)
         );
     },

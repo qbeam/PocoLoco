@@ -1,6 +1,9 @@
 <template>
   <TablePage>
-    <h3>Customer</h3>
+    <h3>
+      Customer
+      <p class="countQuery">({{ countRow }})</p>
+    </h3>
     <div class="menu-bar">
       <div>
         <span class="icon-wrap">
@@ -243,6 +246,7 @@ export default {
       closeTable: false,
       isSearch: false,
       sortDirection: "down",
+      countRow: "",
       form: {
         rank: "",
         customerID: "",
@@ -300,6 +304,7 @@ export default {
     },
 
     selectionFilter(value) {
+      console.log("Filter", value);
       if (value === selectOption[0]) {
         this.filter = "rank";
       }
@@ -348,6 +353,7 @@ export default {
         .then(
           function(res) {
             this.customer_db = res.data;
+            this.countRow = this.customer_db.length;
             this.isSearch = false;
             if (this.customer_db != "") {
               this.errorSearching = false;
@@ -370,6 +376,7 @@ export default {
         .then(
           function(res) {
             this.customer_db = res.data;
+            this.countRow = this.customer_db.length;
             this.isSearch = true;
             if (this.customer_db != "") {
               this.errorSearching = false;
@@ -435,6 +442,10 @@ export default {
 h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
+}
+.countQuery {
+  display: inline-block;
+  font-size: 25px;
 }
 h4 {
   font-size: 20px;

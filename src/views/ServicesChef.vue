@@ -1,6 +1,9 @@
 <template>
   <TablePage>
-    <h3>Services</h3>
+    <h3>
+      Services
+      <p class="countQuery">({{ countRow }})</p>
+    </h3>
     <div>
       <button
         class="menu-button"
@@ -18,9 +21,9 @@
     </div>
 
     <div class="inner-container">
-      <AllServiceChef v-if="selected == menus[0]" />
-      <OrderServiceChef v-if="selected == menus[1]" />
-      <ServiceActivityChef v-if="selected == menus[2]" />
+      <AllServiceChef @countQuery="countQuery" v-if="selected == menus[0]" />
+      <OrderServiceChef @countQuery="countQuery" v-if="selected == menus[1]" />
+      <ServiceActivityChef @countQuery="countQuery" v-if="selected == menus[2]" />
     </div>
   </TablePage>
 </template>
@@ -45,11 +48,15 @@ export default {
     return {
       menus,
       selected: menus[1],
+      countRow: "",
     };
   },
   methods: {
     selectMenu(menu) {
       this.selected = menu;
+    },
+    countQuery(value) {
+      this.countRow = value;
     },
   },
 };
@@ -59,6 +66,10 @@ export default {
 h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
+}
+.countQuery {
+  display: inline-block;
+  font-size: 25px;
 }
 .menu-button {
   width: 150px;

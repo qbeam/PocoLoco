@@ -1,6 +1,9 @@
 <template>
   <TablePage>
-    <h3>Promotions</h3>
+    <h3>
+      Promotions
+      <p class="countQuery">({{ countRow }})</p>
+    </h3>
     <div class="menu-bar">
       <div>
         <span class="icon-wrap">
@@ -283,6 +286,7 @@ export default {
       season_db: "",
       roomtype_db: "",
       check: false,
+      countRow:"",
       form: {
         promotionID: "",
         season: "",
@@ -350,6 +354,7 @@ export default {
         .then(
           function(res) {
             this.promotion_db = res.data;
+            this.countRow = this.promotion_db.length;
           }.bind(this)
         );
     },
@@ -409,6 +414,7 @@ export default {
         .then(
           function(res) {
             this.promotion_db = res.data;
+            this.countRow = this.promotion_db.length;
             if (this.promotion_db != "") {
               this.errorSearching = false;
             } else {
@@ -532,6 +538,10 @@ export default {
 h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
+}
+.countQuery {
+  display: inline-block;
+  font-size: 25px;
 }
 h4 {
   font-size: 20px;

@@ -175,6 +175,7 @@ export default {
       total_insert: "",
       count_success: 0,
       count_fail: 0,
+      countRow:"",
       item: {
         id: "",
         name: "",
@@ -195,7 +196,9 @@ export default {
     pageReturn(page) {
       this.currentPage = page;
     },
-
+    returnQuery() {
+      this.$emit("countQuery", this.countRow);
+    },
     getAllService() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_orderService.php", {
@@ -204,6 +207,8 @@ export default {
         .then(
           function(res) {
             this.service_db = res.data;
+            this.countRow = this.service_db.length;
+            this.returnQuery(); 
           }.bind(this)
         );
     },
@@ -217,6 +222,8 @@ export default {
         .then(
           function(res) {
             this.service_db = res.data;
+            this.countRow = this.service_db.length;
+            this.returnQuery(); 
           }.bind(this)
         );
     },

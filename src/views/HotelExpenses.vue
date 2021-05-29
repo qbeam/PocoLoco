@@ -1,6 +1,9 @@
 <template>
   <TablePage>
-    <h3>Hotel Expenses</h3>
+    <h3>
+      Hotel Expenses
+      <p class="countQuery">({{ countRow }})</p>
+    </h3>
     <div class="menu-bar">
       <div>
         <span class="icon-wrap">
@@ -301,6 +304,7 @@ export default {
       sort: "expenseDate",
       filter: "em_firstName",
       expenseDetail_db: "",
+      countRow: "",
       form: {
         expenseID: "",
         employeeID: "",
@@ -405,6 +409,7 @@ export default {
         .then(
           function(res) {
             this.expenseDetail_db = res.data;
+            this.countRow = this.expenseDetail_db.length;
             if (this.expenseDetail_db != "") {
               this.errorSearching = false;
             } else {
@@ -431,11 +436,10 @@ export default {
             detail: this.form.detail,
             expense: this.form.expense,
             expenseDate: this.form.expenseDate,
-            
           })
           .then(
             function(res) {
-            console.log(this.form.type);
+              console.log(this.form.type);
               if (res.data.success == true) {
                 alert(res.data.message);
                 this.resetData();
@@ -468,6 +472,7 @@ export default {
         .then(
           function(res) {
             this.expenseDetail_db = res.data;
+            this.countRow = this.expenseDetail_db.length;
             if (this.expenseDetail_db != "") {
               this.errorSearching = false;
             } else {
@@ -556,6 +561,10 @@ export default {
 h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
+}
+.countQuery {
+  display: inline-block;
+  font-size: 25px;
 }
 h4 {
   font-size: 20px;
