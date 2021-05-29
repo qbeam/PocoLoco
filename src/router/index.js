@@ -27,6 +27,7 @@ import MyAccountRole from "../views/MyAccountRole.vue";
 import MyAccountProfile from "../views/MyAccountProfile.vue";
 import OrderMaid from "../views/OrderMaid.vue";
 import OrderChef from "../views/OrderChef.vue";
+import Payment from '../views/Payment.vue';
 
 const routes = [
   {
@@ -169,6 +170,11 @@ const routes = [
     name: "OrderChef",
     component: OrderChef,
   },
+  {
+    path: '/Payment',
+    name: 'Payment',
+    component: Payment
+  }
 ];
 
 const router = createRouter({

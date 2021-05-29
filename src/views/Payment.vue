@@ -1,0 +1,95 @@
+<template>
+  <TablePage>
+    <h3>Payment</h3>
+    <div>
+      <button
+        class="menu-button"
+        v-for="(menu, i) in menus"
+        :key="i"
+        @click="selectMenu(menu)"
+        :style="
+          menu == selected
+            ? { borderBottom: '5px solid var(--primary-blue)' }
+            : {}
+        "
+      >
+        {{ menu }}
+      </button>
+    </div>
+
+    <div class="inner-container">
+      <AllPayment v-if="selected == menus[0]" />
+      <DepositPay v-if="selected == menus[1]" />
+      <CheckOutPay v-if="selected == menus[2]" />
+    </div>
+  </TablePage>
+</template>
+
+<script>
+import TablePage from "../components/TablePage.vue";
+import AllPayment from "../components/AllPayment";
+import DepositPay from "../components/DepositPay";
+import CheckOutPay from "../components/CheckOutPay";
+
+const menus = ["All Payment", "Pay Deposit", "Check Out"];
+export default {
+  name: "Payment",
+  components: {
+    TablePage,
+    AllPayment,
+    DepositPay,
+    CheckOutPay,
+  },
+  data() {
+    return {
+      menus,
+      selected: menus[0],
+    };
+  },
+  methods: {
+    selectMenu(menu) {
+      this.selected = menu;
+    },
+  },
+};
+</script>
+
+<style scoped>
+h3 {
+  font-size: 48px;
+  margin: 80px 0 35px 0;
+}
+.menu-button {
+  width: 150px;
+  height: 35px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-color);
+}
+.inner-container {
+  display: flex;
+  height: fit-content;
+  margin-bottom: 50px;
+  padding: 35px 30px;
+  background: white;
+}
+@media (max-width: 1000px) {
+  h3 {
+    margin: 40px 0 20px 0;
+  }
+}
+@media (max-width: 700px) {
+  .inner-container {
+    margin-bottom: 20px;
+  }
+  .menu-button {
+    width: 100px;
+    height: 35px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+}
+</style>
