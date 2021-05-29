@@ -58,9 +58,46 @@
         </td>
         <td>{{ convertDate(booking.checkIn) }}</td>
         <td>{{ convertDate(booking.checkOut) }}</td>
-        <td>{{ booking.status }}</td>
         <td>
+          <i
+                v-if="booking.status == 'Check In'"
+                class="fa fa-circle"
+                :style="{ color: '#24BA45'  }"
+              />
+              <i
+                v-if="booking.status == 'Reserve'"
+                class="fa fa-circle"
+                :style="{ color: '#ffc42e' }"
+              />
+              <i
+                v-if="booking.status == 'Cancel'"
+                class="fa fa-circle"
+                :style="{ color: '#e11818' }"
+              />
+              <i
+                v-if="booking.status == 'Check Out'"
+                class="fa fa-circle"
+                :style="{ color: '#BDBDBD' }"
+              />
+          {{ booking.status }}
+          </td>
+        <td>
+          <div v-if="booking.status == 'Check Out'" class="manage">
+            <button
+                class="manage-button"
+                @click="searchDetail()"
+              >
+                <i class="fa fa-search fa-2x"></i>
+              </button>
+          </div>
           <div v-if="booking.status != 'Check Out'" class="manage">
+            <button
+                class="manage-button"
+                @click="searchDetail()"
+              >
+                <i class="fa fa-search fa-2x"></i>
+              </button>
+            <div class="vl"></div>
             <button class="manage-button" @click="getBookingDetail(booking)">
               <i class="fa fa-pencil fa-2x"></i>
             </button>
@@ -91,6 +128,46 @@
             }
       "
     />
+
+    <Popup :visible="searchVisible" @popReturn="popReturn">
+      <div class="popup-head1">Booking ID: 1000032</div>
+    <div class="popup-head">
+      <div>Name: Ying supavadeeeeeeeeeeee</div>
+      <div>Phone: 0985468485</div>
+    </div>
+    <div class="group-row">
+      <div class="group-item">
+        <p><b>Booking Detail ID: </b>2011544</p>
+        <p><b>Guest Name: </b>Ying supeeek</p>
+        <p><b>Room Number: </b>1215</p>
+        <p><b>Check IN: </b>15/12/1233</p>
+        <p><b>Status: </b>
+        <i
+                v-if="true"
+                class="fa fa-circle"
+                :style="{ color: '#24BA45' }"
+              /> 
+              <i
+                v-if="false"
+                class="fa fa-circle"
+                :style="{ color: '#FFC42E' }"
+              /> 
+              <i
+                v-if="false"
+                class="fa fa-circle"
+                :style="{ color: '#FF0000' }"
+              /> 
+              Check IN</p>
+      </div>
+      <div class="group-item">
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p><b>Room Type: </b>Suite</p>
+        <p><b>Check OUT: </b> 12/1/1234</p>
+        <p><b>Total: </b>2500 Bath</p>
+      </div>
+    </div>
+    </Popup>
 
     <Popup
       :visible="visible"
@@ -235,6 +312,7 @@ export default {
     return {
       currentPage: 1,
       visible: false,
+      searchVisible: false,
       checkInDateConfig: {
         type: "string",
         mask: "YYYY-MM-DD",
@@ -276,6 +354,7 @@ export default {
     },
     popReturn(value) {
       this.visible = value;
+      this.searchVisible = value;
     },
     setActiveArrow(clickedArrow) {
       this.activeArrow = clickedArrow;
@@ -301,7 +380,9 @@ export default {
         this.sort = "status";
       }
     },
-
+    searchDetail() {
+      this.searchVisible = !this.searchVisible;
+    },
     getallBookingDetail() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
@@ -490,6 +571,10 @@ table {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+.fa-circle {
+  font-size: 10px;
+  margin-right: 5px;
 }
 .fa-pencil:hover,
 .fa-trash:hover {
