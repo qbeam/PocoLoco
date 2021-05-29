@@ -121,9 +121,33 @@
         >
           <td>{{ detail.bookingDetailID }}</td>
           <td>{{ detail.roomID }}</td>
-          <td>{{ convertStatus(detail.status) }}</td>
+          <td> 
+            <i
+                v-if="convertStatus(detail.status) == 'Check IN'"
+                class="fa fa-circle"
+                :style="{ color: '#24BA45'  }"
+              />
+              <i
+                v-if="convertStatus(detail.status) == 'Reserve'"
+                class="fa fa-circle"
+                :style="{ color: '#ffc42e' }"
+              />
+              <i
+                v-if="convertStatus(detail.status) == 'Cancel'"
+                class="fa fa-circle"
+                :style="{ color: '#e11818' }"
+              />
+            {{ convertStatus(detail.status) }}
+          </td>
           <td>
             <div class="manage">
+              <button
+                class="manage-button"
+                @click="searchDetail(detail.bookingDetailID)"
+              >
+                <i class="fa fa-search fa-2x"></i>
+              </button>
+              <div class="vl"></div>
               <button
                 class="manage-button"
                 @click="editDetail(detail.bookingDetailID)"
@@ -134,6 +158,46 @@
           </td>
         </tr>
       </table>
+    </Popup>
+
+    <Popup :visible="switchInfoPop" :pop2="true" @pop2Return="pop2Return">
+    <div class="popup-head1">Booking ID: {{ sampleBooking.id }}</div>
+    <div class="popup-head">
+      <div>Name: {{ sampleBooking.name }} {{sampleBooking.lastname}}</div>
+      <div>Phone: {{ sampleBooking.phone }}</div>
+    </div>
+    <div class="group-row">
+      <div class="group-item">
+        <p><b>Booking Detail ID: </b>{{sampleBooking.id}}</p>
+        <p><b>Guest Name: </b>{{ sampleBooking.name }} {{sampleBooking.lastname}}</p>
+        <p><b>Room Number: </b>1215</p>
+        <p><b>Check IN: </b>15/12/1233</p>
+        <p><b>Status: </b>
+        <i
+                v-if="true"
+                class="fa fa-circle"
+                :style="{ color: '#24BA45' }"
+              /> 
+              <i
+                v-if="false"
+                class="fa fa-circle"
+                :style="{ color: '#FFC42E' }"
+              /> 
+              <i
+                v-if="false"
+                class="fa fa-circle"
+                :style="{ color: '#FF0000' }"
+              /> 
+              Check IN</p>
+      </div>
+      <div class="group-item">
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p><b>Room Type: </b>Suite</p>
+        <p><b>Check OUT: </b> 12/1/1234</p>
+        <p><b>Total: </b>2500 Bath</p>
+      </div>
+    </div>
     </Popup>
 
     <Popup
@@ -242,6 +306,14 @@ import axios from "axios";
 
 const selectOption = ["BookingID", "Name", "Phone", "Email"];
 const colNames = ["Booking ID", "Customer Name", "Phone", "Email"];
+const sampleBooking = 
+  {
+    id: 1023654800,
+    name: "ying",
+    lastname: "supa",
+    phone: "0820116484",
+    email: "yingsu@pocoloco.co.th",
+  };
 
 export default {
   name: "Booking",
@@ -262,9 +334,11 @@ export default {
   },
   data() {
     return {
+      sampleBooking,
       colNames,
       currentPage: 1,
       visible: false,
+      switchInfoPop: false,
       switchPop: false,
       status: "",
       errorSearching: false,
@@ -317,6 +391,7 @@ export default {
     },
     pop2Return(value) {
       this.switchPop = value;
+      this.switchInfoPop = value;
       this.visible = !value;
     },
 
@@ -366,12 +441,11 @@ export default {
         .then(
           function(res) {
             this.booking_db = res.data;
+            this.countRow = this.booking_db.length;
             if (this.booking_db != "") {
               this.errorSearching = false;
-              this.countRow = this.booking_db.pop();
             } else {
               this.errorSearching = true;
-              this.countRow = 0;
             }
           }.bind(this)
         );
@@ -458,8 +532,14 @@ export default {
         })
         .then(
           function(res) {
-            this.countRow = res.data.pop();
+            console.log(this.data);
             this.booking_db = res.data;
+            this.countRow = this.booking_db.length;
+            if (this.booking_db != "") {
+              this.errorSearching = false;
+            } else {
+              this.errorSearching = true;
+            }
           }.bind(this)
         );
     },
@@ -475,6 +555,10 @@ export default {
             this.bookingDetail_db = res.data;
           }.bind(this)
         );
+    },
+    searchDetail() {
+      this.visible = !this.visible;
+      this.switchInfoPop = !this.switchInfoPop;
     },
     editDetail(id) {
       this.visible = !this.visible;
@@ -568,6 +652,10 @@ table {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+.fa-circle {
+  font-size: 10px;
+  margin-right: 5px;
 }
 .fa-pencil:hover,
 .fa-trash:hover {
