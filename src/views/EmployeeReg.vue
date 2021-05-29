@@ -365,6 +365,7 @@
       </InnerFormContainer>
       <div class="buttons">
         <DefaultButton
+          @click="backToEmployee"
           :style="{
             background: 'none',
             marginRight: '110px',
@@ -437,6 +438,9 @@ export default {
   },
 
   methods: {
+    backToEmployee() {
+      this.$router.push("/Employee");
+    },
     getRole() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {

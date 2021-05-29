@@ -2,9 +2,11 @@
   <TablePage>
     <h3>
       Employee
-      <p class="countQuery">(62)</p>
+      <p class="countQuery">({{ countRow }})</p>
     </h3>
-    <div v-if="role === 'Business Owner'">
+
+    <!-- Menu For Owner -->
+    <div v-if="role === 'Owner'">
       <button
         class="menu-button"
         v-for="(menu, i) in menus"
@@ -20,25 +22,33 @@
       </button>
     </div>
 
-    <div class="inner-container" v-if="role === 'Business Owner'">
-      <AllEmployee v-if="selected == menus[0]" />
-      <AllEmployeeRole v-if="selected == menus[1]" />
+    <!-- For Business -->
+    <div class="inner-container" v-if="role === 'Owner'">
+      <AllEmployee @countQuery="countQuery" v-if="selected == menus[0]" />
+      <AllEmployeeRole @countQuery="countQuery" v-if="selected == menus[1]" />
     </div>
 
-    <div class="menu-bar" v-if="role === 'Receptionist'">
+    <!-- Menu For Manager -->
+    <div class="menu-bar" v-if="role === 'Manager'">
       <div>
         <span class="icon-wrap">
           <i class="fa fa-search fa-1x"></i>
         </span>
 
-        <input class="search-field" type="text" placeholder="search" />
+        <input
+          class="search-field"
+          v-model="search"
+          type="text"
+          placeholder="search"
+        />
       </div>
       <CustomSelect
         type="Filter"
-        :options="['A', 'B', 'C', 'Sleep tight']"
+        :options="selectOption"
         :style="{ marginRight: '20px' }"
+        @selection="selectionFilter"
       />
-      <DefaultButton type="small">Search</DefaultButton>
+      <DefaultButton @click="searchData" type="small">Search</DefaultButton>
 
       <AddButton
         :style="
@@ -49,7 +59,10 @@
         @click="goToEmployeeReg()"
       />
     </div>
-    <table v-if="sampleEmployee.length !== 0 && role === 'Receptionist'">
+
+    <!-- Employee Table For Manager -->
+    <SearchError v-if="errorSearching" :style="{ marginTop: '80px' }" />
+    <table v-if="employee_db.length !== 0 && role === 'Manager'">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
@@ -65,7 +78,7 @@
       </tr>
 
       <tr
-        v-for="(sampleEmployee, i) in sampleEmployee.slice(
+        v-for="(employee, i) in employee_db.slice(
           currentPage * tableRow - tableRow,
           currentPage * tableRow
         )"
@@ -75,51 +88,50 @@
         <td>
           <div class="profile">
             <i class="table-circle">
-              <img src="../assets/ReceptionistF.png" />
+              <img :src="require(`../assets/${employee.picName}.png`)" />
             </i>
-            <p>{{ sampleEmployee.id }}</p>
+            <p>{{ employee.employeeID }}</p>
           </div>
         </td>
-        <td>{{ sampleEmployee.firstname }} {{ sampleEmployee.lastname }}</td>
-        <td>{{ sampleEmployee.role }}</td>
-        <td>{{ sampleEmployee.salary }}</td>
+        <td>{{ employee.em_name }}</td>
+        <td>{{ employee.roleName }}</td>
+        <td>{{ employee.salary }}</td>
         <td>
           <div>
             <p style="margin-top: 5px; margin-bottom: 2px">
               <i
-                v-if="sampleEmployee.status == 'Employed'"
+                v-if="employee.workStatus == 'Employed'"
                 class="fa fa-circle"
                 :style="{ color: '#24BA45' }"
               />
               <i
-                v-if="sampleEmployee.status == 'Suspended'"
+                v-if="employee.workStatus == 'Suspended'"
                 class="fa fa-circle"
-                :style="{ color: '#FFC42E' }"
+                :style="{ color: 'FFC42E#' }"
               />
               <i
-                v-if="sampleEmployee.status == 'Quited'"
+                v-if="employee.workStatus == 'Quited'"
                 class="fa fa-circle"
                 :style="{ color: '#FF0000' }"
               />
-              {{ sampleEmployee.status }}
+              {{ employee.workStatus }}
             </p>
-            <p class="sub-row">2 year</p>
+            <div v-if="employee.duration == 1 || employee.duration == 0">
+              <p class="sub-row">{{ employee.duration }} year</p>
+            </div>
+            <div v-else>
+              <p class="sub-row">{{ employee.duration }} years</p>
+            </div>
           </div>
         </td>
 
         <td>
           <div class="manage">
-            <button
-              class="manage-button"
-              @click="getSearchRecord(sampleEmployee)"
-            >
+            <button class="manage-button" @click="viewEmployee(employee)">
               <i class="fa fa-search fa-2x"></i>
             </button>
             <div class="vl"></div>
-            <button
-              class="manage-button"
-              @click="getEditRecord(sampleEmployee)"
-            >
+            <button class="manage-button" @click="editEmployee(employee)">
               <i class="fa fa-pencil fa-2x"></i>
             </button>
           </div>
@@ -128,8 +140,9 @@
     </table>
 
     <PaginationBar
-      :pageCount="Math.ceil(sampleEmployee.length / tableRow)"
-      :paginationVisible="sampleEmployee.length > tableRow"
+      v-if="role === 'Manager'"
+      :pageCount="Math.ceil(employee_db.length / tableRow)"
+      :paginationVisible="employee_db.length > tableRow"
       @pageReturn="pageReturn"
       :style="
         width <= 1000
@@ -150,6 +163,7 @@
       "
     />
 
+    <!-- View -->
     <Popup :visible="searchVisible" @popReturn="popReturn">
       <div class="popup-head">
         <div class="group-row">
@@ -157,20 +171,21 @@
             <div class="group-row">
               <div class="group-item-left">
                 <div class="circle">
-                  <img src="../assets/ReceptionistF.png" />
+                  <!-- <img src="../assets/ReceptionistF.png" /> -->
+                  <img :src="require(`../assets/${employee.picName}.png`)" />
                 </div>
               </div>
               <div class="group-item-left" style="margin-top: 7px">
-                {{ employee.id }}
+                {{ employee.employeeID }}
               </div>
             </div>
           </div>
           <div class="group-item">
             <div style="font-size: 20px">
-              {{ employee.firstname }} {{ employee.lastname }}
+              {{ employee.em_name }}
             </div>
             <div style="font-weight: normal; font-size: 18px">
-              {{ employee.role }}
+              {{ employee.roleName }}
             </div>
           </div>
         </div>
@@ -178,26 +193,28 @@
 
       <div class="group-row">
         <div class="group-item">
-          <p>Department: {{ employee.department }}</p>
-          <p>Working time: {{ employee.workingTime }}</p>
-          <p>Identification: {{ employee.identification }}</p>
-          <p>Gender: {{ employee.gender }}</p>
-          <p>Email: {{ employee.email }}</p>
+          <p><b>Department: </b>{{ employee.departmentName }}</p>
+          <p><b>Working time: </b>{{ employee.shift }}</p>
+          <p><b>Identification: </b>{{ employee.identification }}</p>
+          <p><b>Gender: </b>{{ employee.gender }}</p>
+          <p><b>Email: </b>{{ employee.email }}</p>
         </div>
         <div class="group-item">
-          <p>Salary: {{ employee.salary }}</p>
-          <p>Start Date: {{ employee.startDate }}</p>
+          <p><b>Salary: </b>{{ employee.salary }}</p>
+          <p><b>Start Date: </b>{{ convertDate(employee.startDate) }}</p>
           <p>&nbsp;</p>
-          <p>Date of Birth: {{ employee.DOB }}</p>
-          <p>Phone: {{ employee.phone }}</p>
+          <p><b>Date of Birth: </b>{{ convertDate(employee.DOB) }}</p>
+          <p><b>Phone: </b>{{ employee.phone }}</p>
         </div>
       </div>
     </Popup>
+
+    <!-- Edit -->
     <Popup
       :visible="editVisible"
       :buttons="true"
       @popReturn="popReturn"
-      @submit="submit"
+      @submit="updateData"
     >
       <div class="popup-head">
         <div class="group-row">
@@ -205,20 +222,21 @@
             <div class="group-row">
               <div class="group-item-left">
                 <div class="circle">
-                  <img src="../assets/ReceptionistF.png" />
+                  <!-- <img src="../assets/ReceptionistF.png" /> -->
+                  <img :src="require(`../assets/${form.picName}.png`)" />
                 </div>
               </div>
               <div class="group-item-left" style="margin-top: 7px">
-                {{ employee.id }}
+                {{ form.employeeID }}
               </div>
             </div>
           </div>
           <div class="group-item">
             <div style="font-size: 20px">
-              {{ employee.firstname }} {{ employee.lastname }}
+              {{ form.em_name }}
             </div>
             <div style="font-weight: normal; font-size: 18px">
-              {{ employee.role }}
+              {{ form.roleName }}
             </div>
           </div>
         </div>
@@ -227,7 +245,9 @@
       <h4 style="margin-bottom: 35px">Shift</h4>
       <CustomSelect
         type="Grey"
-        :options="['05:00 - 13:00', '13:00 - 21:00', '21:00 - 05:00']"
+        :options="selectShift"
+        :defaultChoice="form.shift"
+        @selection="selectionShift"
         :style="{ marginRight: '20px' }"
       />
 
@@ -235,17 +255,17 @@
       <div class="choices">
         <label class="container1">
           Employed
-          <input type="radio" value="Employed" v-model="employee.status" />
+          <input type="radio" value="Employed" v-model="form.workStatus" />
           <span class="checkmark"></span>
         </label>
         <label class="container2"
           >Suspended
-          <input type="radio" value="Suspended" v-model="employee.status" />
+          <input type="radio" value="Suspended" v-model="form.workStatus" />
           <span class="checkmark"></span>
         </label>
         <label class="container3"
           >Quited
-          <input type="radio" value="Quited" v-model="employee.status" />
+          <input type="radio" value="Quited" v-model="form.workStatus" />
           <span class="checkmark"></span>
         </label>
       </div>
@@ -265,77 +285,23 @@ import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 import SortingArrow from "../components/SortingArrow";
+import SearchError from "../components/SearchError";
+import axios from "axios";
 
 const menus = ["All Employees", "All Employees Roles"];
 
-const colNames = ["EmployeeID", "Name", "Role", "Salary", "Status"];
-
-const sampleEmployee = [
-  {
-    id: 120001,
-    firstname: "Supavadee",
-    lastname: "Phusanam",
-    role: "Manager",
-    department: "Kitchen",
-    salary: 30000,
-    workingTime: "1",
-    startDate: "22/06/2015",
-    identification: 1201230121201,
-    gender: "Female",
-    DOB: "19/08/2000",
-    email: "yingsu@gmail.com",
-    phone: "0820116484",
-    status: "Employed",
-  },
-  {
-    id: 120001,
-    firstname: "Supavadeesa",
-    lastname: "Phusanamsad",
-    role: "Manager",
-    department: "Kitchen",
-    salary: 30000,
-    workingTime: "1",
-    startDate: "22/06/2015",
-    identification: 1201230121201,
-    gender: "Female",
-    DOB: "19/08/2000",
-    email: "yingsu@gmail.com",
-    phone: "0820116484",
-    status: "Employed",
-  },
-  {
-    id: 120001,
-    firstname: "Supavadee",
-    lastname: "Phusanam",
-    role: "Manager",
-    department: "Kitchen",
-    salary: 30000,
-    workingTime: "1",
-    startDate: "22/06/2015",
-    identification: 1201230121201,
-    gender: "Female",
-    DOB: "19/08/2000",
-    email: "yingsu@gmail.com",
-    phone: "0820116484",
-    status: "Suspended",
-  },
-  {
-    id: 120001,
-    firstname: "Supavadee",
-    lastname: "Phusanam",
-    role: "Manager",
-    department: "Kitchen",
-    salary: 30000,
-    workingTime: "1",
-    startDate: "22/06/2015",
-    identification: 1201230121201,
-    gender: "Female",
-    DOB: "19/08/2000",
-    email: "yingsu@gmail.com",
-    phone: "0820116484",
-    status: "Quited",
-  },
+const selectOption = [
+  "Employee ID",
+  "Name",
+  "Role",
+  "Salary",
+  "Status",
+  "Duration",
 ];
+
+const colNames = ["Employee ID", "Name", "Role", "Salary", "Status"];
+const selectShift = ["05:00 - 13:00", "13:00 - 21:00", "21:00 - 05:00"];
+const workStatus = ["Employed", "Suspended", "Quited"];
 
 export default {
   name: "Employee",
@@ -349,6 +315,7 @@ export default {
     Popup,
     CustomSelect,
     SortingArrow,
+    SearchError,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -357,20 +324,62 @@ export default {
   },
   data() {
     return {
-      sampleEmployee,
       colNames,
       menus,
       selected: menus[0],
       employee: [],
+      errorSearching: false,
       searchVisible: false,
       editVisible: false,
       currentPage: 1,
       activeArrow: 0,
-      sortDirection: "down",
-      role: "Business Owner",
+      sortDirection: "up",
+      //role: "Manager",
+      role: "Owner",
+      departmentName: "Receptionist",
+      countRow: "",
+
+      selectOption,
+      selectShift,
+      sort: "employeeID",
+      filter: "employeeID",
+      search: "",
+      employee_db: "",
+      department_db: "",
+      role_db: "",
+      totalData: 0,
+      isView: false,
+      isEdit: false,
+
+      form: {
+        employeeID: "",
+        em_name: "",
+        firstName: "",
+        lastName: "",
+        salary: "",
+        workStatus: "",
+        identification: "",
+        gender: "",
+        DOB: "",
+        email: "",
+        phone: "",
+        workTime: "",
+        startDate: "",
+        roleName: "",
+        department: "",
+        shift: "",
+      },
     };
   },
+
+  created() {
+    this.getAllEmployee();
+  },
+
   methods: {
+    goToEmployeeReg() {
+      this.$router.push("/EmployeeReg");
+    },
     selectMenu(menu) {
       this.selected = menu;
     },
@@ -381,26 +390,212 @@ export default {
       this.searchVisible = value;
       this.editVisible = value;
     },
-    submit(value) {
-      this.editVisible = value;
-    },
     setActiveArrow(clickedArrow) {
       this.activeArrow = clickedArrow;
+      this.setSort(clickedArrow);
+      this.searchData();
     },
     sortReturn(direction) {
       this.sortDirection = direction;
     },
-    getSearchRecord(employees) {
+    countQuery(value) {
+      this.countRow = value;
+    },
+    setSort(click) {
+      if (click == 0) {
+        this.sort = "employeeID";
+      } else if (click == 1) {
+        this.sort = "em_name";
+      } else if (click == 2) {
+        this.sort = "roleName";
+      } else if (click == 3) {
+        this.sort = "salary";
+      } else if (click == 4) {
+        this.sort = "duration";
+      }
+    },
+
+    viewEmployee(employees) {
       this.searchVisible = !this.searchVisible;
       this.employee = employees;
     },
-    getEditRecord(employees) {
-      this.editVisible = !this.editVisible;
-      this.employee = employees;
-    },
-    deleteData() {},
     goToEmployeeReg() {
       this.$router.push("/EmployeeReg");
+    },
+
+    getAllEmployee() {
+      console.log(this.departmentName);
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_employee.php", {
+          action: "getEmployeeManager",
+          department: this.departmentName,
+        })
+        .then(
+          function(res) {
+            console.log(res);
+            this.employee_db = res.data;
+            this.countRow = this.employee_db.length;
+            if (this.employee_db != "") {
+              this.errorSearching = false;
+            } else {
+              this.errorSearching = true;
+            }
+          }.bind(this)
+        );
+    },
+
+    getRole(departmentName) {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_employee.php", {
+          action: "getRole",
+          department: departmentName,
+        })
+        .then(
+          function(res) {
+            this.role_db = res.data;
+          }.bind(this)
+        );
+    },
+
+    editEmployee(employee) {
+      this.editVisible = !this.editVisible;
+      this.getRole(employee.departmentName);
+      this.getData(employee);
+    },
+
+    getData(employee) {
+      this.form.employeeID = employee.employeeID;
+      this.form.em_name = employee.em_name;
+      this.form.salary = employee.salary;
+      this.form.workStatus = employee.workStatus;
+      this.form.identification = employee.identification;
+      this.form.gender = employee.gender;
+      this.form.DOB = employee.DOB;
+      this.form.email = employee.email;
+      this.form.phone = employee.phone;
+      this.form.workTime = employee.workTime;
+      this.form.startDate = employee.startDate;
+      this.form.roleName = employee.roleName;
+      this.form.departmentName = employee.departmentName;
+      this.form.shift = employee.shift;
+      this.form.picName = employee.picName;
+    },
+
+    updateData(value) {
+      this.editVisible = value;
+      this.form.workStatus = this.convertWorkStatus(this.form.workStatus);
+      this.form.shift = this.converShift(this.form.shift);
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_employee.php", {
+          action: "updateDataManager",
+          employeeID: this.form.employeeID,
+          shift: this.form.shift,
+          workStatus: this.form.workStatus,
+        })
+        .then(
+          function(res) {
+            console.log(res.data);
+            if (res.data.success == true) {
+              alert(res.data.message);
+              this.getAllEmployee();
+            } else {
+              alert(res.data.message);
+            }
+          }.bind(this)
+        );
+    },
+
+    searchData() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_employee.php", {
+          action: "searchDataManager",
+          search: this.search,
+          filter: this.filter,
+          sort: this.sort,
+          direction: this.sortDirection,
+          department: this.departmentName,
+        })
+        .then(
+          function(res) {
+            console.log(res);
+            this.employee_db = res.data;
+            this.countRow = this.employee_db.length;
+            if (this.employee_db != "") {
+              this.errorSearching = false;
+            } else {
+              this.errorSearching = true;
+            }
+          }.bind(this)
+        );
+    },
+
+    convertWorkStatus(s) {
+      var status = "";
+      if (s == workStatus[0]) {
+        status = "E";
+      } else if (s == workStatus[1]) {
+        status = "S";
+      } else if (s == workStatus[2]) {
+        status = "Q";
+      }
+      return status;
+    },
+
+    convertDate(date) {
+      var datearray = date.split("-");
+      var newdate = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
+      return newdate;
+    },
+
+    yearsDiff(startDate) {
+      startDate = new Date(startDate);
+      var today = new Date();
+
+      var yearsDiff = today.getFullYear() - startDate.getFullYear();
+      return yearsDiff;
+    },
+
+    selectionFilter(value) {
+      if (value === selectOption[0]) {
+        this.filter = "employeeID";
+      }
+      if (value === selectOption[1]) {
+        this.filter = "em_name";
+      }
+      if (value === selectOption[2]) {
+        this.filter = "roleName";
+      }
+      if (value === selectOption[3]) {
+        this.filter = "salary";
+      }
+      if (value === selectOption[4]) {
+        this.filter = "workStatus";
+      }
+      if (value === selectOption[5]) {
+        this.filter = "duration";
+      }
+    },
+    selectionDepartment(value) {
+      this.form.department = value;
+      this.getRole(value);
+    },
+    selectionRole(value) {
+      this.roleName = value;
+    },
+    selectionShift(value) {
+      this.form.shift = value;
+    },
+    converShift(value) {
+      var shift = 0;
+      if (value == selectShift[0]) {
+        shift = 1;
+      } else if (value == selectShift[1]) {
+        shift = 2;
+      } else if (value == selectShift[3]) {
+        shift = 3;
+      }
+
+      return shift;
     },
   },
 };
@@ -485,8 +680,8 @@ table {
   justify-content: center;
 }
 .circle {
-  width: 25px;
-  height: 25x;
+  width: 45px;
+  height: 45px;
   background: var(--primary-yellow);
   display: flex;
   justify-content: center;

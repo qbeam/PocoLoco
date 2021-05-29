@@ -15,16 +15,18 @@
         class="search-field"
         type="text"
         placeholder="search"
+        v-model="search"
         :style="{ marginBottom: '0' }"
       />
     </div>
     <div class="menu-button">
       <CustomSelect
         type="Filter"
-        :options="['A', 'B', 'C', 'Sleep tight']"
+        :options="selectOption"
         :style="{ marginRight: '20px' }"
+        @selection="selectionFilter"
       />
-      <DefaultButton type="small"> Search </DefaultButton>
+      <DefaultButton @click="searchData()" type="small"> Search </DefaultButton>
     </div>
     <AddButton
       @click="goToAddRole()"
@@ -33,7 +35,7 @@
   </div>
 
   <div class="table-container">
-    <table v-if="sampleRole.length !== 0">
+    <table v-if="role_db.length !== 0">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
@@ -49,26 +51,26 @@
       </tr>
 
       <tr
-        v-for="(sampleRole, i) in sampleRole.slice(
+        v-for="(role, i) in role_db.slice(
           currentPage * tableRow - tableRow,
           currentPage * tableRow
         )"
         :key="i"
         class="row"
       >
-        <td>{{ sampleRole.id }}</td>
-        <td>{{ sampleRole.roleName }}</td>
-        <td>{{ sampleRole.department }}</td>
-        <td>{{ sampleRole.salary }}</td>
-        <td>{{ sampleRole.bonusRate }}</td>
+        <td>{{ role.roleID }}</td>
+        <td>{{ role.roleName }}</td>
+        <td>{{ role.departmentName }}</td>
+        <td>{{ role.salary }}</td>
+        <td>{{ role.bonusRate }}</td>
 
         <td>
           <div class="manage">
-            <button class="manage-button" @click="getEditRecord(sampleRole)">
+            <button class="manage-button" @click="getRecord(role.roleID)">
               <i class="fa fa-pencil fa-2x"></i>
             </button>
             <div class="vl"></div>
-            <button class="manage-button">
+            <button class="manage-button" @click="deleteData(role)">
               <i class="fa fa-trash fa-2x"></i>
             </button>
           </div>
@@ -77,8 +79,8 @@
     </table>
   </div>
   <PaginationBar
-    :pageCount="Math.ceil(sampleRole.length / tableRow)"
-    :paginationVisible="sampleRole.length > tableRow"
+    :pageCount="Math.ceil(role_db.length / tableRow)"
+    :paginationVisible="role_db.length > tableRow"
     @pageReturn="pageReturn"
   />
 
@@ -89,27 +91,27 @@
     @submit="submit"
     :style="{ top: '0', left: '0', margin: '0' }"
   >
-  <div class="popup-head">
-        <div>Department: {{ role.department }}</div>
-        <div>Role: {{ role.roleName }}</div>
-      </div>
-      <p>Salary</p>
-      <div :style="{ paddingBottom: '20px' }">
-        <input
-          type="text"
-          v-model="role.salary"
-          :placeholder="salary"
-          :style="{ marginRight: '10px' }"
-        />
-        Baht
-      </div>
-      <p>Bonus Rate</p>
+    <div class="popup-head">
+      <div>Department: {{ departmentID }}</div>
+      <div>Role: {{ roleName }}</div>
+    </div>
+    <p>Salary</p>
+    <div :style="{ paddingBottom: '20px' }">
       <input
         type="text"
-        v-model="role.bonusRate"
-        :placeholder="bonusRate"
-        :style="{ width: '95%', marginBottom: '30px' }"
+        v-model="salary"
+        :placeholder="salary"
+        :style="{ marginRight: '10px' }"
       />
+      Baht
+    </div>
+    <p>Bonus Rate</p>
+    <input
+      type="text"
+      v-model="bonusRate"
+      :placeholder="bonusRate"
+      :style="{ width: '95%', marginBottom: '30px' }"
+    />
   </Popup>
 </template>
 
@@ -121,59 +123,11 @@ import { useScreenWidth } from "../composables/useScreenWidth";
 import PaginationBar from "../components/PaginationBar";
 import Popup from "../components/Popup";
 import SortingArrow from "../components/SortingArrow";
+import SearchError from "../components/SearchError";
+import axios from "axios";
 
 const colNames = ["RoleID", "Role Name", "Department", "Salary", "Bonus Rate"];
-const sampleRole = [
-  {
-    id: 11,
-    roleName: "Manager",
-    department: "Kitchen",
-    salary: 30000,
-    bonusRate: 0.5,
-  },
-  {
-    id: 11,
-    roleName: "Manager",
-    department: "Kitchen",
-    salary: 30000,
-    bonusRate: 0.5,
-  },
-  {
-    id: 11,
-    roleName: "Manager",
-    department: "Kitchen",
-    salary: 30000,
-    bonusRate: 0.5,
-  },
-  {
-    id: 11,
-    roleName: "Manager",
-    department: "Kitchen",
-    salary: 30000,
-    bonusRate: 0.5,
-  },
-  {
-    id: 11,
-    roleName: "Manager",
-    department: "Kitchen",
-    salary: 30000,
-    bonusRate: 0.5,
-  },
-  {
-    id: 11,
-    roleName: "Manager",
-    department: "Kitchen",
-    salary: 30000,
-    bonusRate: 0.5,
-  },
-  {
-    id: 11,
-    roleName: "Manager",
-    department: "Kitchen",
-    salary: 30000,
-    bonusRate: 0.5,
-  },
-];
+const selectOption = ["Name", "Role ID", "Department", "Salary", "Borate Rate"];
 
 export default {
   name: "AllEmployeeRole",
@@ -183,6 +137,8 @@ export default {
     AddButton,
     PaginationBar,
     Popup,
+    CustomSelect,
+    SearchError,
     SortingArrow,
   },
   setup() {
@@ -191,16 +147,38 @@ export default {
   },
   data() {
     return {
-      sampleRole,
+      selectOption,
       colNames,
       role: [],
       editVisible: false,
+      numberPerPage: 4,
       currentPage: 1,
       activeArrow: 0,
       tableRow: 10,
       sortDirection: "down",
+      errorSearching: false,
+      countRow: "",
+
+      role_db: "",
+      departmentID: null,
+      roleID: null,
+      roleName: "",
+      salary: 0,
+      bonusRate: 0,
+
+      sort: "roleID",
+      filter: "roleName",
+      search: "",
+      status: "save",
+      isEdit: false,
+      check: false,
     };
   },
+
+  created() {
+    this.getAllRole();
+  },
+
   methods: {
     pageReturn(page) {
       this.currentPage = page;
@@ -211,20 +189,169 @@ export default {
     },
     submit(value) {
       this.editVisible = value;
+      this.submitData();
     },
     setActiveArrow(clickedArrow) {
       this.activeArrow = clickedArrow;
-      console.log(this.sampleEmployee.id);
+      this.setSort(clickedArrow);
+      this.searchData();
     },
     sortReturn(direction) {
       this.sortDirection = direction;
     },
-    getEditRecord(role) {
+    setSort(click) {
+      if (click == 0) {
+        this.sort = "roleID";
+      } else if (click == 1) {
+        this.sort = "departmentName";
+      } else if (click == 2) {
+        this.sort = "roleName";
+      } else if (click == 3) {
+        this.sort = "salary";
+      } else if (click == 4) {
+        this.sort = "bonusRate";
+      }
+    },
+
+    selectionFilter(value) {
+      if (value === selectOption[0]) {
+        this.filter = "roleName";
+      }
+      if (value === selectOption[1]) {
+        this.filter = "roleID";
+      }
+      if (value === selectOption[2]) {
+        this.filter = "departmentName";
+      }
+      if (value === selectOption[3]) {
+        this.filter = "salary";
+      }
+      if (value === selectOption[4]) {
+        this.filter = "bonusRate";
+      }
+    },
+    // getEditRecord(role) {
+    //   this.editVisible = !this.editVisible;
+    //   this.role = role;
+    // },
+
+    clearValue() {
+      this.roleID = "";
+      this.salary = "";
+      this.bonusRate = "";
+      this.departmentID = "";
+      this.roleName = "";
+      this.isEdit = false;
+    },
+    returnQuery() {
+      this.$emit("countQuery", this.countRow);
+    },
+    searchData() {
+      console.log("search", this.search);
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_role.php", {
+          action: "getSearchData",
+          search: this.search,
+          sort: this.sort,
+          filter: this.filter,
+          direction: this.sortDirection,
+        })
+        .then(
+          function(res) {
+            this.role_db = res.data;
+            this.countRow = this.role_db.length;
+            this.returnQuery();
+            if (this.role_db != "") {
+              this.errorSearching = false;
+            } else {
+              this.errorSearching = true;
+            }
+          }.bind(this)
+        );
+    },
+    getRecord(roleID) {
+      console.log("edit");
       this.editVisible = !this.editVisible;
-      this.role = role;
+      this.isEdit = true;
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_role.php", {
+          action: "getEditUser",
+          roleID: roleID,
+        })
+        .then(
+          function(res) {
+            this.roleID = res.data.roleID;
+            this.salary = res.data.salary;
+            this.bonusRate = res.data.bonusRate;
+            this.departmentID = res.data.departmentID;
+            this.roleName = res.data.roleName;
+          }.bind(this)
+        );
+    },
+    deleteData(role) {
+      if (confirm("Delete '" + role.roleName + "' ?")) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_role.php", {
+            action: "deleteData",
+            roleID: role.roleID,
+          })
+          .then(
+            function(res) {
+              alert(res.data.message);
+              this.getAllRole();
+            }.bind(this)
+          );
+      }
+    },
+    submitData() {
+      this.check = this.salary != "" && this.bonusRate != "";
+      if (this.check && this.isEdit) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_role.php", {
+            roleID: this.roleID,
+            salary: this.salary,
+            bonusRate: this.bonusRate,
+            departmentID: this.departmentID,
+            roleName: this.roleName,
+            action: "update",
+          })
+          .then(
+            function(res) {
+              alert(res.data.message);
+              this.getAllRole();
+              this.clearValue();
+            }.bind(this)
+          );
+      }
     },
     goToAddRole() {
       this.$router.push("/AddRole");
+    },
+    navReturn(isOpen) {
+      this.navOpen = isOpen;
+    },
+    onResize() {
+      this.windowWidth = self.innerWidth;
+      this.windowHeight = self.innerHeight;
+      this.numberPerPage = Math.floor((this.windowHeight - 450) / 35);
+      if (this.windowWidth <= 1000) {
+        this.visible = false;
+      }
+    },
+
+    getAllRole() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_role.php", {
+          action: "getAll",
+        })
+        .then(
+          function(res) {
+            console.log(res);
+            this.role_db = res.data;
+            this.countRow = this.role_db.length;
+            this.returnQuery();
+          }.bind(this)
+        );
     },
   },
 };
@@ -459,7 +586,7 @@ input {
   .menu-bar {
     flex-direction: column;
   }
-  .menu-buttons {
+  .menu-button {
     margin-top: 40px;
   }
 }
