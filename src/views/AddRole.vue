@@ -186,8 +186,8 @@ export default {
   },
   methods: {
     backToRolePage() {
-         this.$router.push("/Role");
-       },
+      this.$router.push("/Employee");
+    },
     fetch() {
       axios
         .get("http://localhost:8080/PocoLoco_db/api_addRole.php")
@@ -198,7 +198,7 @@ export default {
           console.log("ERROR");
         });
     },
-    validatecCheck() {
+    validateCheck() {
       if (this.details.departmentID == "") {
         this.departmentError = false;
       }
@@ -223,6 +223,7 @@ export default {
       if (this.details.bonusRate != "") {
         this.bonusRateError = true;
       }
+
       this.check =
         this.departmentError &&
         this.roleNameError &&
@@ -243,9 +244,12 @@ export default {
             salary: this.details.salary,
             bonusRate: this.details.bonusRate,
           })
-          .then(function(res) {
-            console.log(res.data);
-          });
+          .then(
+            function(res) {
+              alert(res.data.message);
+              this.backToRolePage();
+            }.bind(this)
+          );
       }
     },
   },
