@@ -374,6 +374,7 @@ export default {
 
   created() {
     this.getAllEmployee();
+    this.selected = this.$store.state.employeeMenu;
   },
 
   methods: {
@@ -382,6 +383,7 @@ export default {
     },
     selectMenu(menu) {
       this.selected = menu;
+      this.$store.state.employeeMenu = menu;
     },
     pageReturn(page) {
       this.currentPage = page;

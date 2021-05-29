@@ -111,16 +111,22 @@
 
       <div v-if="phoneError">
         <h4>Phone</h4>
-        <input v-model="form.phone" type="number" 
-        onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
-        placeholder="ex. 0812345678" />
+        <input
+          v-model="form.phone"
+          type="number"
+          onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
+          placeholder="ex. 0812345678"
+        />
       </div>
 
       <div v-else>
         <h4 style="color: red">Phone</h4>
-        <input v-model="form.phone" type="number" 
-        onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
-        placeholder="ex. 0812345678" />
+        <input
+          v-model="form.phone"
+          type="number"
+          onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
+          placeholder="ex. 0812345678"
+        />
       </div>
 
       <div v-if="emailError">
@@ -210,8 +216,8 @@ export default {
 
   methods: {
     backToCustomer() {
-        this.$router.push("/Customer");
-      },
+      this.$router.push("/Customer");
+    },
     submitData(e) {
       e.preventDefault();
       this.validate();
@@ -233,6 +239,7 @@ export default {
               if (res.data.success == true) {
                 alert("Saved Successful");
                 this.resetData();
+                this.backToCustomer();
               } else {
                 this.message = res.data.message;
               }
@@ -375,5 +382,5 @@ input[type="number"] {
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
-} 
+}
 </style>
