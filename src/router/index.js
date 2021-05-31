@@ -28,6 +28,7 @@ import MyAccountProfile from "../views/MyAccountProfile.vue";
 import OrderMaid from "../views/OrderMaid.vue";
 import OrderChef from "../views/OrderChef.vue";
 import Payment from '../views/Payment.vue';
+import MyAccount from '../views/MyAccount.vue';
 
 const routes = [
   {
@@ -154,6 +155,11 @@ const routes = [
     path: "/MyAccountRole",
     name: "MyAccountRole",
     component: MyAccountRole,
+  },
+  {
+    path: "/MyAccount",
+    name: "MyAccount",
+    component: MyAccount,
   },
   {
     path: "/MyAccountProfile",
