@@ -1,10 +1,12 @@
-Skip to content Search or jump to… Pulls Issues Marketplace Explore
 <template>
   <SearchError v-if="error" :style="{ marginTop: '80px' }" />
   <div class="search-field">
     <h4>Booking ID</h4>
-    <input type="text" />
-    <DefaultButton type="small" :style="width < 600 ? { width: '100px' } : {}"
+    <input v-model="bookingID" type="text" />
+    <DefaultButton
+      @click="getInformation"
+      type="small"
+      :style="width < 600 ? { width: '100px' } : {}"
       >Search</DefaultButton
     >
   </div>
@@ -15,41 +17,40 @@ Skip to content Search or jump to… Pulls Issues Marketplace Explore
         Customer ID: {{ customerID }}
       </div>
       <div class="item" :style="width > 800 ? { marginRight: '10px' } : {}">
-        Name: {{ customerName }}
+        Name: {{ firstName }} {{ lastName }}
       </div>
       <div class="item">Phone: {{ phone }}</div>
     </div>
   </div>
+
   <div class="table-container">
-    <table v-if="bookings.length !== 0 && !error">
+    <table v-if="payment.length !== 0 && !error">
       <tr>
         <th>Room Number</th>
         <th>Room type</th>
         <th>Night</th>
-        <th>Room Price</th>
         <th>Total</th>
       </tr>
 
       <tr
-        v-for="(booking, i) in bookings.slice(
+        v-for="(pay, i) in payment.slice(
           currentPage * tableRow - tableRow,
           currentPage * tableRow
         )"
         :key="i"
         class="row"
       >
-        <td>{{ booking.roomNumber }}</td>
-        <td>{{ booking.type }}</td>
-        <td>{{ booking.day }}</td>
-        <td>{{ booking.price }}</td>
-        <td>{{ booking.day * booking.price }}</td>
+        <td>{{ pay.roomID }}</td>
+        <td>{{ pay.roomType }}</td>
+        <td>{{ pay.day }}</td>
+        <td>{{ pay.price }}</td>
       </tr>
     </table>
   </div>
   <PaginationBar
     v-if="!error"
-    :pageCount="Math.ceil(bookings.length / tableRow)"
-    :paginationVisible="bookings.length > tableRow"
+    :pageCount="Math.ceil(payment.length / tableRow)"
+    :paginationVisible="payment.length > tableRow"
     @pageReturn="pageReturn"
   />
   <div class="payment-action">
@@ -66,7 +67,7 @@ Skip to content Search or jump to… Pulls Issues Marketplace Explore
       <p>Date</p>
       <div class="flex x-full">
         <v-date-picker
-          v-model="paymentDate"
+          v-model="date"
           :masks="{ input: ['DD/MM/YYYY'] }"
           :model-config="dateConfig"
           mode="single"
@@ -88,12 +89,19 @@ Skip to content Search or jump to… Pulls Issues Marketplace Explore
     </div>
   </div>
   <div class="footer">
+    <p>Subtotal= {{ subTotal }} ฿</p>
     <p>20% Deposit = {{ deposit }} ฿</p>
+    <p>Charge = {{ totalCharge }} ฿</p>
+    <hr />
+    <p>Total Payment = {{ totalPayment }} ฿</p>
     <div class="buttons">
-      <DefaultButton type="transparent" :style="{ marginRight: '50px' }"
+      <DefaultButton
+        @click="reset"
+        type="transparent"
+        :style="{ marginRight: '50px' }"
         >CANCEL</DefaultButton
       >
-      <DefaultButton @click="addEmployee">CONFIRM</DefaultButton>
+      <DefaultButton @click="confirmInf">CONFIRM</DefaultButton>
     </div>
   </div>
 </template>
@@ -104,15 +112,9 @@ import DefaultButton from "./DefaultButton";
 import { useScreenWidth } from "../composables/useScreenWidth";
 import PaginationBar from "./PaginationBar";
 import SearchError from "./SearchError";
+import axios from "axios";
 
-const bookings = [
-  { roomNumber: 1502, type: "Suite", day: 2, price: 7000 },
-  { roomNumber: 1503, type: "Suite", day: 2, price: 7000 },
-  { roomNumber: 1504, type: "Suite", day: 2, price: 7000 },
-  { roomNumber: 1505, type: "Suite", day: 2, price: 7000 },
-  { roomNumber: 1512, type: "Deluxe", day: 2, price: 6500 },
-  { roomNumber: 1520, type: "Standard", day: 2, price: 3500 },
-];
+const paymentMethods = ["Bank Transfer", "Cash", "Credit Card"];
 
 export default {
   name: "DepositPay",
@@ -128,28 +130,167 @@ export default {
   },
   data() {
     return {
-      bookings,
       currentPage: 1,
       tableRow: 5,
       error: false,
-      customerID: 666666,
-      customerName: "Ploypapas LonglonglongSurname",
-      phone: "0888888888",
       deposit: 100, // 20% of total price
-      paymentMethods: ["Bank Transfer", "Cash", "Credit Card"],
       selectedMethod: null,
       dateConfig: {
         type: "string",
         mask: "YYYY-MM-DD",
       },
+
+      paymentMethods,
+      bookingID: "",
+      customerID: "",
+      name: "",
+      firstName: "",
+      lastName: "",
+      phone: "",
+      payment: "",
+      subTotal: "",
+      deposit: "",
+      method: "1",
+      chargeRate: "",
+      totalCharge: "0",
+      totalPayment: "",
+      deposit: "",
+      date: "",
     };
   },
+
+  created() {
+    this.getChargeRate();
+  },
+
   methods: {
     pageReturn(page) {
       this.currentPage = page;
     },
     selectMethod(value) {
-      this.selectedMethod = value;
+      console.log(value);
+      if (value === paymentMethods[0]) {
+        this.method = 1;
+      }
+      if (value === paymentMethods[1]) {
+        this.method = 2;
+      }
+      if (value === paymentMethods[2]) {
+        this.method = 3;
+      }
+      this.getTotal(this.payment);
+    },
+
+    getChargeRate() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_paymentCheckOut.php", {
+          action: "getChargeRate",
+        })
+        .then(
+          function(res) {
+            this.chargeRate = res.data;
+          }.bind(this)
+        );
+    },
+
+    getInformation() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_paymentDeposit.php", {
+          action: "getInformation",
+          bookingID: this.bookingID,
+        })
+        .then(
+          function(res) {
+            
+            if (res.data == "1") {
+              alert("Don't have Booking ID " + this.bookingID);
+              this.bookingID = "";
+            } else if (res.data == "2") {
+              alert("Deposit Paid");
+              this.bookingID = "";
+            } else {
+              this.customerID = res.data[0].customerID;
+              this.name = res.data[0].name;
+              this.firstName = res.data[0].firstName;
+              this.lastName = res.data[0].lastName;
+              this.phone = res.data[0].phone;
+              this.getPayment();
+            }
+          }.bind(this)
+        );
+    },
+
+    getPayment() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_paymentDeposit.php", {
+          action: "getPayment",
+          bookingID: this.bookingID,
+        })
+        .then(
+          function(res) {
+            console.log(res);
+            this.payment = res.data;
+            this.getTotal(this.payment);
+          }.bind(this)
+        );
+    },
+
+    getTotal(payment) {
+      var i = 0;
+      var sum = 0;
+
+      while (i < payment.length) {
+        sum = sum + Number(payment[i].price);
+        i = i + 1;
+      }
+
+      this.deposit = (sum * 20) / 100;
+      this.subTotal = sum;
+      if (this.method == 3) {
+        this.totalCharge = (this.deposit * this.chargeRate) / 100;
+        this.totalPayment = this.deposit + this.totalCharge;
+      } else {
+        this.totalPayment = sum;
+        this.totalCharge = 0;
+      }
+    },
+
+    confirmInf() {
+      console.log(this.date);
+      if(this.bookingID == ""){
+        alert("Please enter the Booking ID ");
+      }
+      else if(this.date == ""){
+        alert("Please enter the date ");
+      }
+      else{
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_paymentDeposit.php", {
+          action: "confirmInf",
+          bookingID: this.bookingID,
+          method: this.method,
+          date: this.date,
+        })
+        .then(
+          function(res) {
+            alert(res.data.message);
+            if (res.data.success == true) {
+              this.bookingID = "";
+            }
+            this.reset();
+          }.bind(this)
+        );
+      }
+    },
+    reset() {
+      // this.bookingID = "";
+      // this.customerID = "";
+      // this.name = "";
+      // this.firstName = "";
+      // this.lastName = "";
+      // this.phone = "";
+      // this.payment = "";
+      // vm.$forceUpdate();
     },
   },
 };

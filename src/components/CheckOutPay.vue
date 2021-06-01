@@ -3,14 +3,20 @@ Skip to content Search or jump to… Pulls Issues Marketplace Explore
   <SearchError v-if="error" :style="{ marginTop: '80px' }" />
   <div class="search-field">
     <div class="search-item">
-      <h4>Booking ID</h4>
-      <input type="text" />
+      <h4>Room Number</h4>
+      <input v-model="roomID" type="text" />
     </div>
     <div class="search-item">
-      <DefaultButton type="small" :style="{ marginRight: '5px' }"
+      <DefaultButton
+        @click="getInformation"
+        type="small"
+        :style="{ marginRight: '5px' }"
         >Add</DefaultButton
       >
-      <DefaultButton type="small" :style="{ background: 'var(--primary-red)' }"
+      <DefaultButton
+        @click="removePayment"
+        type="small"
+        :style="{ background: 'var(--primary-red)' }"
         >Remove</DefaultButton
       >
     </div>
@@ -22,41 +28,39 @@ Skip to content Search or jump to… Pulls Issues Marketplace Explore
         Customer ID: {{ customerID }}
       </div>
       <div class="item" :style="width > 800 ? { marginRight: '10px' } : {}">
-        Name: {{ customerName }}
+        Name: {{ firstName }} {{ lastName }}
       </div>
       <div class="item">Phone: {{ phone }}</div>
     </div>
   </div>
   <div class="table-container">
-    <table v-if="bookings.length !== 0 && !error">
+    <table v-if="payment.length !== 0 && !error">
       <tr>
         <th>Room Number</th>
-        <th>Room type</th>
+        <th>Detail</th>
         <th>Night</th>
-        <th>Room Price</th>
         <th>Total</th>
       </tr>
 
       <tr
-        v-for="(booking, i) in bookings.slice(
+        v-for="(pay, i) in payment.slice(
           currentPage * tableRow - tableRow,
           currentPage * tableRow
         )"
         :key="i"
         class="row"
       >
-        <td>{{ booking.roomNumber }}</td>
-        <td>{{ booking.type }}</td>
-        <td>{{ booking.day }}</td>
-        <td>{{ booking.price }}</td>
-        <td>{{ booking.day * booking.price }}</td>
+        <td>{{ pay.roomID }}</td>
+        <td>{{ pay.name }}</td>
+        <td>{{ pay.amount }}</td>
+        <td>{{ pay.total }}</td>
       </tr>
     </table>
   </div>
   <PaginationBar
     v-if="!error"
-    :pageCount="Math.ceil(bookings.length / tableRow)"
-    :paginationVisible="bookings.length > tableRow"
+    :pageCount="Math.ceil(payment.length / tableRow)"
+    :paginationVisible="payment.length > tableRow"
     @pageReturn="pageReturn"
   />
   <div class="payment-action">
@@ -67,26 +71,51 @@ Skip to content Search or jump to… Pulls Issues Marketplace Explore
       @selection="selectMethod"
       :style="{ margin: 'auto 10px' }"
     />
+
+    <div
+      v-if="method == 3"
+      class="item"
+      :style="width > 800 ? { marginRight: '10px' } : {}"
+    >
+      <p>Charge rate: {{ chargeRate }} %</p>
+    </div>
   </div>
+  <div>
+    <hr />
+  </div>
+
   <div class="summary">
     <div class="item" :style="width > 800 ? { marginRight: '10px' } : {}">
-      <p>Amount: {{ totalAmount }} ฿</p>
+      <p>Subtotal: {{ amount }} ฿</p>
     </div>
     <div class="item" :style="width > 800 ? { marginRight: '10px' } : {}">
-      <p>Discount: {{ discount * 100 }} %</p>
+      <p>Discount: {{ discount }} ฿</p>
     </div>
     <div class="item">
-      <p>
-        Total: <b>{{ (1 - discount) * totalAmount }}</b> ฿
-      </p>
+      <p>Total: {{ total }} ฿</p>
+    </div>
+  </div>
+  <dimv.v
+    v-if="method == 3"
+    :style="width > 800 ? { marginRight: '10px' } : {}"
+  >
+    <p>Charge: {{ totalCharge }} ฿</p>
+  </dimv.v>
+  <div>
+    <hr />
+    <div class="item" :style="width > 800 ? { marginRight: '10px' } : {}">
+      <p>Total Payment: {{ totalPayment }} ฿</p>
     </div>
   </div>
 
   <div class="buttons">
-    <DefaultButton type="transparent" :style="{ marginRight: '50px' }"
+    <DefaultButton
+      @click="clearPayment"
+      type="transparent"
+      :style="{ marginRight: '50px' }"
       >CANCEL</DefaultButton
     >
-    <DefaultButton @click="addEmployee">CONFIRM</DefaultButton>
+    <DefaultButton @click="confirmInf">CONFIRM</DefaultButton>
   </div>
 </template>
 
@@ -96,16 +125,9 @@ import DefaultButton from "./DefaultButton";
 import { useScreenWidth } from "../composables/useScreenWidth";
 import PaginationBar from "./PaginationBar";
 import SearchError from "./SearchError";
+import axios from "axios";
 
-const bookings = [
-  { roomNumber: 1502, type: "Suite", day: 2, price: 7000 },
-  { roomNumber: 1503, type: "Suite", day: 2, price: 7000 },
-  { roomNumber: 1504, type: "Suite", day: 2, price: 7000 },
-  { roomNumber: 1505, type: "Suite", day: 2, price: 7000 },
-  { roomNumber: 1512, type: "Deluxe", day: 2, price: 6500 },
-  { roomNumber: 1520, type: "Standard", day: 2, price: 3500 },
-];
-
+const paymentMethods = ["Bank Transfer", "Cash", "Credit Card"];
 export default {
   name: "CheckOutPay",
   components: {
@@ -120,30 +142,253 @@ export default {
   },
   data() {
     return {
-      bookings,
       currentPage: 1,
       tableRow: 5,
       error: false,
-      customerID: 666666,
-      customerName: "Ploypapas LonglonglongSurname",
-      phone: "0888888888",
-      totalAmount: 35000,
-      discount: 0.1,
       deposit: 100, // 20% of total price
-      paymentMethods: ["Bank Transfer", "Cash", "Credit Card"],
+      paymentMethods,
       selectedMethod: null,
       dateConfig: {
         type: "string",
         mask: "YYYY-MM-DD",
       },
+
+      roomID: "",
+      customerID: "",
+      firstName: "",
+      lastName: "",
+      phone: "",
+      payment: [],
+      amountPaid: [],
+      allRoom: [],
+      bookingID: "",
+      total: "",
+      amount: "",
+      discount: "",
+      method: "1",
+      chargeRate: "",
+      totalCharge: "0",
+      totalPayment: "",
+      name:"",
     };
   },
+
+  created() {
+    this.getChargeRate();
+  },
+
   methods: {
     pageReturn(page) {
       this.currentPage = page;
     },
     selectMethod(value) {
-      this.selectedMethod = value;
+      if (value === paymentMethods[0]) {
+        this.method = 1;
+      }
+      if (value === paymentMethods[1]) {
+        this.method = 2;
+      }
+      if (value === paymentMethods[2]) {
+        this.method = 3;
+      }
+      this.getAmount(this.payment);
+    },
+
+    getChargeRate() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_paymentCheckOut.php", {
+          action: "getChargeRate",
+        })
+        .then(
+          function(res) {
+            console.log("Charge", res.data);
+            this.chargeRate = res.data;
+          }.bind(this)
+        );
+    },
+
+    getInformation() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_paymentCheckOut.php", {
+          action: "getInformation",
+          roomID: this.roomID,
+        })
+        .then(
+          function(res) {
+            if (res.data == "") {
+              alert("Cannot pay this room number");
+              this.roomID = "";
+            } else {
+              if (
+                this.allRoom.length == 0 ||
+                this.bookingID == res.data[0]["bookingID"]
+              ) {
+                this.customerID = res.data[0].customerID;
+                this.firstName = res.data[0].firstName;
+                this.lastName = res.data[0].lastName;
+                this.name = res.data[0].name;
+                this.phone = res.data[0].phone;
+                this.getPayment();
+              } else {
+                alert("Different Booking ID");
+              }
+            }
+          }.bind(this)
+        );
+    },
+
+    getPayment() {
+      var i = 0;
+      var room = Number(this.roomID);
+      var check = 0;
+
+      while (i < this.allRoom.length) {
+        if (room == this.allRoom[i]) {
+          check = 1;
+          alert("Already have this roomID");
+          this.roomID = "";
+          break;
+        }
+        i++;
+      }
+
+      if (check == 0) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_paymentCheckOut.php", {
+            action: "PaymentCheckOut",
+            roomID: this.roomID,
+          })
+          .then(
+            function(res) {
+              console.log("detail", res.data);
+              var i = 0;
+              if (
+                this.allRoom.length == 0 ||
+                this.bookingID == res.data[0]["bookingID"]
+              ) {
+                this.bookingID = res.data[0]["bookingID"];
+                while (i < res.data.length) {
+                  this.payment.push(res.data[i]);
+                  i++;
+                }
+                this.calAmountPaid(res.data);
+                this.getAmount(this.payment);
+              } else {
+                console.log("Not Match");
+              }
+            }.bind(this)
+          );
+      }
+    },
+
+    calAmountPaid(room) {
+      var roomID = 0;
+      var paid = 0;
+      var i = 0;
+      var sumAmount = 0;
+      var sumDiscount = 0;
+
+      roomID = room[0].roomID;
+
+      while (i < room.length) {
+        if (Number(room[i].total) > 0) {
+          sumAmount = sumAmount + Number(room[i].total);
+        } else {
+          sumDiscount = sumDiscount + Number(room[i].total);
+        }
+        i++;
+      }
+
+      paid = sumAmount + sumDiscount;
+
+      if(this.paymentMethods == 3){
+        paid = this.chargeRate * paid;
+      }
+
+      this.allRoom.push(roomID);
+      this.amountPaid.push(paid);
+    },
+
+    removePayment() {
+      var room = Number(this.roomID);
+      var i = 0;
+      var j = 0;
+      var length = this.payment.length;
+      var lengthRoom = this.allRoom.length;
+
+      while (i < length && this.payment.length > 0 && j < length) {
+        if (room == Number(this.payment[i]["roomID"])) {
+          this.payment.splice(i, 1);
+          j++;
+        } else {
+          i++;
+          j++;
+        }
+      }
+
+      i = 0;
+      while (i < lengthRoom) {
+        if (room == this.allRoom[i]) {
+          this.allRoom.splice(i, 1);
+          this.amountPaid.splice(i, 1);
+          break;
+        }
+        i++;
+      }
+
+      this.getAmount(this.payment);
+    },
+
+    getAmount(payment) {
+      var i = 0;
+      var sumAmount = 0;
+      var sumDiscount = 0;
+      var total = 0;
+      while (i < payment.length) {
+        if (Number(payment[i].total) > 0) {
+          sumAmount = sumAmount + Number(payment[i].total);
+        } else {
+          sumDiscount = sumDiscount + Number(payment[i].total);
+        }
+        i = i + 1;
+      }
+      this.amount = sumAmount;
+      this.discount = -sumDiscount;
+      total = sumAmount + sumDiscount;
+      this.total = total;
+
+      // Credit Card
+      if (this.method == 3) {
+        this.totalCharge = (total * this.chargeRate) / 100;
+        this.totalPayment = total + this.totalCharge;
+      } else {
+        this.totalPayment = total;
+      }
+    },
+
+    confirmInf() {
+      console.log("method", this.method);
+      console.log("totalPayment", this.totalPayment);
+      console.log("allRoom", this.allRoom);
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_paymentCheckOut.php", {
+          action: "confirmInf",
+          method: this.method,
+          amountPaid: this.amountPaid,
+          allRoom: this.allRoom,
+        })
+        .then(
+          function(res) {
+            console.log(res.data);
+            alert(res.data.message);
+            if (res.data.success == true) {
+              // this.clearPayment();
+            }
+          }.bind(this)
+        );
+    },
+    clearPayment() {
+      // vm.$forceUpdate();
     },
   },
 };
