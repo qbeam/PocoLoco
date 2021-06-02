@@ -60,43 +60,43 @@
         <td>{{ convertDate(booking.checkOut) }}</td>
         <td>
           <i
-                v-if="booking.status == 'Check In'"
-                class="fa fa-circle"
-                :style="{ color: '#24BA45'  }"
-              />
-              <i
-                v-if="booking.status == 'Reserve'"
-                class="fa fa-circle"
-                :style="{ color: '#ffc42e' }"
-              />
-              <i
-                v-if="booking.status == 'Cancel'"
-                class="fa fa-circle"
-                :style="{ color: '#e11818' }"
-              />
-              <i
-                v-if="booking.status == 'Check Out'"
-                class="fa fa-circle"
-                :style="{ color: '#BDBDBD' }"
-              />
+            v-if="booking.status == 'Check In'"
+            class="fa fa-circle"
+            :style="{ color: '#24BA45' }"
+          />
+          <i
+            v-if="booking.status == 'Reserve'"
+            class="fa fa-circle"
+            :style="{ color: '#ffc42e' }"
+          />
+          <i
+            v-if="booking.status == 'Cancel'"
+            class="fa fa-circle"
+            :style="{ color: '#e11818' }"
+          />
+          <i
+            v-if="booking.status == 'Check Out'"
+            class="fa fa-circle"
+            :style="{ color: '#BDBDBD' }"
+          />
           {{ booking.status }}
-          </td>
+        </td>
         <td>
-          <div v-if="booking.status == 'Check Out'" class="manage">
-            <button
-                class="manage-button"
-                @click="searchDetail()"
-              >
-                <i class="fa fa-search fa-2x"></i>
-              </button>
+          <div
+            v-if="booking.status == 'Check Out' || booking.status == 'Cancel'"
+            class="manage"
+          >
+            <button class="manage-button" @click="searchDetail(booking)">
+              <i class="fa fa-search fa-2x"></i>
+            </button>
           </div>
-          <div v-if="booking.status != 'Check Out'" class="manage">
-            <button
-                class="manage-button"
-                @click="searchDetail()"
-              >
-                <i class="fa fa-search fa-2x"></i>
-              </button>
+          <div
+            v-if="booking.status == 'Reserve' || booking.status == 'Check In'"
+            class="manage"
+          >
+            <button class="manage-button" @click="searchDetail(booking)">
+              <i class="fa fa-search fa-2x"></i>
+            </button>
             <div class="vl"></div>
             <button class="manage-button" @click="getBookingDetail(booking)">
               <i class="fa fa-pencil fa-2x"></i>
@@ -130,43 +130,53 @@
     />
 
     <Popup :visible="searchVisible" @popReturn="popReturn">
-      <div class="popup-head1">Booking ID: 1000032</div>
-    <div class="popup-head">
-      <div>Name: Ying supavadeeeeeeeeeeee</div>
-      <div>Phone: 0985468485</div>
-    </div>
-    <div class="group-row">
-      <div class="group-item">
-        <p><b>Booking Detail ID: </b>2011544</p>
-        <p><b>Guest Name: </b>Ying supeeek</p>
-        <p><b>Room Number: </b>1215</p>
-        <p><b>Check IN: </b>15/12/1233</p>
-        <p><b>Status: </b>
-        <i
-                v-if="true"
-                class="fa fa-circle"
-                :style="{ color: '#24BA45' }"
-              /> 
-              <i
-                v-if="false"
-                class="fa fa-circle"
-                :style="{ color: '#FFC42E' }"
-              /> 
-              <i
-                v-if="false"
-                class="fa fa-circle"
-                :style="{ color: '#FF0000' }"
-              /> 
-              Check IN</p>
+      <div class="popup-head1">Booking ID: {{ booking.bookingDetailID }}</div>
+      <div class="popup-head">
+        <div>Name: {{ booking.firstName }} {{ booking.lastName }}</div>
+        <div>Phone: {{ booking.phone }}</div>
       </div>
-      <div class="group-item">
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p><b>Room Type: </b>Suite</p>
-        <p><b>Check OUT: </b> 12/1/1234</p>
-        <p><b>Total: </b>2500 Bath</p>
+      <div class="group-row">
+        <div class="group-item">
+          <p><b>Booking Detail ID: </b>{{ booking.bookingDetailID }}</p>
+          <p>
+            <b>Guest Name: </b>{{ booking.guestFirstName }}
+            {{ booking.guestLastName }}
+          </p>
+          <p><b>Room Number: </b>{{ booking.roomID }}</p>
+          <p><b>Check IN: </b>{{ convertDate(booking.checkIn) }}</p>
+          <p>
+            <b>Status: </b>
+            <i
+              v-if="booking.status == 'Check In'"
+              class="fa fa-circle"
+              :style="{ color: '#24BA45' }"
+            />
+            <i
+              v-if="booking.status == 'Reserve'"
+              class="fa fa-circle"
+              :style="{ color: '#FFC42E' }"
+            />
+            <i
+              v-if="booking.status == 'Cancel'"
+              class="fa fa-circle"
+              :style="{ color: '#FF0000' }"
+            />
+            <i
+              v-if="booking.status == 'Check Out'"
+              class="fa fa-circle"
+              :style="{ color: '#BDBDBD' }"
+            />
+            {{ booking.status }}
+          </p>
+        </div>
+        <div class="group-item">
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p><b>Room Type: </b>{{ booking.roomType }}</p>
+          <p><b>Check OUT: </b>{{ convertDate(booking.checkOut) }}</p>
+          <p><b>Total: </b>{{ booking.price }} Bath</p>
+        </div>
       </div>
-    </div>
     </Popup>
 
     <Popup
@@ -380,9 +390,12 @@ export default {
         this.sort = "status";
       }
     },
-    searchDetail() {
+
+    searchDetail(bookings) {
       this.searchVisible = !this.searchVisible;
+      this.booking = bookings;
     },
+
     getallBookingDetail() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
