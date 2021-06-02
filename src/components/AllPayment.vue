@@ -1,4 +1,4 @@
-Skip to content Search or jump to… Pulls Issues Marketplace Explore
+
 <template>
   <div class="menu-bar">
     <div class="search-container">

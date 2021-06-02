@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       menus,
-      selected: menus[0],
+      selected: menus[1],
     };
   },
   methods: {
