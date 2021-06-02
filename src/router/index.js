@@ -29,6 +29,7 @@ import OrderMaid from "../views/OrderMaid.vue";
 import OrderChef from "../views/OrderChef.vue";
 import Payment from '../views/Payment.vue';
 import TimeStamp from "../views/TimeStamp.vue";
+import MyAccount from '../views/MyAccount.vue'
 
 const routes = [
   {
@@ -180,6 +181,10 @@ const routes = [
     path: '/TimeStamp',
     name: 'TimeStamp',
     component: TimeStamp
+  }, {
+    path: '/MyAccount',
+    name: 'MyAccount',
+    component: MyAccount
   }
 ];
 
