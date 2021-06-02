@@ -89,7 +89,7 @@ export default {
 };
 </script>
 
-<style scope>
+<style scoped>
 .container {
   display: flex;
   background: var(--primary-blue);
