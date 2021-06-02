@@ -45,8 +45,8 @@ export default {
   data() {
     return {
       menus,
-      selected: menus[0],
-      countRow:"",
+      selected: menus[1],
+      countRow: "",
     };
   },
   methods: {
@@ -55,7 +55,7 @@ export default {
     },
     countQuery(value) {
       this.countRow = value;
-    }
+    },
   },
 };
 </script>
