@@ -30,9 +30,9 @@
 
 <script>
 import TablePage from "../components/TablePage.vue";
-import AllService from "../components/AllService.vue";
-import OrderService from "../components/OrderService.vue";
-import ServiceActivity from "../components/ServiceActivity.vue";
+import AllService from "../components/ServicePages/AllService";
+import OrderService from "../components/ServicePages/OrderService.vue";
+import ServiceActivity from "../components/ServicePages/ServiceActivity.vue";
 const menus = ["All Services", "Order Service", "History"];
 export default {
   name: "Services",

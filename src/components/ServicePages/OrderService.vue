@@ -147,11 +147,11 @@
 </template>
 
 <script>
-import DefaultButton from "../components/DefaultButton";
-import { useScreenHeight } from "../composables/useScreenHeight";
-import { useScreenWidth } from "../composables/useScreenWidth";
-import PaginationBar from "../components/PaginationBar";
-import SearchError from "../components/SearchError";
+import DefaultButton from "../DefaultButton";
+import { useScreenHeight } from "../../composables/useScreenHeight";
+import { useScreenWidth } from "../../composables/useScreenWidth";
+import PaginationBar from "../PaginationBar";
+import SearchError from "../SearchError";
 import axios from "axios";
 
 export default {
