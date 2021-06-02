@@ -123,15 +123,14 @@
 </template>
 
 <script>
-import CustomSelect from "./CustomSelect";
-import DefaultButton from "./DefaultButton";
-import AddButton from "./AddButton";
-import { useScreenWidth } from "../composables/useScreenWidth";
-import { useScreenHeight } from "../composables/useScreenHeight";
-import PaginationBar from "./PaginationBar";
-import Popup from "../components/Popup";
-import SearchError from "../components/SearchError";
-import SortingArrow from "../components/SortingArrow";
+import CustomSelect from "../CustomSelect";
+import DefaultButton from "../DefaultButton";
+import AddButton from "../AddButton";
+import { useScreenWidth } from "../../composables/useScreenWidth";
+import PaginationBar from "../PaginationBar";
+import Popup from "../Popup";
+import SearchError from "../SearchError";
+import SortingArrow from "../SortingArrow";
 import axios from "axios";
 
 const selectOption = ["Name", "Type", "Price"];
@@ -225,8 +224,8 @@ export default {
           function(res) {
             this.service_db = res.data;
             this.countRow = this.service_db.length;
-            this.returnQuery();          
-            }.bind(this)
+            this.returnQuery();
+          }.bind(this)
         );
     },
     updateData() {

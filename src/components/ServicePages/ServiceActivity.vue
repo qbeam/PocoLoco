@@ -1,10 +1,7 @@
 <template>
   <div class="menu-bar">
-    <div>
-      <span class="icon-wrap">
-        <i class="fa fa-search fa-1x"></i>
-      </span>
-
+    <div class="search-container">
+      <i class="fa fa-search"></i>
       <input
         v-model="search"
         class="search-field"
@@ -135,14 +132,14 @@
 </template>
 
 <script>
-import CustomSelect from "../components/CustomSelect";
-import DefaultButton from "../components/DefaultButton";
-import { useScreenWidth } from "../composables/useScreenWidth";
-import { useScreenHeight } from "../composables/useScreenHeight";
-import PaginationBar from "../components/PaginationBar";
-import Popup from "../components/Popup";
-import SearchError from "../components/SearchError";
-import SortingArrow from "../components/SortingArrow";
+import CustomSelect from "../CustomSelect";
+import DefaultButton from "../DefaultButton";
+import { useScreenWidth } from "../../composables/useScreenWidth";
+import { useScreenHeight } from "../../composables/useScreenHeight";
+import PaginationBar from "../PaginationBar";
+import Popup from "../Popup";
+import SearchError from "../SearchError";
+import SortingArrow from "../SortingArrow";
 import axios from "axios";
 
 const selectOption = ["Room No.", "Date"];
@@ -175,7 +172,7 @@ export default {
       priceSum: 0,
       history_db: [],
       order_db: [],
-      countRow:"",
+      countRow: "",
 
       search: "",
       searchSent: "",
@@ -263,7 +260,7 @@ export default {
           function(res) {
             this.history_db = res.data;
             this.countRow = this.history_db.length;
-            this.returnQuery(); 
+            this.returnQuery();
           }.bind(this)
         );
     },
@@ -286,7 +283,7 @@ export default {
           function(res) {
             this.history_db = res.data;
             this.countRow = this.history_db.length;
-            this.returnQuery(); 
+            this.returnQuery();
             if (this.history_db != "") {
               this.errorSearching = false;
             } else {
@@ -339,6 +336,15 @@ export default {
   position: absolute;
   z-index: 0;
   padding: 5px 20px;
+}
+.search-container {
+  position: relative;
+}
+.fa-search {
+  position: absolute;
+  z-index: 5;
+  margin: 7px 0 0 12px;
+  font-size: 16px;
 }
 .search-field {
   width: 225px;
