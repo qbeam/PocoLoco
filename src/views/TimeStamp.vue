@@ -141,5 +141,13 @@ input {
   .current-time {
     width: 80%;
   }
+  .inner-container {
+    width: 70%;
+    height: 90%;
+    margin: auto;
+    background-color: white;
+    text-align: center;
+    justify-content: flex-start;
+  }
 }
 </style>
