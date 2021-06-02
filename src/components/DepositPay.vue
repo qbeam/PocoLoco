@@ -55,15 +55,6 @@
   />
   <div class="payment-action">
     <div class="select">
-      <p>Payment Method</p>
-      <CustomSelect
-        type="Grey"
-        :options="paymentMethods"
-        @selection="selectMethod"
-        :style="{ margin: 'auto 10px' }"
-      />
-    </div>
-    <div class="select">
       <p>Date</p>
       <div class="flex x-full">
         <v-date-picker
@@ -79,7 +70,6 @@
                 class="date-input"
                 :value="inputValue"
                 v-on="inputEvents"
-                :style="{ width: '120px', marginRight: '0' }"
               />
               <i class="fa fa-calendar"></i>
             </div>
@@ -88,21 +78,57 @@
       </div>
     </div>
   </div>
-  <div class="footer">
-    <p>Subtotal= {{ subTotal }} ฿</p>
-    <p>20% Deposit = {{ deposit }} ฿</p>
-    <p>Charge = {{ totalCharge }} ฿</p>
-    <hr />
-    <p>Total Payment = {{ totalPayment }} ฿</p>
-    <div class="buttons">
-      <DefaultButton
-        @click="reset"
-        type="transparent"
-        :style="{ marginRight: '50px' }"
-        >CANCEL</DefaultButton
-      >
-      <DefaultButton @click="confirmInf">CONFIRM</DefaultButton>
+
+  <div class="payment-action">
+    <div :style="{ display: 'flex' }">
+      <p>Payment Method</p>
+      <CustomSelect
+        type="Grey"
+        :options="paymentMethods"
+        @selection="selectMethod"
+        :style="{ margin: 'auto 10px' }"
+      />
     </div>
+    <div v-if="method == 3">
+      <p class="charge-warning">* Additional {{ chargeRate }} % charge</p>
+    </div>
+  </div>
+
+  <div>
+    <hr />
+  </div>
+  <div class="summary">
+    <div class="room-total">
+      <div class="item">
+        <p>Total: {{ subTotal }} ฿</p>
+      </div>
+      <div class="item">
+        <p>20% Deposit: {{ deposit }} ฿</p>
+      </div>
+    </div>
+    <div class="charge-amount" v-if="method == 3">
+      <p>Charge: {{ totalCharge }} ฿</p>
+    </div>
+  </div>
+  <div>
+    <hr />
+    <div class="net-total">
+      <p
+        :style="width > 750 ? { marginRight: '15%' } : { marginRight: '10px' }"
+      >
+        Total Payment: {{ totalPayment }} ฿
+      </p>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <DefaultButton
+      @click="reset"
+      type="transparent"
+      :style="{ marginRight: '50px' }"
+      >CANCEL</DefaultButton
+    >
+    <DefaultButton @click="confirmInf">CONFIRM</DefaultButton>
   </div>
 </template>
 
@@ -152,7 +178,7 @@ export default {
       deposit: "",
       method: "1",
       chargeRate: "",
-      totalCharge: "0",
+      totalCharge: "",
       totalPayment: "",
       deposit: "",
       date: "",
@@ -201,7 +227,6 @@ export default {
         })
         .then(
           function(res) {
-            
             if (res.data == "1") {
               alert("Don't have Booking ID " + this.bookingID);
               this.bookingID = "";
@@ -257,29 +282,27 @@ export default {
 
     confirmInf() {
       console.log(this.date);
-      if(this.bookingID == ""){
+      if (this.bookingID == "") {
         alert("Please enter the Booking ID ");
-      }
-      else if(this.date == ""){
+      } else if (this.date == "") {
         alert("Please enter the date ");
-      }
-      else{
-      axios
-        .post("http://localhost:8080/PocoLoco_db/api_paymentDeposit.php", {
-          action: "confirmInf",
-          bookingID: this.bookingID,
-          method: this.method,
-          date: this.date,
-        })
-        .then(
-          function(res) {
-            alert(res.data.message);
-            if (res.data.success == true) {
-              this.bookingID = "";
-            }
-            this.reset();
-          }.bind(this)
-        );
+      } else {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_paymentDeposit.php", {
+            action: "confirmInf",
+            bookingID: this.bookingID,
+            method: this.method,
+            date: this.date,
+          })
+          .then(
+            function(res) {
+              alert(res.data.message);
+              if (res.data.success == true) {
+                this.bookingID = "";
+              }
+              this.reset();
+            }.bind(this)
+          );
       }
     },
     reset() {
@@ -361,31 +384,62 @@ td {
 }
 .payment-action {
   display: flex;
-  margin: 20px 0;
+  flex-direction: column;
+  margin: 20px 0 15px 0;
+  align-items: center;
 }
 .select {
   display: flex;
-  width: 50%;
+  width: 100%;
   justify-content: center;
   align-items: center;
 }
 .date-input {
   height: 30px;
+  width: 150px;
+  font-size: 14px;
 }
 .fa-calendar {
   color: var(--primary-blue);
   font-size: 25px;
   align-self: center;
-  margin-left: -30px;
+  margin-left: -40px;
 }
-.footer {
+.charge-warning {
+  font-size: 14px;
+  color: var(--primary-red);
+  margin: 5px 0 0 0;
+}
+.summary {
+  display: flex;
+  width: 70%;
+  align-self: center;
+  flex-direction: column;
+}
+.room-total {
+  display: flex;
+  width: 60%;
+  justify-content: space-between;
+  align-self: flex-end;
+}
+.charge-amount {
+  display: flex;
+  justify-content: flex-end;
+}
+.net-total {
+  width: 100%;
+  height: 45px;
   display: flex;
   align-items: center;
-  flex-direction: column;
+  margin: 15px 0;
+  background: var(--light-grey);
+  font-weight: bold;
+  justify-content: flex-end;
 }
 .buttons {
   display: flex;
-  margin: 20px 0;
+  margin: 50px 0 20px 0;
+  justify-content: center;
 }
 @media (max-width: 800px) {
   .info {
@@ -403,9 +457,15 @@ td {
   .payment-action {
     flex-direction: column;
   }
-  .select {
+  .summary {
     width: 100%;
-    margin: 10px 0;
+  }
+  .room-total {
+    width: 80%;
+    padding: 0 10px;
+  }
+  .charge-amount {
+    padding: 0 10px;
   }
 }
 @media (max-width: 550px) {

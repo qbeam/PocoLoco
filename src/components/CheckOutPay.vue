@@ -63,48 +63,50 @@ Skip to content Search or jump to… Pulls Issues Marketplace Explore
     :paginationVisible="payment.length > tableRow"
     @pageReturn="pageReturn"
   />
+
   <div class="payment-action">
-    <p>Payment Method</p>
-    <CustomSelect
-      type="Grey"
-      :options="paymentMethods"
-      @selection="selectMethod"
-      :style="{ margin: 'auto 10px' }"
-    />
-
-    <div
-      v-if="method == 3"
-      class="item"
-      :style="width > 800 ? { marginRight: '10px' } : {}"
-    >
-      <p>Charge rate: {{ chargeRate }} %</p>
+    <div :style="{ display: 'flex' }">
+      <p>Payment Method</p>
+      <CustomSelect
+        type="Grey"
+        :options="paymentMethods"
+        @selection="selectMethod"
+        :style="{ margin: 'auto 10px' }"
+      />
+    </div>
+    <div v-if="method == 3">
+      <p class="charge-warning">* Additional {{ chargeRate }} % charge</p>
     </div>
   </div>
+
   <div>
     <hr />
   </div>
-
   <div class="summary">
-    <div class="item" :style="width > 800 ? { marginRight: '10px' } : {}">
-      <p>Subtotal: {{ amount }} ฿</p>
+    <div class="room-total">
+      <div class="item">
+        <p>Subtotal: {{ amount }} ฿</p>
+      </div>
+      <div class="item">
+        <p>Discount: {{ discount }} ฿</p>
+      </div>
+      <div class="item">
+        <p>Total: {{ total }} ฿</p>
+      </div>
     </div>
-    <div class="item" :style="width > 800 ? { marginRight: '10px' } : {}">
-      <p>Discount: {{ discount }} ฿</p>
-    </div>
-    <div class="item">
-      <p>Total: {{ total }} ฿</p>
+    <div class="charge-amount" v-if="method == 3">
+      <p>Charge: {{ totalCharge }} ฿</p>
     </div>
   </div>
-  <dimv.v
-    v-if="method == 3"
-    :style="width > 800 ? { marginRight: '10px' } : {}"
-  >
-    <p>Charge: {{ totalCharge }} ฿</p>
-  </dimv.v>
+
   <div>
     <hr />
-    <div class="item" :style="width > 800 ? { marginRight: '10px' } : {}">
-      <p>Total Payment: {{ totalPayment }} ฿</p>
+    <div class="net-total">
+      <p
+        :style="width > 750 ? { marginRight: '15%' } : { marginRight: '10px' }"
+      >
+        Total Payment: {{ totalPayment }} ฿
+      </p>
     </div>
   </div>
 
@@ -169,7 +171,7 @@ export default {
       chargeRate: "",
       totalCharge: "0",
       totalPayment: "",
-      name:"",
+      name: "",
     };
   },
 
@@ -301,7 +303,7 @@ export default {
 
       paid = sumAmount + sumDiscount;
 
-      if(this.paymentMethods == 3){
+      if (this.paymentMethods == 3) {
         paid = this.chargeRate * paid;
       }
 
@@ -434,6 +436,7 @@ input {
   display: flex;
   height: 250px;
 }
+
 table {
   width: 100%;
   max-width: 1000;
@@ -463,9 +466,16 @@ td {
 }
 .payment-action {
   display: flex;
-  margin: 20px 0;
-  justify-content: center;
+  flex-direction: column;
+  margin: 20px 0 15px 0;
+  align-items: center;
 }
+.charge-warning {
+  font-size: 14px;
+  color: var(--primary-red);
+  margin: 5px 0 0 0;
+}
+
 .buttons {
   display: flex;
   margin: 50px 0 20px 0;
@@ -475,8 +485,27 @@ td {
   display: flex;
   width: 70%;
   align-self: center;
+  flex-direction: column;
+}
+.room-total {
+  display: flex;
   justify-content: space-between;
 }
+.charge-amount {
+  display: flex;
+  justify-content: flex-end;
+}
+.net-total {
+  width: 100%;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+  background: var(--light-grey);
+  font-weight: bold;
+  justify-content: flex-end;
+}
+
 @media (max-width: 800px) {
   .customer-info {
     margin: 10px 0;
@@ -506,8 +535,13 @@ td {
     width: 200px;
   }
   .summary {
-    flex-direction: column;
-    align-items: center;
+    width: 100%;
+  }
+  .room-total {
+    padding: 0 10px;
+  }
+  .charge-amount {
+    padding: 0 10px;
   }
 }
 @media (max-width: 550px) {
