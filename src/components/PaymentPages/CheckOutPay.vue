@@ -1,4 +1,3 @@
-Skip to content Search or jump to… Pulls Issues Marketplace Explore
 <template>
   <SearchError v-if="error" :style="{ marginTop: '80px' }" />
   <div class="search-field">
@@ -369,25 +368,26 @@ export default {
     },
 
     confirmInf() {
-      console.log("method", this.method);
-      console.log("totalPayment", this.totalPayment);
-      console.log("allRoom", this.allRoom);
-      axios
-        .post("http://localhost:8080/PocoLoco_db/api_paymentCheckOut.php", {
-          action: "confirmInf",
-          method: this.method,
-          amountPaid: this.amountPaid,
-          allRoom: this.allRoom,
-        })
-        .then(
-          function(res) {
-            console.log(res.data);
-            alert(res.data.message);
-            if (res.data.success == true) {
-              // this.clearPayment();
-            }
-          }.bind(this)
-        );
+      if (this.roomID == "") {
+        alert("Please fill Room Number");
+      } else {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_paymentCheckOut.php", {
+            action: "confirmInf",
+            method: this.method,
+            amountPaid: this.amountPaid,
+            allRoom: this.allRoom,
+          })
+          .then(
+            function(res) {
+              console.log(res.data);
+              alert(res.data.message);
+              if (res.data.success == true) {
+                // this.clearPayment();
+              }
+            }.bind(this)
+          );
+      }
     },
     clearPayment() {
       // vm.$forceUpdate();
