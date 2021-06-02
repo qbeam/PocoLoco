@@ -189,6 +189,14 @@ export default {
       totalAmount: 0,
       totalPrice: 0,
       errorSearching: false,
+      //role: "Owner",
+      //role: "Manager Reception",
+      //role: "Manager Chef",
+      //role: "Manager Maid",
+      //role: "Reception",
+      // role: "Chef",
+       role: "Maid",
+      type: "",
     };
   },
   created() {
@@ -206,6 +214,7 @@ export default {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_orderService.php", {
           action: "getAllService",
+          role: this.role,
         })
         .then(
           function(res) {
@@ -223,10 +232,17 @@ export default {
     },
 
     searchService() {
+      if (this.role == "Maid" || this.role == "Manager Maid") {
+        this.type = 1;
+      } else if (this.role == "Chef" || this.role == "Manager Chef") {
+        this.type = 2;
+      }
       axios
         .post("http://localhost:8080/PocoLoco_db/api_orderService.php", {
           action: "searchService",
           search: this.search,
+          role: this.role,
+          type: this.type,
         })
         .then(
           function(res) {
@@ -340,6 +356,7 @@ export default {
               if (this.count_fail == this.orders.length) {
                 alert(res.data.message);
                 this.clearBasket();
+                this.getAllService();
               }
             }
           }.bind(this)

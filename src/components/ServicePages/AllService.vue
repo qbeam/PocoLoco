@@ -12,12 +12,27 @@
       />
     </div>
     <div class="menu-buttons">
-      <CustomSelect
-        type="Filter"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionFilter"
-      />
+      <div
+        v-if="
+          role == 'Owner' || role == 'Manager Reception' || role == 'Reception'
+        "
+      >
+        <CustomSelect
+          type="Filter"
+          :options="selectOptionOwner"
+          :style="{ marginRight: '20px' }"
+          @selection="selectionFilterOwner"
+        />
+      </div>
+
+      <div v-else>
+        <CustomSelect
+          type="Filter"
+          :options="selectOption"
+          :style="{ marginRight: '20px' }"
+          @selection="selectionFilter"
+        />
+      </div>
 
       <DefaultButton type="small" @click="searchData">
         Search
@@ -37,6 +52,7 @@
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
             {{ colName }}
+
             <SortingArrow
               :active="activeArrow == i ? true : false"
               @click="setActiveArrow(i)"
@@ -44,7 +60,16 @@
             />
           </div>
         </th>
-        <th>Manage</th>
+        <th
+          v-if="
+            role == 'Owner' ||
+              role == 'Manager Reception' ||
+              role == 'Manager Chef' ||
+              role == 'Manager Maid'
+          "
+        >
+          Manage
+        </th>
       </tr>
 
       <tr
@@ -62,7 +87,15 @@
         <td>{{ service.servicePrice }}</td>
 
         <td>
-          <div class="manage">
+          <div
+            v-if="
+              role == 'Owner' ||
+                role == 'Manager Reception' ||
+                role == 'Manager Chef' ||
+                role == 'Manager Maid'
+            "
+            class="manage"
+          >
             <button class="manage-button" @click="getServiceEdit(service)">
               <i class="fa fa-pencil fa-2x"></i>
             </button>
@@ -89,20 +122,27 @@
     @submit="submit"
     :style="{ top: '0', left: '0', margin: '0' }"
   >
-    <h4>Service Type</h4>
-    <select v-model="form.type">
-      <option :value="form.type" selected disabled hidden>
-        {{ form.type }}
-      </option>
-      <option
-        v-for="(option, i) in serviceOptions"
-        :key="i"
-        :value="serviceOptions[i]"
-        :selected="option == form.type ? 'selected' : null"
-      >
-        {{ option }}
-      </option>
-    </select>
+    <div
+      v-if="
+        role == 'Owner' || role == 'Reception' || role == 'Manager Reception'
+      "
+    >
+      <h4>Service Type</h4>
+      <select v-model="form.type">
+        <option :value="form.type" selected disabled hidden>
+          {{ form.type }}
+        </option>
+        <option
+          v-for="(option, i) in serviceOptions"
+          :key="i"
+          :value="serviceOptions[i]"
+          :selected="option == form.type ? 'selected' : null"
+        >
+          {{ option }}
+        </option>
+      </select>
+    </div>
+
     <h4>Service Name</h4>
     <input
       type="text"
@@ -133,7 +173,9 @@ import SearchError from "../SearchError";
 import SortingArrow from "../SortingArrow";
 import axios from "axios";
 
-const selectOption = ["Name", "Type", "Price"];
+const selectOptionOwner = ["Name", "Type", "Price"];
+
+const selectOption = ["Name", "Price"];
 
 const colNames = ["Name", "Type", "Price"];
 
@@ -158,8 +200,9 @@ export default {
       tableRow: 10,
       editVisible: false,
       selectOption,
+      selectOptionOwner,
       colNames,
-      serviceOptions: ["Room Facility", "Food & Beverage"],
+      serviceOptions: ["Room Facilities", "Food & Beverage"],
       service_db: "",
       type_db: "",
       search: "",
@@ -176,6 +219,14 @@ export default {
         servicePrice: "",
         isEdit: false,
       },
+      //role: "Owner",
+      //role: "Manager Reception",
+       role: "Manager Chef",
+      //role: "Manager Maid",
+      //role: "Reception",
+      // role: "Chef",
+      // role: "Maid",
+      type: "",
     };
   },
   created() {
@@ -219,6 +270,7 @@ export default {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_allService.php", {
           action: "getAllService",
+          role: this.role,
         })
         .then(
           function(res) {
@@ -271,7 +323,11 @@ export default {
       }
     },
     searchData() {
-      console.log("search", this.search);
+      if (this.role == "Chef" || this.role == "Manager Chef") {
+        this.type = "Food & Beverage";
+      } else if (this.role == "Maid" || this.role == "Manager Maid") {
+        this.type = "Room Facilities";
+      }
       axios
         .post("http://localhost:8080/PocoLoco_db/api_allService.php", {
           action: "searchService",
@@ -279,10 +335,11 @@ export default {
           filter: this.filter,
           sort: this.sort,
           direction: this.sortDirection,
+          role: this.role,
+          type: this.type,
         })
         .then(
           function(res) {
-            console.log(res);
             this.service_db = res.data;
             this.countRow = this.service_db.length;
             this.returnQuery();
@@ -311,6 +368,14 @@ export default {
     },
 
     selectionFilter(value) {
+      if (value === selectOption[0]) {
+        this.filter = "name";
+      }
+      if (value === selectOption[1]) {
+        this.filter = "servicePrice";
+      }
+    },
+    selectionFilterOwner(value) {
       if (value === selectOption[0]) {
         this.filter = "name";
       }

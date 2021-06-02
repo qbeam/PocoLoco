@@ -110,7 +110,7 @@
       </tr>
 
       <tr v-for="(order, i) in order_db" :key="i" class="row">
-        <td>{{ order.name }}</td>
+        <td>{{ order.serviceName }}</td>
         <td>{{ order.amount }}</td>
         <td>{{ order.servicePrice }}</td>
         <td>{{ order.amount * order.servicePrice }}</td>
@@ -173,6 +173,7 @@ export default {
       history_db: [],
       order_db: [],
       countRow: "",
+      serviceName: "",
 
       search: "",
       searchSent: "",
@@ -180,6 +181,15 @@ export default {
       sort: "Date",
       sortDirection: "up",
       errorSearching: false,
+
+      //role: "Owner",
+      //role: "Manager Reception",
+      //role: "Manager Chef",
+      //role: "Manager Maid",
+      //role: "Reception",
+      //role: "Chef",
+      role: "Maid",
+      type: "",
     };
   },
   created() {
@@ -238,6 +248,7 @@ export default {
           action: "getServiceData",
           roomID: record.roomID,
           date: record.date,
+          role: this.role,
         })
         .then(
           function(res) {
@@ -255,6 +266,7 @@ export default {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_serviceActivity.php", {
           action: "getServiceActivity",
+          role: this.role,
         })
         .then(
           function(res) {
@@ -278,6 +290,8 @@ export default {
           filter: this.filter,
           sort: this.sort,
           direction: this.sortDirection,
+          type: this.type,
+          role: this.role,
         })
         .then(
           function(res) {
@@ -309,7 +323,6 @@ export default {
     },
 
     converDateToQuery(date) {
-      console.log("length", date.length);
       var datearray = date.split("/");
       if (datearray.length != 3 || date.length != 10) {
         alert("Date format should be dd/mm/yyyy");

@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       menus,
-      selected: menus[1],
+      selected: menus[0],
       countRow: "",
     };
   },
