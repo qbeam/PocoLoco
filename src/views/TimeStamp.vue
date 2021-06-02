@@ -10,7 +10,7 @@
         <p>{{ second }}</p>
       </div>
       <h2>{{ day }}, {{ month }} {{ date }}, {{ year }}</h2>
-      <input type="text" placeholder="username" />
+      <input type="text" placeholder="Employee ID" />
       <DefaultButton
         :style="{
           background: 'var(--primary-red)',
