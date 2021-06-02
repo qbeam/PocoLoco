@@ -76,7 +76,6 @@ export default {
               this.$store.state.employeeDetail.role = res.data.roleName;
               this.$store.state.employeeDetail.department = res.data.departmentName;
               this.$store.state.employeeDetail.profilePic = res.data.roleName + res.data.gender;
-              console.log(res.data.roleName)
               // this.$router.push({
               //   name: "Home",
               //   params: {

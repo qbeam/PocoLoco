@@ -3,80 +3,135 @@
     <h4>Personal Information</h4>
     <i class="fa fa-pencil" @click="showPopup" />
   </div>
+  <div v-for="(account, index) in account_db" v-bind:key="index">
+    <h5>Name</h5>
+    <p>{{ account.em_firstname }} {{ account.em_lastname }}</p>
 
-  <h5>Name</h5>
-  <p>{{ name }}</p>
+    <h5>Identification</h5>
+    <p>{{ account.identification }}</p>
 
-  <h5>Identification</h5>
-  <p>{{ identification }}</p>
-
-  <div class="group">
-    <div class="group-item">
-      <h5>Birth Date</h5>
-      <p>{{ birth }}</p>
+    <div class="group">
+      <div class="group-item">
+        <h5>Birth Date</h5>
+        <p>{{ convertDate(account.DOB) }}</p>
+      </div>
+      <div class="group-item">
+        <h5>Gender</h5>
+        <p>{{ account.gender }}</p>
+      </div>
     </div>
-    <div class="group-item">
-      <h5>Gender</h5>
-      <p>{{ gender }}</p>
-    </div>
-  </div>
 
-  <div class="group">
-    <div class="group-item">
-      <h5>Email</h5>
-      <p>{{ email }}</p>
-    </div>
-    <div class="group-item">
-      <h5>Phone</h5>
-      <p>{{ phone }}</p>
+    <div class="group">
+      <div class="group-item">
+        <h5>Email</h5>
+        <p>{{ account.email }}</p>
+      </div>
+      <div class="group-item">
+        <h5>Phone</h5>
+        <p>{{ account.phone }}</p>
+      </div>
     </div>
   </div>
 
   <Popup
     v-bind:visible="popupVisible"
     @popReturn="editVisible"
+    @submit="submit"
     :buttons="true"
     :style="{ top: '0', right: '0' }"
   >
     <div class="group">
       <div class="group-item" :style="{ width: '50%' }">
         <p>Name</p>
-        <input />
+        <input v-model="form.em_firstname" type="text" placeholder="ex. Name" />
       </div>
       <div class="group-item">
         <p>Surname</p>
-        <input />
+        <input v-model="form.em_lastname" type="text" placeholder="ex. Name" />
       </div>
     </div>
     <p>Phone</p>
-    <input />
+    <input v-model="form.phone" type="text" />
     <p>Email</p>
-    <input :style="{ width: '80%' }" />
+    <input v-model="form.email" type="text" />
   </Popup>
 </template>
 
 <script>
 import Popup from "../Popup";
+import axios from "axios";
 export default {
   name: "MyProfile",
   components: { Popup },
   data() {
     return {
-      name: "Monkey Harry",
-      identification: "1231230123213",
-      birth: "2000/10/01",
-      gender: "Male",
-      email: "monkey.h@pocoloco.com",
-      phone: "0818888888",
       popupVisible: false,
+      account_db: "",
+      check: false,
+      res: "",
+      form: {
+        employeeID: "",
+        em_firstname: "",
+        em_lastname: "",
+        phone: "",
+        email: "",
+        isEdit: false,
+      },
     };
   },
+  created() {
+    this.form.employeeID = this.$store.state.employeeDetail.employeeID;
+    this.getAccountProfile();
+  },
+
   methods: {
     showPopup() {
       this.popupVisible = true;
     },
     editVisible(value) {
       this.popupVisible = value;
+    },
+    submit(value) {
+      this.popupVisible = value;
+      this.updateData();
+    },
+    getAccountProfile() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_myAccount.php", {
+          action: "getAll",
+          employeeID: this.form.employeeID,
+        })
+        .then(
+          function(res) {
+            this.account_db = res.data;
+            this.form.em_firstname = res.data[0].em_firstname;
+            this.form.em_lastname = res.data[0].em_lastname;
+            this.form.phone = res.data[0].phone;
+            this.form.email = res.data[0].email;
+          }.bind(this)
+        );
+    },
+    updateData() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_myAccount.php", {
+          action: "updateData",
+          employeeID: this.form.employeeID,
+          em_firstname: this.form.em_firstname,
+          em_lastname: this.form.em_lastname,
+          phone: this.form.phone,
+          email: this.form.email,
+        })
+        .then(
+          function(res) {
+            alert(res.data.message);
+            this.getAccountProfile();
+          }.bind(this)
+        );
+    },
+    convertDate(date) {
+      var datearray = date.split("-");
+      var newdate = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
+      return newdate;
     },
   },
 };
