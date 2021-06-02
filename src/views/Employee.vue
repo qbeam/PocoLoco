@@ -222,7 +222,6 @@
             <div class="group-row">
               <div class="group-item-left">
                 <div class="circle">
-                  <!-- <img src="../assets/ReceptionistF.png" /> -->
                   <img :src="require(`../assets/${form.picName}.png`)" />
                 </div>
               </div>
