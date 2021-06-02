@@ -54,7 +54,7 @@
             />
           </div>
         </th>
-        <th>Manage</th>
+        <th v-if="role != 'Reception'">Manage</th>
       </tr>
 
       <tr
@@ -71,7 +71,7 @@
         <td>{{ promotion.discount }}%</td>
         <td>{{ convertDate(promotion.startDate) }}</td>
         <td>{{ convertDate(promotion.endDate) }}</td>
-        <td>
+        <td v-if="role != 'Reception'">
           <div class="manage">
             <button
               class="manage-button"
@@ -286,7 +286,7 @@ export default {
       season_db: "",
       roomtype_db: "",
       check: false,
-      countRow:"",
+      countRow: "",
       form: {
         promotionID: "",
         season: "",
@@ -306,6 +306,9 @@ export default {
         type: "string",
         mask: "YYYY-MM-DD",
       },
+      role: "Owner",
+      //role: "Manager Reception",
+      //role: "Reception",
     };
   },
   created() {
@@ -645,6 +648,7 @@ td {
   text-align: center;
   justify-content: center;
   align-items: center;
+  height: 35px;
 }
 .row:hover {
   cursor: pointer;

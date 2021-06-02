@@ -47,7 +47,8 @@
             />
           </div>
         </th>
-        <th>Edit</th>
+
+        <th v-if="role != 'Reception'">Edit</th>
       </tr>
 
       <tr
@@ -63,7 +64,7 @@
         <td>{{ room.roomPrice }}</td>
         <td>{{ room.capacity }}</td>
         <td>{{ room.size }}</td>
-        <td>
+        <td v-if="role != 'Reception'">
           <div class="manage">
             <button class="manage-button" @click="getRoomDataEdit(room)">
               <i class="fa fa-pencil fa-2x"></i>
@@ -196,6 +197,9 @@ export default {
         capacity: "",
         size: "",
       },
+      //role: "Owner",
+      //role: "Manager Reception",
+      role: "Reception",
     };
   },
   created() {
@@ -443,6 +447,7 @@ td {
   text-align: center;
   justify-content: center;
   align-items: center;
+  height: 35px;
 }
 .row:hover {
   cursor: pointer;
