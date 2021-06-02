@@ -20,8 +20,11 @@
     </DefaultButton>
   </div>
 
-  <SearchError v-if="errorSearching" />
-  <table class="search-table">
+  <SearchError
+    v-if="errorSearching"
+    :style="{ marginTop: '50px', marginBottom: '50px' }"
+  />
+  <table v-if="service_db.length !== 0" class="search-table">
     <tr>
       <th v-if="width > 700">Service ID</th>
       <th>Name</th>
@@ -153,7 +156,7 @@ import axios from "axios";
 
 export default {
   name: "OrderService",
-  components: { DefaultButton, PaginationBar, DefaultButton },
+  components: { DefaultButton, PaginationBar, DefaultButton, SearchError },
   setup() {
     const { width } = useScreenWidth();
     const { height, tableRow } = useScreenHeight(420);
@@ -164,7 +167,6 @@ export default {
       currentPage: 1,
       resultPerPage: 5,
       startingAmount: 1,
-      SearchError,
       roomID: "",
       search: "",
       service_db: "",
@@ -175,7 +177,7 @@ export default {
       total_insert: "",
       count_success: 0,
       count_fail: 0,
-      countRow:"",
+      countRow: "",
       item: {
         id: "",
         name: "",
@@ -186,6 +188,7 @@ export default {
       orders: [],
       totalAmount: 0,
       totalPrice: 0,
+      errorSearching: false,
     };
   },
   created() {
@@ -208,7 +211,13 @@ export default {
           function(res) {
             this.service_db = res.data;
             this.countRow = this.service_db.length;
-            this.returnQuery(); 
+            if (this.service_db != "") {
+              this.errorSearching = false;
+            } else {
+              this.errorSearching = true;
+            }
+            console.log("Search", this.errorSearching);
+            this.returnQuery();
           }.bind(this)
         );
     },
@@ -223,7 +232,12 @@ export default {
           function(res) {
             this.service_db = res.data;
             this.countRow = this.service_db.length;
-            this.returnQuery(); 
+            if (this.service_db != "") {
+              this.errorSearching = false;
+            } else {
+              this.errorSearching = true;
+            }
+            this.returnQuery();
           }.bind(this)
         );
     },
@@ -233,6 +247,7 @@ export default {
       const inputAmount = Number(
         document.getElementById(`orderAmount${index}`).value
       );
+
       this.totalAmount = this.totalAmount + inputAmount;
       this.totalPrice = this.totalPrice + item.servicePrice * inputAmount;
 
@@ -276,11 +291,10 @@ export default {
     },
 
     removeOrder(order, index) {
-      const inputAmount = Number(
-        document.getElementById(`orderAmount${index}`).value
-      );
-      this.totalAmount = this.totalAmount - inputAmount;
-      this.totalPrice = this.totalPrice - order.price * inputAmount;
+      var amount = order.amount;
+
+      this.totalAmount = this.totalAmount - amount;
+      this.totalPrice = this.totalPrice - order.price * amount;
       this.orders.splice(index, 1);
     },
 
