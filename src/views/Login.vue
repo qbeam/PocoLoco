@@ -71,10 +71,21 @@ export default {
           function(res) {
             console.log(res);
             if (res.data.login == 1) {
-              this.$router.push({
-                name: "Home",
-                params: { employeeID: res.data.employeeID },
-              });
+              this.$router.push({ name: "Home" });
+              this.$store.state.employeeDetail.employeeID = res.data.employeeID;
+              this.$store.state.employeeDetail.role = res.data.roleName;
+              this.$store.state.employeeDetail.department = res.data.departmentName;
+              this.$store.state.employeeDetail.profilePic = res.data.roleName + res.data.gender;
+              console.log(res.data.roleName)
+              // this.$router.push({
+              //   name: "Home",
+              //   params: {
+              //     employeeID: res.data.employeeID,
+              //     roleName: res.data.roleName,
+              //     departmentName: res.data.departmentName,
+              //     gender: res.data.gender,
+              //   },
+              // });
             }
           }.bind(this)
         );
