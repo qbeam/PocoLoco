@@ -15,7 +15,7 @@
       <div class="item" v-for="(record, i) in lateSummary" :key="i">
         <div class="icon">
           <div class="user-icon">
-            <img :src="require(`../assets/${record.role}.png`)" />
+            <img :src="require(`../../assets/${record.role}.png`)" />
           </div>
         </div>
 
@@ -36,16 +36,16 @@
 </template>
 
 <script>
-import CustomSelect from "./CustomSelect";
+import CustomSelect from "../CustomSelect";
 
 const lateSummary = [
-  { id: 123456, name: "Pungkung Carrot", role: "OwnerF", late: 100 },
-  { id: 123456, name: "Pungkung Turtle", role: "ReceptionistF", late: 80 },
-  { id: 123456, name: "Pungkung Rabbit", role: "ManagerF", late: 50 },
-  { id: 123456, name: "Pungkung Broccolli", role: "MaidF", late: 30 },
-  { id: 123456, name: "Pungkung Baby", role: "OwnerF", late: 10 },
-  { id: 123456, name: "Ploypapas Pianchoopat", role: "ChefF", late: 5 },
-  { id: 123456, name: "Supavadee Yingying", role: "ReceptionistF", late: 2 },
+  { id: 123456, name: "Pungkung Carrot", role: "owner", late: 100 },
+  { id: 123456, name: "Pungkung Turtle", role: "receptionist", late: 80 },
+  { id: 123456, name: "Pungkung Rabbit", role: "manager", late: 50 },
+  { id: 123456, name: "Pungkung Broccolli", role: "maid", late: 30 },
+  { id: 123456, name: "Pungkung Baby", role: "owner", late: 10 },
+  { id: 123456, name: "Ploypapas Pianchoopat", role: "chef", late: 5 },
+  { id: 123456, name: "Supavadee Yingying", role: "receptionist", late: 2 },
 ];
 export default {
   name: "LateEmployee",

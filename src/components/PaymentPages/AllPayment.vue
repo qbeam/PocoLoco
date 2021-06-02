@@ -1,4 +1,3 @@
-
 <template>
   <div class="menu-bar">
     <div class="search-container">
@@ -54,12 +53,11 @@
 </template>
 
 <script>
-import CustomSelect from "./CustomSelect";
-import DefaultButton from "./DefaultButton";
-import { useScreenWidth } from "../composables/useScreenWidth";
-import PaginationBar from "./PaginationBar";
-import Popup from "./Popup";
-import SearchError from "./SearchError";
+import CustomSelect from "../CustomSelect";
+import DefaultButton from "../DefaultButton";
+import { useScreenWidth } from "../../composables/useScreenWidth";
+import PaginationBar from "../PaginationBar";
+import SearchError from "../SearchError";
 
 const payments = [
   {

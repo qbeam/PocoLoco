@@ -27,9 +27,9 @@
 
 <script>
 import TablePage from "../components/TablePage.vue";
-import AllPayment from "../components/AllPayment";
-import DepositPay from "../components/DepositPay";
-import CheckOutPay from "../components/CheckOutPay";
+import AllPayment from "../components/PaymentPages/AllPayment";
+import DepositPay from "../components/PaymentPages/DepositPay";
+import CheckOutPay from "../components/PaymentPages/CheckOutPay";
 
 const menus = ["All Payment", "Pay Deposit", "Check Out"];
 export default {
@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       menus,
-      selected: menus[1],
+      selected: menus[0],
     };
   },
   methods: {

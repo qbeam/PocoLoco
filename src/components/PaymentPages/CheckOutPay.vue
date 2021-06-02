@@ -122,11 +122,11 @@ Skip to content Search or jump to… Pulls Issues Marketplace Explore
 </template>
 
 <script>
-import CustomSelect from "./CustomSelect";
-import DefaultButton from "./DefaultButton";
-import { useScreenWidth } from "../composables/useScreenWidth";
-import PaginationBar from "./PaginationBar";
-import SearchError from "./SearchError";
+import CustomSelect from "../CustomSelect";
+import DefaultButton from "../DefaultButton";
+import { useScreenWidth } from "../../composables/useScreenWidth";
+import PaginationBar from "../PaginationBar";
+import SearchError from "../SearchError";
 import axios from "axios";
 
 const paymentMethods = ["Bank Transfer", "Cash", "Credit Card"];
