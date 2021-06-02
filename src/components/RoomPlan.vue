@@ -279,10 +279,9 @@ const roomStatus = [
 ];
 export default {
   name: "RoomPlan",
-  props: ["floor", "building"],
+  props: ["floor", "building", "date"],
   data() {
     return {
-      room_db,
       roomStatus,
       roomOrder: [
         "03",
@@ -316,33 +315,44 @@ export default {
   created() {
     this.getRoomNumber();
   },
+  watch: {
+    date: function() {
+      this.getRoomNumber();
+    },
+    floor: function() {
+      this.getRoomNumber();
+    },
+    building: function() {
+      this.getRoomNumber();
+    },
+  },
   methods: {
     getRoomNumber() {
-      console.log("building", this.building);
-      console.log("floor", this.floor);
       axios
         .post("http://localhost:8080/PocoLoco_db/api_floorPlan.php", {
           action: "getRoomNumber",
           building: this.building,
           floor: this.floor,
+          date: this.date,
         })
         .then(
           function(res) {
-            this.arrangeHotelRoom(res.data);
+            console.log(res.data);
+            //this.arrangeHotelRoom(res.data);
           }.bind(this)
         );
     },
-    arrangeHotelRoom(roomList) {
-      const i = 0;
-      const j = 0;
-      while(i < roomList.length) {
-        while (j < roomList.length){
-          // if roomList[j] == roomOrder[i] => add that room to Array, pop that room out of roomList and break while loop
-          // else j++ (look for next room in the list)
-        }
-        i += 1
-      }
-    },
+    // arrangeHotelRoom(roomList) {
+    //   const i = 0;
+    //   const j = 0;
+    //   while (i < roomList.length) {
+    //     while (j < roomList.length) {
+    //       // if roomList[j] == roomOrder[i] => add that room to Array, pop that room out of roomList and break while loop
+    //       // else j++ (look for next room in the list)
+    //     }
+    //     i += 1;
+    //   }
+    // },
     getBgColor(detail) {
       if (detail.type == "Standard") {
         if (detail.status == 0) {
