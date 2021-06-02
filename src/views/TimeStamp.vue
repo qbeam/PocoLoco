@@ -1,86 +1,145 @@
 <template>
   <div class="container">
-      <div class="inner-container">
-        <h1>TimeStamp</h1>
-        <h1>{{hour}}:{{minute}}:{{second}}</h1>
-        <h2>{{day}}, {{month}} {{date}}, {{year}}</h2>
-        <input type="text">
-        <DefaultButton
-          :style="{
-            height: '45px',
-            width: '150px',
-            background: 'var(--primary-red)',
-            fontSize: '15px',
-          }"
-          >Submit</DefaultButton>
+    <div class="inner-container">
+      <h1>Timestamp</h1>
+      <div class="current-time">
+        <p>{{ hour }}</p>
+        <p>:</p>
+        <p>{{ minute }}</p>
+        <p>:</p>
+        <p>{{ second }}</p>
       </div>
+      <h2>{{ day }}, {{ month }} {{ date }}, {{ year }}</h2>
+      <input type="text" placeholder="username" />
+      <DefaultButton
+        :style="{
+          background: 'var(--primary-red)',
+          alignSelf: 'center',
+          filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))',
+        }"
+        >SUBMIT</DefaultButton
+      >
+    </div>
   </div>
 </template>
 
 <script>
 import DefaultButton from "../components/DefaultButton.vue";
 export default {
-    name: "TimeStamp",
-    components: {
-        DefaultButton,
-    },
-    mounted() {
-        setInterval(() => {
-            var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            this.day = days[new Date().getDay()];
-            this.date = new Date().getDate();
-            this.month = months[new Date().getMonth()];
-            this.year = new Date().getFullYear();
-            this.hour = new Date().getHours();
-            this.minute = new Date().getMinutes();
-            this.second = new Date().getSeconds();
+  name: "TimeStamp",
+  components: {
+    DefaultButton,
+  },
+  mounted() {
+    setInterval(() => {
+      var days = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+      var months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      this.day = days[new Date().getDay()];
+      this.date = new Date().getDate();
+      this.month = months[new Date().getMonth()];
+      this.year = new Date().getFullYear();
+      this.hour = new Date().getHours();
+      this.minute = new Date().getMinutes();
+      this.second = new Date().getSeconds();
 
-            if (this.hour < 10) {
-                this.hour = "0" + this.hour;
-            }
-            if (this.minute < 10) {
-                this.minute = "0" + this.minute;
-            }
-            if (this.second < 10) {
-                this.second = "0" + this.second;
-            }
-        }, 1000)
-    },
-    data() {
-        return {
-            today: "",
-            date: "",
-            day: "",
-            month: "",
-            year: "",
-            hour: "",
-            minute: "",
-            second: "",
-        }
-    },
-
-}
+      if (this.hour < 10) {
+        this.hour = "0" + this.hour;
+      }
+      if (this.minute < 10) {
+        this.minute = "0" + this.minute;
+      }
+      if (this.second < 10) {
+        this.second = "0" + this.second;
+      }
+    }, 1000);
+  },
+  data() {
+    return {
+      today: "",
+      date: "",
+      day: "",
+      month: "",
+      year: "",
+      hour: "",
+      minute: "",
+      second: "",
+    };
+  },
+};
 </script>
 
 <style scope>
 .container {
   display: flex;
-  text-align: center;
-  width: 100%;
   background: var(--primary-blue);
+  padding: 0;
 }
 .inner-container {
-    width: 80%;
-    align-self: center;
-    height: 100%;
-    margin: 40px;
-    background-color: white;
-  }
+  width: 70%;
+  height: 80%;
+  margin: auto;
+  background-color: white;
+  justify-content: center;
+  align-items: center;
+}
+h1 {
+  font-size: 64px;
+  color: #0b2e4f;
+  margin: 25px 0;
+}
+.current-time {
+  display: flex;
+  font-size: 64px;
+  font-weight: bold;
+  color: #4e7087;
+  width: 50%;
+  justify-content: space-between;
+  margin: 25px 0 20px 0;
+}
+p {
+  margin: 0;
+}
+h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #4e7087;
+}
 input {
   width: 300px;
-  height: 35px;
-  padding-left: 10px;
-  margin-bottom: 30px;
+  height: 50px;
+  margin: 50px 0 30px 0;
+  align-self: center;
+  border: 0;
+  background: #fcfcfc;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  text-align: center;
+  font-size: 24px;
+  color: var(--text-color);
+}
+@media (max-width: 550px) {
+  .current-time {
+    width: 80%;
+  }
 }
 </style>
