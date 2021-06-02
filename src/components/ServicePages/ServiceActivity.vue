@@ -1,7 +1,15 @@
 <template>
   <div class="menu-bar">
     <div class="search-container">
-      <i class="fa fa-search"></i>
+      <i
+        class="fa fa-search"
+        :style="{
+          position: 'absolute',
+          zIndex: '5',
+          marginLeft: '15px',
+          pointerEvents: 'none',
+        }"
+      ></i>
       <input
         v-model="search"
         class="search-field"
@@ -55,7 +63,7 @@
       <td>
         <div class="manage">
           <button class="manage-button" @click="getServiceData(record)">
-            <i class="fa fa-search fa-2x"></i>
+            <i class="fa fa-search" :style="{ fontSize: '20px' }"></i>
           </button>
         </div>
       </td>
@@ -351,13 +359,9 @@ export default {
   padding: 5px 20px;
 }
 .search-container {
+  display: flex;
   position: relative;
-}
-.fa-search {
-  position: absolute;
-  z-index: 5;
-  margin: 7px 0 0 12px;
-  font-size: 16px;
+  align-items: center;
 }
 .search-field {
   width: 225px;
@@ -407,10 +411,6 @@ td {
   border: none;
   background: none;
 }
-.fa-search:hover {
-  color: var(--primary-blue);
-  cursor: pointer;
-}
 .popup-head {
   display: flex;
   flex-direction: row;
@@ -426,6 +426,10 @@ h4 {
 .summary {
   height: 45px;
   border-top: 2px solid var(--light-grey);
+}
+.fa-search:hover {
+  cursor: pointer;
+  color: var(--primary-blue);
 }
 @media (max-width: 800px) {
   .menu-bar {
