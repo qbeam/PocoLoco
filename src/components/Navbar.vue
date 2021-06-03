@@ -29,7 +29,7 @@
       <router-link
         v-for="(permission, i) in permissions"
         :key="i"
-        :to="{ name: `${permission.path}` }"
+        :to="{ name: `${permission.path}`}"
         >{{ permission.name }}</router-link
       >
     </div>
@@ -49,6 +49,8 @@
 
 <script>
 import { useScreenWidth } from "../composables/useScreenWidth";
+import axios from "axios";
+
 const AdminOwner = [
   { name: "Overview", path: "BusinessAnalysis" },
   { name: "Employee", path: "Employee" },
@@ -110,39 +112,6 @@ const Chef = [
 ];
 export default {
   name: "Navbar",
-  setup() {
-    const { width } = useScreenWidth();
-    return { width };
-  },
-  created() {
-    this.employeeID = this.$store.state.employeeDetail.employeeID;
-    this.role = this.$store.state.employeeDetail.role;
-    this.department = this.$store.state.employeeDetail.department;
-    this.profilePic = this.$store.state.employeeDetail.profilePic;
-
-    if (this.role === "Owner" || this.role === "Admin") {
-      this.permissions = AdminOwner;
-    }
-    if (this.role === "Manager" && this.department === "Receptionist") {
-      this.permissions = ReceptionManager;
-    }
-    if (this.role === "Receptionist") {
-      this.permissions = Receptionist;
-    }
-    if (this.role === "Manager" && this.department === "Kitchen") {
-      this.permissions = ChefManager;
-    }
-    if (this.role === "Chef") {
-      this.permissions = Chef;
-    }
-    if (this.role === "Manager" && this.department === "Housekeeping") {
-      this.permissions = MaidManager;
-    }
-    if (this.role === "Maid") {
-      this.permissions = Maid;
-    }
-  },
-
   data() {
     return {
       AdminOwner,
@@ -155,15 +124,92 @@ export default {
       employeeID: "",
       role: "",
       department: "",
-      profilePic: "",
+      gender: "",
+      profilePic: "AdminF",
       visible: false,
       permissions: [],
+      user: "",
     };
   },
+  setup() {
+    const { width } = useScreenWidth();
+    return { width };
+  },
+
+  created() {
+    if (this.$store.state.user != "") {
+      this.$router.push("/Home");
+      // this.getInformation()
+    }
+    this.employeeID = this.$store.state.employeeDetail.employeeID;
+    this.role = this.$store.state.employeeDetail.role;
+    this.department = this.$store.state.employeeDetail.department;
+    // this.profilePic = this.$store.state.employeeDetail.profilePic;
+    this.routerPermission();
+  },
+
   methods: {
+    error404() {
+      this.$router.push("/Error404");
+    },
+    routertest() {
+      this.$router.push("/ServiceToDo");
+    },
+    storeData() {
+      this.$store.state.employeeDetail.employeeID = this.employeeID;
+      this.$store.state.employeeDetail.role = this.role;
+      this.$store.state.employeeDetail.department = this.department;
+      // this.$store.state.employeeDetail.profilePic = this.profilePic;
+      console.log(this.$store.state.employeeDetail.employeeID);
+      console.log(this.$store.state.employeeDetail.role);
+      console.log(this.$store.state.employeeDetail.department);
+      // console.log(this.$store.state.employeeDetail.profilePic);
+      this.routerPermission();
+    },
+    // async getInformation() {
+    //   await axios
+    //     .post("http://localhost:8080/PocoLoco_db/api_login.php", {
+    //       action: "getInformation",
+    //       employeeID: this.user,
+    //     })
+    //     .then(
+    //       await function(res) {
+    //         this.employeeID = res.data.employeeID;
+    //         this.role = res.data.roleName;
+    //         this.department = res.data.departmentName;
+    //         console.log("DATA", res.data);
+    //         // this.profilePic = res.data.roleName + res.data.gender;
+    //         // console.log(this.profilePic);
+    //         this.storeData();
+    //       }.bind(this)
+    //     );
+    // },
     returnVisible() {
       this.visible = !this.visible;
       this.$emit("NavReturn", this.visible);
+    },
+    routerPermission() {
+      if (this.role === "Owner" || this.role === "Admin") {
+        this.permissions = AdminOwner;
+      }
+      if (this.role === "Manager" && this.department === "Receptionist") {
+        this.permissions = ReceptionManager;
+      }
+      if (this.role === "Receptionist") {
+        this.permissions = Receptionist;
+      }
+      if (this.role === "Manager" && this.department === "Kitchen") {
+        this.permissions = ChefManager;
+      }
+      if (this.role === "Chef") {
+        this.permissions = Chef;
+      }
+      if (this.role === "Manager" && this.department === "Housekeeping") {
+        this.permissions = MaidManager;
+      }
+      if (this.role === "Maid") {
+        this.permissions = Maid;
+      }
     },
   },
 };

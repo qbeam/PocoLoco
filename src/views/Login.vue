@@ -71,11 +71,13 @@ export default {
           function(res) {
             console.log(res);
             if (res.data.login == 1) {
-              this.$router.push({ name: "Home" });
+              localStorage.setItem("user", res.data.employeeID);
               this.$store.state.employeeDetail.employeeID = res.data.employeeID;
               this.$store.state.employeeDetail.role = res.data.roleName;
               this.$store.state.employeeDetail.department = res.data.departmentName;
               this.$store.state.employeeDetail.profilePic = res.data.roleName + res.data.gender;
+              this.$store.state.user = localStorage.getItem("user");
+              this.$router.push({ name: "Home" });
               // this.$router.push({
               //   name: "Home",
               //   params: {

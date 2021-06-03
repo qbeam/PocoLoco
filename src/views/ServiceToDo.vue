@@ -125,12 +125,23 @@ export default {
     };
   },
   created() {
-    this.role = this.$store.state.employeeDetail.role;
-    this.department = this.$store.state.employeeDetail.department;
+    this.storeData();
     this.checkRole();
     this.getOrder();
   },
+    // watch: {
+    // role: function() {
+    //   this.storeData();
+    //   },
+    // },
   methods: {
+    storeData() {
+      this.role = this.$store.state.employeeDetail.role;
+      this.department = this.$store.state.employeeDetail.department;
+      console.log("STORE ROLE", this.$store.state.employeeDetail.role);
+      console.log("ROLE", this.role);
+      console.log("department", this.department);
+    },
     pageReturn(page) {
       this.currentPage = page;
     },
@@ -140,18 +151,18 @@ export default {
     sortReturn(direction) {
       this.sortDirection = direction;
     },
-
     goToAddOrder() {
       this.$router.push("/Services");
     },
-    getOrder() {
-      axios
+    async getOrder() {
+      await axios
         .post("http://localhost:8080/PocoLoco_db/api_serviceToDo.php", {
           action: "getAll",
           type: this.type,
         })
         .then(
           function(res) {
+            console.log(res.data);
             this.order_db = res.data;
             this.countRow = this.order_db.length;
             if (this.order_db != "") {
