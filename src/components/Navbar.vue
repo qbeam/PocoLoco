@@ -34,20 +34,7 @@
       >
     </div>
 
-    <!-- <div class="menu" v-if="visible || width > 1000">
-      <router-link :to="{ name: 'Home' }">Home</router-link>
-      <router-link :to="{ name: 'Employee' }">Employee</router-link>
-      <router-link :to="{ name: 'Role' }">Role</router-link>
-      <router-link :to="{ name: 'Customer' }">Customer</router-link>
-      <router-link :to="{ name: 'HotelExpenses' }">Hotel Expenses</router-link>
-      <router-link :to="{ name: 'Booking' }">Booking</router-link>
-      <router-link :to="{ name: 'BookingDetail' }">BookingDetail</router-link>
-      <router-link :to="{ name: 'Promotion' }">Promotion</router-link>
-      <router-link :to="{ name: 'Room' }">Room</router-link>
-      <router-link :to="{ name: 'Services' }">Services</router-link>
-      <router-link :to="{ name: 'OrderChef' }">Order</router-link>
-      <router-link :to="{ name: 'OrderMaid' }">Order</router-link>
-    </div> -->
+   
     <button class="logout-button" v-if="visible || width > 1000">
       <div class="logout-text">
         <i
@@ -100,25 +87,25 @@ const Receptionist = [
 ];
 const MaidManager = [
   { name: "Home", path: "FloorPlan" },
-  { name: "Order", path: "OrderMaid" },
+  { name: "Order", path: "ServiceToDo" },
   { name: "Employee", path: "Employee" },
   { name: "Services", path: "Services" },
   { name: "My Account", path: "MyAccount" },
 ];
 const Maid = [
   { name: "Home", path: "FloorPlan" },
-  { name: "Order", path: "OrderMaid" },
+  { name: "Order", path: "ServiceToDo" },
   { name: "Services", path: "Services" },
   { name: "My Account", path: "MyAccount" },
 ];
 const ChefManager = [
-  { name: "Home", path: "OrderChef" },
+  { name: "Home", path: "ServiceToDo" },
   { name: "Employee", path: "Employee" },
   { name: "Services", path: "Services" },
   { name: "My Account", path: "MyAccount" },
 ];
 const Chef = [
-  { name: "Home", path: "OrderChef" },
+  { name: "Home", path: "ServiceToDo" },
   { name: "Services", path: "Services" },
   { name: "My Account", path: "MyAccount" },
 ];
@@ -132,9 +119,8 @@ export default {
     this.employeeID = this.$store.state.employeeDetail.employeeID;
     this.role = this.$store.state.employeeDetail.role;
     this.department = this.$store.state.employeeDetail.department;
-    // this.profilePic = this.$store.state.employeeDetail.profilePic;
-    console.log(this.role);
-    console.log(this.department);
+ 
+  
     if (this.role === "Owner" || this.role === "Admin") {
       this.permissions = AdminOwner;
     }
@@ -157,15 +143,7 @@ export default {
       this.permissions = Maid;
     }
   },
-  // mounted() {
-  //   if (this.role === "Owner" || "Admin") {
-  //     this.permissions = this.AdminOwner;
-  //   }
-  //   if (this.role === "Receptionist") {
-  //     this.permissions = this.ReceptionManager;
-  //     console.log(this.permissions);
-  //   }
-  // },
+
   data() {
     return {
       AdminOwner,
