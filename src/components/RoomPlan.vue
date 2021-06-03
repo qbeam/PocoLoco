@@ -1,238 +1,240 @@
 <template>
-  <div class="map">
-    <div class="long-row">
-      <div
-        class="big"
-        v-for="(detail, i) in roomStatus.slice(0, 1)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
+  <div>
+    <div class="map">
+      <div class="long-row">
+        <div
+          class="big"
+          v-for="(detail, i) in roomStatus.slice(0, 1)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(1, 3)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div class="elevator">E</div>
+        <div class="elevator">E</div>
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(3, 5)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div
+          class="big"
+          v-for="(detail, i) in roomStatus.slice(5, 6)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
       </div>
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(1, 3)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-      <div class="elevator">E</div>
-      <div class="elevator">E</div>
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(3, 5)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-      <div
-        class="big"
-        v-for="(detail, i) in roomStatus.slice(5, 6)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-    </div>
 
-    <div class="opposite">
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(6, 7)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
+      <div class="opposite">
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(6, 7)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div class="walkway"></div>
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(7, 8)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
       </div>
-      <div class="walkway"></div>
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(7, 8)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-    </div>
 
-    <div class="center">
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(8, 9)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
+      <div class="center">
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(8, 9)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div class="path"></div>
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(9, 12)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div class="path"></div>
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(12, 13)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
       </div>
-      <div class="path"></div>
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(9, 12)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-      <div class="path"></div>
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(12, 13)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-    </div>
 
-    <div class="center">
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(13, 14)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
+      <div class="center">
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(13, 14)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div class="path"></div>
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(14, 16)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div class="small" :style="{ background: '#9C9C9C' }"></div>
+        <div class="path"></div>
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(16, 17)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
       </div>
-      <div class="path"></div>
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(14, 16)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-      <div class="small" :style="{ background: '#9C9C9C' }"></div>
-      <div class="path"></div>
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(16, 17)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-    </div>
 
-    <div class="opposite">
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(17, 18)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
+      <div class="opposite">
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(17, 18)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div class="walkway"></div>
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(18, 19)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
       </div>
-      <div class="walkway"></div>
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(18, 19)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-    </div>
 
-    <div class="long-row">
-      <div
-        class="big"
-        v-for="(detail, i) in roomStatus.slice(19, 20)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(20, 22)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-      <div class="elevator">E</div>
-      <div class="elevator">E</div>
-      <div
-        class="small"
-        v-for="(detail, i) in roomStatus.slice(22, 24)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
-      </div>
-      <div
-        class="big"
-        v-for="(detail, i) in roomStatus.slice(24, 25)"
-        :key="i"
-        :style="{
-          background: getBgColor(detail),
-          cursor: getCursor(detail.status),
-        }"
-      >
-        {{ detail.roomNumber }}
+      <div class="long-row">
+        <div
+          class="big"
+          v-for="(detail, i) in roomStatus.slice(19, 20)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(20, 22)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div class="elevator">E</div>
+        <div class="elevator">E</div>
+        <div
+          class="small"
+          v-for="(detail, i) in roomStatus.slice(22, 24)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
+        <div
+          class="big"
+          v-for="(detail, i) in roomStatus.slice(24, 25)"
+          :key="i"
+          :style="{
+            background: getBgColor(detail),
+            cursor: getCursor(detail.status),
+          }"
+        >
+          {{ detail.roomNumber }}
+        </div>
       </div>
     </div>
+    <DefaultButton
+      @click="goToAddBooking"
+      :style="{ margin: '50px auto 0 auto' }"
+    >
+      Make Booking</DefaultButton
+    >
   </div>
-  <DefaultButton
-    @click="goToAddBooking"
-    :style="{ margin: '50px auto 0 auto' }"
-  >
-    Make Booking</DefaultButton
-  >
 </template>
 
 <script>

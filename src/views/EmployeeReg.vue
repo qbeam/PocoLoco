@@ -568,10 +568,14 @@ export default {
             password: this.details.password,
             cf_pass: this.details.cf_pass,
           })
-          .then(function(res) {
-            console.log(res.data);
-            //alert(res.data);
-          });
+          .then(
+            function(res) {
+              if (res.data.success == true) {
+                this.backToEmployee();
+              }
+              alert(res.data.message);
+            }.bind(this)
+          );
       }
     },
   },

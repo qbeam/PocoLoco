@@ -64,7 +64,7 @@
 
     <div class="inner-container">
       <p class="title">Building: {{ building }} Floor: {{ floor }}</p>
-      <RoomPlan :floor="floor" :building="building" />
+      <RoomPlan :floor="floor" :building="building" :date="pickedDate" />
     </div>
   </TablePage>
 </template>
@@ -92,7 +92,22 @@ export default {
       },
     };
   },
+  created() {
+    this.getDate();
+  },
   methods: {
+    getDate() {
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, "0");
+      var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+      var yyyy = today.getFullYear();
+
+      // today = mm + "/" + dd + "/" + yyyy;
+      today = yyyy + "/" + mm + "/" + dd;
+
+      this.pickedDate = today;
+    },
+
     selectBuilding(selectedBuilding) {
       this.building = selectedBuilding;
       console.log("selected B", this.building);

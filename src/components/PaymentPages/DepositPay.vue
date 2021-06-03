@@ -123,7 +123,7 @@
 
   <div class="buttons">
     <DefaultButton
-      @click="reset"
+      @click="reset()"
       type="transparent"
       :style="{ marginRight: '50px' }"
       >CANCEL</DefaultButton
@@ -281,7 +281,6 @@ export default {
     },
 
     confirmInf() {
-      console.log(this.date);
       if (this.bookingID == "") {
         alert("Please enter the Booking ID ");
       } else if (this.date == "") {
@@ -313,7 +312,7 @@ export default {
       // this.lastName = "";
       // this.phone = "";
       // this.payment = "";
-      // vm.$forceUpdate();
+      this.$router.push("/payment");
     },
   },
 };

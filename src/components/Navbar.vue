@@ -18,13 +18,23 @@
       <i class="fa fa-bars fa-2x" v-if="!visible"></i>
     </button>
     <div class="circle" v-if="visible || width > 1000">
-      <img src="../assets/OwnerM.png" />
+      <img :src="require(`../assets/${profilePic}.png`)" />
     </div>
     <div class="info" v-if="visible || width > 1000">
-      <b>Role Name</b>
-      <b>Employee ID</b>
+      <b>{{ role }}</b>
+      <b>{{ employeeID }}</b>
     </div>
+
     <div class="menu" v-if="visible || width > 1000">
+      <router-link
+        v-for="(permission, i) in permissions"
+        :key="i"
+        :to="{ name: `${permission.path}` }"
+        >{{ permission.name }}</router-link
+      >
+    </div>
+
+    <!-- <div class="menu" v-if="visible || width > 1000">
       <router-link :to="{ name: 'Home' }">Home</router-link>
       <router-link :to="{ name: 'Employee' }">Employee</router-link>
       <router-link :to="{ name: 'Role' }">Role</router-link>
@@ -37,7 +47,7 @@
       <router-link :to="{ name: 'Services' }">Services</router-link>
       <router-link :to="{ name: 'OrderChef' }">Order</router-link>
       <router-link :to="{ name: 'OrderMaid' }">Order</router-link>
-    </div>
+    </div> -->
     <button class="logout-button" v-if="visible || width > 1000">
       <div class="logout-text">
         <i
@@ -53,15 +63,124 @@
 
 <script>
 import { useScreenWidth } from "../composables/useScreenWidth";
+const AdminOwner = [
+  { name: "Overview", path: "BusinessAnalysis" },
+  { name: "Employee", path: "Employee" },
+  { name: "Customer", path: "Customer" },
+  { name: "Room", path: "Room" },
+  { name: "Promotion", path: "Promotion" },
+  { name: "Booking", path: "Booking" },
+  { name: "Booking Detail", path: "BookingDetail" },
+  { name: "Services", path: "Services" },
+  { name: "Payment", path: "Payment" },
+  { name: "Hotel Expenses", path: "HotelExpenses" },
+];
+const ReceptionManager = [
+  { name: "Home", path: "FloorPlan" },
+  { name: "Employee", path: "Employee" },
+  { name: "Customer", path: "Customer" },
+  { name: "Booking", path: "Booking" },
+  { name: "Booking Detail", path: "BookingDetail" },
+  { name: "Services", path: "Services" },
+  { name: "Payment", path: "Payment" },
+  { name: "Room", path: "Room" },
+  { name: "Promotion", path: "Promotion" },
+  { name: "My Account", path: "MyAccount" },
+];
+const Receptionist = [
+  { name: "Home", path: "FloorPlan" },
+  { name: "Customer", path: "Customer" },
+  { name: "Booking", path: "Booking" },
+  { name: "Booking Detail", path: "BookingDetail" },
+  { name: "Services", path: "Services" },
+  { name: "Payment", path: "Payment" },
+  { name: "Room", path: "Room" },
+  { name: "Promotion", path: "Promotion" },
+  { name: "My Account", path: "MyAccount" },
+];
+const MaidManager = [
+  { name: "Home", path: "FloorPlan" },
+  { name: "Order", path: "OrderMaid" },
+  { name: "Employee", path: "Employee" },
+  { name: "Services", path: "Services" },
+  { name: "My Account", path: "MyAccount" },
+];
+const Maid = [
+  { name: "Home", path: "FloorPlan" },
+  { name: "Order", path: "OrderMaid" },
+  { name: "Services", path: "Services" },
+  { name: "My Account", path: "MyAccount" },
+];
+const ChefManager = [
+  { name: "Home", path: "OrderChef" },
+  { name: "Employee", path: "Employee" },
+  { name: "Services", path: "Services" },
+  { name: "My Account", path: "MyAccount" },
+];
+const Chef = [
+  { name: "Home", path: "OrderChef" },
+  { name: "Services", path: "Services" },
+  { name: "My Account", path: "MyAccount" },
+];
 export default {
   name: "Navbar",
   setup() {
     const { width } = useScreenWidth();
     return { width };
   },
+  created() {
+    this.employeeID = this.$store.state.employeeDetail.employeeID;
+    this.role = this.$store.state.employeeDetail.role;
+    this.department = this.$store.state.employeeDetail.department;
+    // this.profilePic = this.$store.state.employeeDetail.profilePic;
+    console.log(this.role);
+    console.log(this.department);
+    if (this.role === "Owner" || this.role === "Admin") {
+      this.permissions = AdminOwner;
+    }
+    if (this.role === "Manager" && this.department === "Receptionist") {
+      this.permissions = ReceptionManager;
+    }
+    if (this.role === "Receptionist") {
+      this.permissions = Receptionist;
+    }
+    if (this.role === "Manager" && this.department === "Kitchen") {
+      this.permissions = ChefManager;
+    }
+    if (this.role === "Chef") {
+      this.permissions = Chef;
+    }
+    if (this.role === "Manager" && this.department === "Housekeeping") {
+      this.permissions = MaidManager;
+    }
+    if (this.role === "Maid") {
+      this.permissions = Maid;
+    }
+  },
+  // mounted() {
+  //   if (this.role === "Owner" || "Admin") {
+  //     this.permissions = this.AdminOwner;
+  //   }
+  //   if (this.role === "Receptionist") {
+  //     this.permissions = this.ReceptionManager;
+  //     console.log(this.permissions);
+  //   }
+  // },
   data() {
     return {
+      AdminOwner,
+      ReceptionManager,
+      Receptionist,
+      MaidManager,
+      Maid,
+      ChefManager,
+      Chef,
+      employeeID: "",
+      role: "",
+      department: "",
+      profilePic: "AdminF",
       visible: false,
+      permissions: [],
     };
   },
   methods: {

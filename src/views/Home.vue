@@ -1,15 +1,14 @@
 <template>
+  <!-- <TablePage >
+  </TablePage> -->
   <Navbar />
   <Container>
     <h1>Home Page</h1>
-    <button @click="visible = !visible">Show Popup</button>
-    <Popup v-bind:visible="visible" @popReturn="popReturn">
-      <h4>Service Type</h4>
-    </Popup>
   </Container>
 </template>
 
 <script>
+import TablePage from "../components/TablePage";
 import Navbar from "../components/Navbar.vue";
 import Container from "../components/Container.vue";
 import Popup from "../components/Popup.vue";
@@ -17,10 +16,11 @@ import SearchError from "../components/SearchError";
 
 export default {
   name: "Home",
-  components: { Navbar, Container, Popup, SearchError },
+  components: { TablePage, Navbar, Container, Popup, SearchError },
   data() {
     return {
-      employeeID: "",
+      role: "",
+      department: "",
       visible: false,
     };
   },
@@ -30,8 +30,29 @@ export default {
     },
   },
   created() {
-    this.employeeID = this.$route.params.employeeID;
-    console.log(this.$route.params);
+    this.role = this.$store.state.employeeDetail.role;
+    this.department = this.$store.state.employeeDetail.department;
+    if (this.role === "Owner" || this.role === "Admin") {
+      this.$router.push("/BusinessAnalysis");
+    }
+    if (this.role === "Manager" && this.department === "Receptionist") {
+      this.$router.push("/FloorPlan");
+    }
+    if (this.role === "Receptionist") {
+      this.$router.push("/FloorPlan");
+    }
+    if (this.role === "Manager" && this.department === "Kitchen") {
+      this.$router.push("/OrderChef");
+    }
+    if (this.role === "Chef") {
+      this.$router.push("/OrderChef");
+    }
+    if (this.role === "Manager" && this.department === "Housekeeping") {
+      this.$router.push("/FloorPlan");
+    }
+    if (this.role === "Maid") {
+      this.$router.push("/FloorPlan");
+    }
   },
 };
 </script>

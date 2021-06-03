@@ -2,49 +2,79 @@
   <div class="header">
     <h4>My Role</h4>
   </div>
+  <div v-for="(account, index) in account_db" v-bind:key="index">
+    <h5>Role</h5>
+    <p>{{ account.roleName }}</p>
 
-  <h5>Role</h5>
-  <p>{{ role }}</p>
+    <h5>Salary</h5>
+    <p>{{ account.salary }}</p>
 
-  <h5>Salary</h5>
-  <p>{{ salary }}</p>
-
-  <div class="group">
-    <div class="group-item">
-      <h5>Start Date</h5>
-      <p>{{ start }}</p>
+    <div class="group">
+      <div class="group-item">
+        <h5>Start Date</h5>
+        <p>{{ convertDate(account.startDate) }}</p>
+      </div>
+      <div class="group-item">
+        <h5>Department</h5>
+        <p>{{ account.departmentName }}</p>
+      </div>
     </div>
-    <div class="group-item">
-      <h5>Department</h5>
-      <p>{{ dept }}</p>
-    </div>
-  </div>
 
-  <div class="group">
-    <div class="group-item">
-      <h5>Working Time</h5>
-      <p>{{ shift }}</p>
-    </div>
-    <div class="group-item">
-      <h5>Bonus Rate</h5>
-      <p>{{ bonus }}</p>
+    <div class="group">
+      <div class="group-item">
+        <h5>Working Time</h5>
+        <p>{{ account.shift }}</p>
+      </div>
+      <div class="group-item">
+        <h5>Bonus Rate</h5>
+        <p>{{ account.bonusRate }}</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "MyRole",
 
   data() {
     return {
-      role: "Manager",
-      salary: "30000",
-      start: "2000/10/01",
-      dept: "Reception",
-      shift: "05:000 - 13:00",
-      bonus: "0.15",
+      account_db: "",
+      res: "",
+      form: {
+        employeeID: "",
+        em_firstname: "",
+        em_lastname: "",
+        phone: "",
+        email: "",
+      },
     };
+  },
+  created() {
+    
+    this.form.employeeID = this.$store.state.employeeDetail.employeeID;
+    this.getAccountRole();
+  },
+
+  methods: {
+    getAccountRole() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_myAccount.php", {
+          action: "getAll",
+          employeeID: this.form.employeeID,
+        })
+        .then(
+          function(res) {
+            this.account_db = res.data;
+          }.bind(this)
+        );
+    },
+    convertDate(date) {
+      var datearray = date.split("-");
+      var newdate = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
+      return newdate;
+    },
   },
 };
 </script>
