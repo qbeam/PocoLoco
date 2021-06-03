@@ -23,7 +23,8 @@ import FloorPlan from "../views/FloorPlan.vue";
 import ServiceToDo from "../views/ServiceToDo.vue";
 import Payment from "../views/Payment.vue";
 import TimeStamp from "../views/TimeStamp.vue";
-import MyAccount from "../views/MyAccount.vue";
+import MyAccount from '../views/MyAccount.vue'
+import TimestampRecord from '../views/TimestampRecord.vue';
 
 const routes = [
   {
@@ -145,15 +146,20 @@ const routes = [
     component: Payment,
   },
   {
-    path: "/TimeStamp",
-    name: "TimeStamp",
-    component: TimeStamp,
+    path: '/TimeStamp',
+    name: 'TimeStamp',
+    component: TimeStamp
   },
   {
-    path: "/MyAccount",
-    name: "MyAccount",
-    component: MyAccount,
+    path: '/MyAccount',
+    name: 'MyAccount',
+    component: MyAccount
   },
+  {
+    path: '/TimestampRecord',
+    name: 'TimestampRecord',
+    component: TimestampRecord
+  }, 
 ];
 
 const router = createRouter({
