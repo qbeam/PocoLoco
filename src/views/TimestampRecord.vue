@@ -2,11 +2,8 @@
   <TablePage>
     <h3>Timestamp</h3>
     <div class="menu-bar">
-      <div>
-        <span class="icon-wrap">
-          <i class="fa fa-search fa-1x"></i>
-        </span>
-
+      <div class="search-container">
+        <i class="fa fa-search fa-1x"></i>
         <input
           v-model="search"
           class="search-field"
@@ -15,24 +12,21 @@
           :style="{ marginBottom: '0' }"
         />
       </div>
-      <CustomSelect
-        type="Filter"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionFilter"
-      />
-
-      <DefaultButton
-        @click="searchData"
-        type="small"
-        :style="width < 650 ? { width: '70px' } : {}"
-      >
-        Search
-      </DefaultButton>
+      <div class="search-buttons">
+        <CustomSelect
+          type="Filter"
+          :options="selectOption"
+          :style="{ margin: '0 20px 20px 0' }"
+          @selection="selectionFilter"
+        />
+        <DefaultButton @click="searchData" type="small">
+          Search
+        </DefaultButton>
+      </div>
     </div>
 
     <SearchError v-if="errorSearching" />
-    <!-- <table v-if="room_db.length !== 0">
+    <table v-if="stampRecord.length !== 0 && !errorSearching">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
@@ -44,36 +38,26 @@
             />
           </div>
         </th>
-
-        <th v-if="role != 'Reception'">Edit</th>
       </tr>
-
       <tr
-        v-for="(room, i) in room_db.slice(
+        v-for="(record, i) in stampRecord.slice(
           currentPage * tableRow - tableRow,
           currentPage * tableRow
         )"
         :key="i"
         class="row"
       >
-        <td>{{ room.roomID }}</td>
-        <td>{{ room.roomType }}</td>
-        <td>{{ room.roomPrice }}</td>
-        <td>{{ room.capacity }}</td>
-        <td>{{ room.size }}</td>
-        <td v-if="role != 'Reception'">
-          <div class="manage">
-            <button class="manage-button" @click="getRoomDataEdit(room)">
-              <i class="fa fa-pencil fa-2x"></i>
-            </button>
-          </div>
-        </td>
+        <td>{{ record.time }}</td>
+        <td>{{ record.id }}</td>
+        <td>{{ record.name }}</td>
+        <td>{{ record.type }}</td>
       </tr>
-    </table> -->
+    </table>
 
-    <!-- <PaginationBar
-      :pageCount="Math.ceil(room_db.length / tableRow)"
-      :paginationVisible="room_db.length > tableRow"
+    <PaginationBar
+      v-if="!errorSearching"
+      :pageCount="Math.ceil(stampRecord.length / tableRow)"
+      :paginationVisible="stampRecord.length > tableRow"
       @pageReturn="pageReturn"
       :style="
         width <= 1000
@@ -92,7 +76,7 @@
               left: '200px',
             }
       "
-    /> -->
+    />
   </TablePage>
 </template>
 
@@ -106,8 +90,76 @@ import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
 import SortingArrow from "../components/SortingArrow";
 
-const selectOption = ["Room No.", "Room Type", "Room Price"];
-const colNames = ["Room Number", "Room Type", "Price", "Capacity", "Size"];
+const selectOption = ["Date", "Employee ID", "Name", "Type"];
+const colNames = ["Date", "Employee ID", "Name", "Type"];
+const stampRecord = [
+  {
+    time: "2564-05-17:12:00:11",
+    id: "666666",
+    name: "Ploypapas Pianchoopat",
+    type: "IN",
+  },
+  {
+    time: "2564-05-17:12:00:18",
+    id: "666666",
+    name: "Supavadee Phusanam",
+    type: "OUT",
+  },
+  {
+    time: "2564-05-17:18:00:11",
+    id: "666666",
+    name: "Ploypapas Pianchoopat",
+    type: "OUT",
+  },
+  {
+    time: "2564-05-17:19:05:11",
+    id: "666666",
+    name: "Pungjung MeCarrot",
+    type: "IN",
+  },
+  {
+    time: "2564-05-17:19:08:11",
+    id: "666666",
+    name: "Beam Soccerman",
+    type: "IN",
+  },
+  {
+    time: "2564-05-18:03:00:11",
+    id: "666666",
+    name: "Pungjung MeCarrot",
+    type: "OUT",
+  },
+  {
+    time: "2564-05-18:05:00:11",
+    id: "666666",
+    name: "Beam Soccerman",
+    type: "OUT",
+  },
+  {
+    time: "2564-05-18:06:00:00",
+    id: "666666",
+    name: "Mew Prettyspaghetti",
+    type: "IN",
+  },
+  {
+    time: "2564-05-18:05:00:18",
+    id: "666666",
+    name: "Supavadee Phusanam",
+    type: "IN",
+  },
+  {
+    time: "2564-05-18:12:00:11",
+    id: "666666",
+    name: "Ploypapas Pianchoopat",
+    type: "IN",
+  },
+  {
+    time: "2564-05-18:15:00:00",
+    id: "666666",
+    name: "Mew Prettyspaghetti",
+    type: "OUT",
+  },
+];
 
 export default {
   name: "TimestampRecord",
@@ -126,8 +178,25 @@ export default {
   },
   data() {
     return {
-      selectOption: ["A", "B", "C"],
+      selectOption,
+      colNames,
+      stampRecord,
+      errorSearching: false,
+      activeArrow: 0,
+      sortDirection: "down",
+      currentPage: 0,
     };
+  },
+  methods: {
+    setActiveArrow(clickedArrow) {
+      this.activeArrow = clickedArrow;
+    },
+    sortReturn(direction) {
+      this.sortDirection = direction;
+    },
+    pageReturn(page) {
+      this.currentPage = page;
+    },
   },
 };
 </script>
@@ -137,14 +206,9 @@ h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
 }
-h4 {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-.icon-wrap {
-  position: absolute;
-  z-index: 0;
-  padding: 5px 20px;
+.search-container {
+  display: flex;
+  align-items: center;
 }
 .search-field {
   width: 225px;
@@ -157,67 +221,30 @@ h4 {
   border-radius: 50px;
   margin-right: 20px;
 }
-i {
+.fa-search {
   color: #5f5f5f;
+  margin-left: 15px;
+  position: absolute;
+  z-index: 5;
 }
 .menu-bar {
   width: 100%;
   display: flex;
   flex-direction: row;
+  align-items: center;
+}
+.search-buttons {
+  display: flex;
+  align-items: center;
 }
 table {
   width: 100%;
   max-width: 1000;
-  margin-top: 50px;
+  margin-top: 30px;
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;
   z-index: 0;
-}
-.manage {
-  height: 35px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-.fa-pencil:hover {
-  color: var(--primary-blue);
-}
-.fa-calendar {
-  color: var(--primary-blue);
-  margin: 3px 0 0 -35px;
-}
-.manage-button {
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-p {
-  margin-bottom: 10px;
-  font-size: 18px;
-}
-input {
-  width: 120px;
-  height: 35px;
-  padding: 0 10px;
-  margin-bottom: 20px;
-  color: var(--header-color);
-}
-.input-group {
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-}
-.group-item {
-  width: 70%;
-  display: flex;
-  flex-direction: column;
-}
-select {
-  width: 180px;
-  height: 35px;
-  margin-bottom: 20px;
 }
 th {
   height: 35px;
@@ -248,25 +275,6 @@ td {
   .search-field {
     width: 180px;
   }
-  .vl {
-    margin: 0 5px;
-  }
-  h4 {
-    font-size: 16px;
-  }
-  p {
-    font-size: 16px;
-  }
-  .subscript-text {
-    font-size: 12px;
-    margin-top: 5px;
-  }
-  .rank {
-    width: 40px;
-    height: 40px;
-    margin: 12px 15px 0 0;
-    font-size: 16px;
-  }
 }
 @media (max-width: 700px) {
   th {
@@ -276,29 +284,25 @@ td {
     font-size: 14px;
   }
   .search-field {
-    width: 150px;
+    width: 250px;
     font-size: 16px;
   }
   h3 {
-    margin: 40px 0 20px 0;
+    margin: 40px 0 25px 0;
   }
-  h4 {
-    font-size: 14px;
-  }
+
   p {
     font-size: 14px;
   }
-  .rank {
-    width: 35px;
-    height: 35px;
-    margin: 10px 15px 0 0;
-    font-size: 14px;
+  .menu-bar {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  select {
-    width: 140px;
+  .search-buttons {
+    margin-top: 20px;
   }
-  .fa-pencil {
-    font-size: 20px;
+  table {
+    margin-top: 15px;
   }
 }
 </style>

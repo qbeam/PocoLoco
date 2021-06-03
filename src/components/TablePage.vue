@@ -1,7 +1,7 @@
 <template>
   <div>
     <Navbar />
-    <div class="page-container">
+    <div class="inner-container">
       <slot />
     </div>
   </div>
@@ -15,15 +15,15 @@ export default {
 </script>
 
 <style scoped>
-.page-container {
-  height: 100%;
+.inner-container {
+  height: 100vh;
   display: flex;
   flex-direction: column;
   padding: 0 60px 0 260px;
   overflow: scroll;
 }
 @media (max-width: 1000px) {
-  .page-container {
+  .inner-container {
     padding: 0 20px 0 80px;
   }
 }
