@@ -48,7 +48,7 @@
           </div>
         </th>
 
-        <th v-if="role != 'Reception'">Edit</th>
+        <th v-if="role == 'Owner' || role == 'Admin' || role == 'Manager'">Edit</th>
       </tr>
 
       <tr
@@ -64,7 +64,7 @@
         <td>{{ room.roomPrice }}</td>
         <td>{{ room.capacity }}</td>
         <td>{{ room.size }}</td>
-        <td v-if="role != 'Reception'">
+        <td v-if="role == 'Owner' || role == 'Admin' || role == 'Manager'">
           <div class="manage">
             <button class="manage-button" @click="getRoomDataEdit(room)">
               <i class="fa fa-pencil fa-2x"></i>
@@ -189,6 +189,8 @@ export default {
       filter: "roomID",
       check: false,
       countRow: "",
+      role: "",
+      departmenrName: "",
       form: {
         roomID: "",
         roomTypeID: "",
@@ -197,12 +199,11 @@ export default {
         capacity: "",
         size: "",
       },
-      //role: "Owner",
-      //role: "Manager Reception",
-      role: "Reception",
     };
   },
   created() {
+    this.role = this.$store.state.employeeDetail.role;
+    this.departmentName = this.$store.state.employeeDetail.department;
     this.getAllRoom();
   },
 

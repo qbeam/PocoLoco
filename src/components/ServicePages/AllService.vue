@@ -60,14 +60,7 @@
             />
           </div>
         </th>
-        <th
-          v-if="
-            role == 'Owner' ||
-              role == 'Manager Reception' ||
-              role == 'Manager Chef' ||
-              role == 'Manager Maid'
-          "
-        >
+        <th v-if="role == 'Owner' || role == 'Admin' || role == 'Manager'">
           Manage
         </th>
       </tr>
@@ -86,16 +79,8 @@
         <td>{{ service.type }}</td>
         <td>{{ service.servicePrice }}</td>
 
-        <td>
-          <div
-            v-if="
-              role == 'Owner' ||
-                role == 'Manager Reception' ||
-                role == 'Manager Chef' ||
-                role == 'Manager Maid'
-            "
-            class="manage"
-          >
+        <td v-if="role == 'Owner' || role == 'Admin' || role == 'Manager'">
+          <div class="manage">
             <button class="manage-button" @click="getServiceEdit(service)">
               <i class="fa fa-pencil fa-2x"></i>
             </button>
@@ -122,11 +107,7 @@
     @submit="submit"
     :style="{ top: '0', left: '0', margin: '0' }"
   >
-    <div
-      v-if="
-        role == 'Owner' || role == 'Reception' || role == 'Manager Reception'
-      "
-    >
+    <div v-if="role == 'Owner' || role == 'Admin' || role == 'Manager'">
       <h4>Service Type</h4>
       <select v-model="form.type">
         <option :value="form.type" selected disabled hidden>
@@ -219,17 +200,14 @@ export default {
         servicePrice: "",
         isEdit: false,
       },
-      //role: "Owner",
-      //role: "Manager Reception",
-       role: "Manager Chef",
-      //role: "Manager Maid",
-      //role: "Reception",
-      // role: "Chef",
-      // role: "Maid",
+      role: "",
+      departmentName: "",
       type: "",
     };
   },
   created() {
+    this.role = this.$store.state.employeeDetail.role;
+    this.departmentName = this.$store.state.employeeDetail.department;
     this.getAllService();
   },
   methods: {
@@ -271,9 +249,12 @@ export default {
         .post("http://localhost:8080/PocoLoco_db/api_allService.php", {
           action: "getAllService",
           role: this.role,
+          department: this.departmentName,
+        
         })
         .then(
           function(res) {
+            console.log(res.data);
             this.service_db = res.data;
             this.countRow = this.service_db.length;
             this.returnQuery();
@@ -291,6 +272,7 @@ export default {
             type: this.form.type,
             name: this.form.name,
             servicePrice: this.form.servicePrice,
+            
           })
           .then(
             function(res) {
@@ -337,6 +319,7 @@ export default {
           direction: this.sortDirection,
           role: this.role,
           type: this.type,
+          department: this.departmentName,
         })
         .then(
           function(res) {

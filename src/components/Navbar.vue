@@ -34,7 +34,6 @@
       >
     </div>
 
-   
     <button class="logout-button" v-if="visible || width > 1000">
       <div class="logout-text">
         <i
@@ -119,8 +118,8 @@ export default {
     this.employeeID = this.$store.state.employeeDetail.employeeID;
     this.role = this.$store.state.employeeDetail.role;
     this.department = this.$store.state.employeeDetail.department;
- 
-  
+    this.profilePic = this.$store.state.employeeDetail.profilePic;
+
     if (this.role === "Owner" || this.role === "Admin") {
       this.permissions = AdminOwner;
     }
@@ -156,7 +155,7 @@ export default {
       employeeID: "",
       role: "",
       department: "",
-      profilePic: "AdminF",
+      profilePic: "",
       visible: false,
       permissions: [],
     };

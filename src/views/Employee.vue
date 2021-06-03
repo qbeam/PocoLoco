@@ -372,7 +372,6 @@ export default {
 
   created() {
     this.role = this.$store.state.employeeDetail.role;
-    console.log("role=",this.role);
     this.departmentName = this.$store.state.employeeDetail.department;
     this.getAllEmployee();
     this.selected = this.$store.state.employeeMenu;

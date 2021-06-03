@@ -54,7 +54,7 @@
             />
           </div>
         </th>
-        <th v-if="role != 'Reception'">Manage</th>
+        <th v-if="role != 'Receptionist'">Manage</th>
       </tr>
 
       <tr
@@ -71,7 +71,7 @@
         <td>{{ promotion.discount }}%</td>
         <td>{{ convertDate(promotion.startDate) }}</td>
         <td>{{ convertDate(promotion.endDate) }}</td>
-        <td v-if="role != 'Reception'">
+        <td v-if="role != 'Receptionist'">
           <div class="manage">
             <button
               class="manage-button"
@@ -287,6 +287,8 @@ export default {
       roomtype_db: "",
       check: false,
       countRow: "",
+      role: "",
+      departmentName: "",
       form: {
         promotionID: "",
         season: "",
@@ -312,6 +314,8 @@ export default {
     };
   },
   created() {
+    this.role = this.$store.state.employeeDetail.role;
+    this.departmentName = this.$store.state.employeeDetail.department;
     this.getPromotion();
   },
   methods: {

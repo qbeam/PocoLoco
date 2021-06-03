@@ -112,41 +112,18 @@
           <th>Manage</th>
         </tr>
 
-        <tr
-          v-for="(detail, i) in bookingDetail_db.slice(
-            currentPage * tableRow - tableRow,
-            currentPage * tableRow
-          )"
-          :key="i"
-          class="row"
-        >
+        <tr v-for="(detail, i) in bookingDetail_db" :key="i" class="row">
           <td>{{ detail.bookingDetailID }}</td>
           <td>{{ detail.roomID }}</td>
           <td>
-            <i
-              v-if="detail.status == 'Check In'"
-              class="fa fa-circle"
-              :style="{ color: '#24BA45' }"
-            />
-            <i
-              v-if="detail.status == 'Reserve'"
-              class="fa fa-circle"
-              :style="{ color: '#ffc42e' }"
-            />
-            <i
-              v-if="detail.status == 'Cancel'"
-              class="fa fa-circle"
-              :style="{ color: '#e11818' }"
-            />
-            <i
-              v-if="detail.status == 'Check Out'"
-              class="fa fa-circle"
-              :style="{ color: '#BDBDBD' }"
-            />
+            <i class="fa fa-circle" :style="{ color: getBgColor(detail) }" />
             {{ detail.status }}
           </td>
           <td>
-            <div v-if="detail.status == 'Check Out' || detail.status == 'Cancel'" class="manage">
+            <div
+              v-if="detail.status == 'Check Out' || detail.status == 'Cancel'"
+              class="manage"
+            >
               <button class="manage-button" @click="searchDetail(detail)">
                 <i class="fa fa-search fa-2x"></i>
               </button>
@@ -187,26 +164,7 @@
           <p><b>Check IN: </b>{{ convertDate(detail.checkIn) }}</p>
           <p>
             <b>Status: </b>
-            <i
-              v-if="detail.status == 'Check In'"
-              class="fa fa-circle"
-              :style="{ color: '#24BA45' }"
-            />
-            <i
-              v-if="detail.status == 'Reserve'"
-              class="fa fa-circle"
-              :style="{ color: '#FFC42E' }"
-            />
-            <i
-              v-if="detail.status == 'Cancel'"
-              class="fa fa-circle"
-              :style="{ color: '#FF0000' }"
-            />
-            <i
-              v-if="detail.status == 'Check Out'"
-              class="fa fa-circle"
-              :style="{ color: '#BDBDBD' }"
-            />
+            <i class="fa fa-circle" :style="{ color: getBgColor(detail) }" />
             {{ detail.status }}
           </p>
         </div>
@@ -220,7 +178,6 @@
       </div>
     </Popup>
 
-    <!-- search ได้แล้ว edit ได้ แต่ยังไม่ update -->
     <Popup
       v-bind:visible="switchPop"
       :buttons="true"
@@ -428,7 +385,20 @@ export default {
         this.sort = "email";
       }
     },
-
+    getBgColor(detail) {
+      if (detail.status == "Check In") {
+        return "#24BA45";
+      }
+      if (detail.status == "Reserve") {
+        return "#ffc42e";
+      }
+      if (detail.status == "Cancel") {
+        return "#e11818";
+      }
+      if (detail.status == "Check Out") {
+        return "#BDBDBD";
+      }
+    },
     getRecord(booking) {
       this.visible = !this.visible;
       this.bookingID = booking.bookingID;

@@ -190,17 +190,15 @@ export default {
       sortDirection: "up",
       errorSearching: false,
 
-      //role: "Owner",
-      //role: "Manager Reception",
-      //role: "Manager Chef",
-      //role: "Manager Maid",
-      //role: "Reception",
-      //role: "Chef",
-      role: "Maid",
+      role: "",
+      departmentName: "",
       type: "",
     };
   },
   created() {
+    this.role = this.$store.state.employeeDetail.role;
+    this.departmentName = this.$store.state.employeeDetail.department;
+    console.log(this.departmentName);
     this.getServiceActivity();
   },
   methods: {
@@ -257,6 +255,7 @@ export default {
           roomID: record.roomID,
           date: record.date,
           role: this.role,
+          department: this.departmentName,
         })
         .then(
           function(res) {
@@ -275,6 +274,7 @@ export default {
         .post("http://localhost:8080/PocoLoco_db/api_serviceActivity.php", {
           action: "getServiceActivity",
           role: this.role,
+          department: this.departmentName,
         })
         .then(
           function(res) {
@@ -300,6 +300,7 @@ export default {
           direction: this.sortDirection,
           type: this.type,
           role: this.role,
+          department: this.department,
         })
         .then(
           function(res) {
