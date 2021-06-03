@@ -11,7 +11,8 @@
       />
     </div>
 
-    <NoOrderChef v-if="noOrder" />
+    <NoOrderMaid v-if="noOrder == true && type == 1" />
+    <NoOrderChef v-if="noOrder == true && type == 2" />
     <table v-if="order_db.length !== 0" style="margin-top: 20px">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
@@ -84,6 +85,7 @@ import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 import NoOrderChef from "../components/NoOrderChef";
+import NoOrderMaid from "../components/NoOrderMaid";
 import axios from "axios";
 
 const colNames = ["Room Number", "Detail", "Amount"];
@@ -98,6 +100,7 @@ export default {
     Popup,
     CustomSelect,
     NoOrderChef,
+    NoOrderMaid,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -117,15 +120,15 @@ export default {
       check: false,
       countRow: "",
       type: "",
-      // role: "Chef",
-      role: "Maid",
+      role: "",
       department: "",
     };
   },
   created() {
     this.role = this.$store.state.employeeDetail.role;
     this.department = this.$store.state.employeeDetail.department;
-    this.getOrderChef();
+    this.checkRole();
+    this.getOrder();
   },
   methods: {
     pageReturn(page) {
@@ -141,8 +144,7 @@ export default {
     goToAddOrder() {
       this.$router.push("/Services");
     },
-    getOrderChef() {
-      this.checkRole();
+    getOrder() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_serviceToDo.php", {
           action: "getAll",
@@ -162,7 +164,6 @@ export default {
     },
 
     finishOrderChef(order) {
-      this.checkRole();
       if (
         confirm(
           "Are you done " + order.serviceName + " of Room " + order.roomID + "?"
@@ -181,7 +182,7 @@ export default {
           .then(
             function(res) {
               if (res.data.success == true) {
-                this.getOrderChef();
+                this.getOrder();
               } else {
                 alert(res.data.message);
               }
