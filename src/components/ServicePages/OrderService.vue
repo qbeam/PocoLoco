@@ -189,17 +189,14 @@ export default {
       totalAmount: 0,
       totalPrice: 0,
       errorSearching: false,
-      //role: "Owner",
-      //role: "Manager Reception",
-      //role: "Manager Chef",
-      //role: "Manager Maid",
-      //role: "Reception",
-      // role: "Chef",
-       role: "Maid",
+      role: "",
+      departmentName: "",
       type: "",
     };
   },
   created() {
+    this.role = this.$store.state.employeeDetail.role;
+    this.departmentName = this.$store.state.employeeDetail.department;
     this.getAllService();
   },
 
@@ -215,6 +212,7 @@ export default {
         .post("http://localhost:8080/PocoLoco_db/api_orderService.php", {
           action: "getAllService",
           role: this.role,
+          department: this.departmentName,
         })
         .then(
           function(res) {
@@ -242,6 +240,7 @@ export default {
           action: "searchService",
           search: this.search,
           role: this.role,
+          department: this.departmentName,
           type: this.type,
         })
         .then(
