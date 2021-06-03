@@ -47,10 +47,18 @@
         :key="i"
         class="row"
       >
-        <td>{{ record.time }}</td>
-        <td>{{ record.id }}</td>
-        <td>{{ record.name }}</td>
-        <td>{{ record.type }}</td>
+        <td :style="{ width: '40%' }">{{ record.stampDateTime }}</td>
+        <td :style="{ width: '15%' }">{{ record.employeeID }}</td>
+        <td :style="{ width: '40%' }">
+          {{ record.em_firstname }} {{ record.em_lastname }}
+        </td>
+        <td :style="{ width: '5%', textAlign: 'start' }">
+          <i
+            class="fa fa-circle"
+            :style="{ color: getTagColor(record.type) }"
+          />
+          {{ getStampType(record.type) }}
+        </td>
       </tr>
     </table>
 
@@ -89,77 +97,7 @@ import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
 import SortingArrow from "../components/SortingArrow";
-
-const selectOption = ["Date", "Employee ID", "Name", "Type"];
-const colNames = ["Date", "Employee ID", "Name", "Type"];
-const stampRecord = [
-  {
-    time: "2564-05-17:12:00:11",
-    id: "666666",
-    name: "Ploypapas Pianchoopat",
-    type: "IN",
-  },
-  {
-    time: "2564-05-17:12:00:18",
-    id: "666666",
-    name: "Supavadee Phusanam",
-    type: "OUT",
-  },
-  {
-    time: "2564-05-17:18:00:11",
-    id: "666666",
-    name: "Ploypapas Pianchoopat",
-    type: "OUT",
-  },
-  {
-    time: "2564-05-17:19:05:11",
-    id: "666666",
-    name: "Pungjung MeCarrot",
-    type: "IN",
-  },
-  {
-    time: "2564-05-17:19:08:11",
-    id: "666666",
-    name: "Beam Soccerman",
-    type: "IN",
-  },
-  {
-    time: "2564-05-18:03:00:11",
-    id: "666666",
-    name: "Pungjung MeCarrot",
-    type: "OUT",
-  },
-  {
-    time: "2564-05-18:05:00:11",
-    id: "666666",
-    name: "Beam Soccerman",
-    type: "OUT",
-  },
-  {
-    time: "2564-05-18:06:00:00",
-    id: "666666",
-    name: "Mew Prettyspaghetti",
-    type: "IN",
-  },
-  {
-    time: "2564-05-18:05:00:18",
-    id: "666666",
-    name: "Supavadee Phusanam",
-    type: "IN",
-  },
-  {
-    time: "2564-05-18:12:00:11",
-    id: "666666",
-    name: "Ploypapas Pianchoopat",
-    type: "IN",
-  },
-  {
-    time: "2564-05-18:15:00:00",
-    id: "666666",
-    name: "Mew Prettyspaghetti",
-    type: "OUT",
-  },
-];
+import axios from "axios";
 
 export default {
   name: "TimestampRecord",
@@ -176,18 +114,46 @@ export default {
     const { height, tableRow } = useScreenHeight(420);
     return { width, height, tableRow };
   },
+  created() {
+    this.getTodayDate();
+    this.getTodayTimeStamp();
+  },
   data() {
     return {
-      selectOption,
-      colNames,
-      stampRecord,
+      todayDate: "",
+      stampRecord: "",
+
+      selectOption: ["Date", "Employee ID", "Name", "Type"],
+      colNames: ["Date", "ID", "Name", "Type"],
       errorSearching: false,
       activeArrow: 0,
       sortDirection: "down",
-      currentPage: 0,
+      currentPage: 1,
     };
   },
   methods: {
+    getTodayDate() {
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, "0");
+      var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+      var yyyy = today.getFullYear();
+      today = yyyy + "-" + mm + "-" + dd;
+      this.todayDate = today;
+    },
+    getTodayTimeStamp() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
+          action: "getTodayTimeStamp",
+          today: this.todayDate,
+        })
+        .then(
+          function(res) {
+            this.stampRecord = res.data;
+            console.log("STA", this.stampRecord);
+            console.log(this.stampRecord[0].em_firstname);
+          }.bind(this)
+        );
+    },
     setActiveArrow(clickedArrow) {
       this.activeArrow = clickedArrow;
     },
@@ -196,6 +162,20 @@ export default {
     },
     pageReturn(page) {
       this.currentPage = page;
+    },
+    getTagColor(type) {
+      if (type == "O") {
+        return "#FF0000";
+      } else {
+        return "#24BA45";
+      }
+    },
+    getStampType(stamp) {
+      if (stamp === "I") {
+        return "IN";
+      } else if (stamp === "O") {
+        return "OUT";
+      }
     },
   },
 };
@@ -267,6 +247,9 @@ td {
 .row:hover {
   cursor: pointer;
   background: var(--grey-highlight);
+}
+.fa-circle {
+  font-size: 12px;
 }
 *:focus {
   outline: 0;
