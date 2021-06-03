@@ -5,7 +5,7 @@
       <div class="search-container">
         <i class="fa fa-search fa-1x"></i>
         <input
-          v-model="search"
+          v-model="keyword"
           class="search-field"
           type="text"
           placeholder="search"
@@ -17,7 +17,7 @@
           type="Filter"
           :options="selectOption"
           :style="{ margin: '0 20px 20px 0' }"
-          @selection="selectionFilter"
+          @selection="setSearchFilter"
         />
         <DefaultButton @click="searchData" type="small">
           Search
@@ -33,7 +33,7 @@
             {{ colName }}
             <SortingArrow
               :active="activeArrow == i ? true : false"
-              @click="setActiveArrow(i)"
+              @click="setSortFilter(i)"
               @sortReturn="sortReturn"
             />
           </div>
@@ -123,10 +123,13 @@ export default {
       todayDate: "",
       stampRecord: "",
 
+      keyword: "",
       selectOption: ["Date", "Employee ID", "Name", "Type"],
+      searchFilter: null,
       colNames: ["Date", "ID", "Name", "Type"],
       errorSearching: false,
       activeArrow: 0,
+      sortFilter: "stampDateTime",
       sortDirection: "down",
       currentPage: 1,
     };
@@ -150,12 +153,31 @@ export default {
           function(res) {
             this.stampRecord = res.data;
             console.log("STA", this.stampRecord);
-            console.log(this.stampRecord[0].em_firstname);
           }.bind(this)
         );
     },
-    setActiveArrow(clickedArrow) {
+    setSearchFilter(value) {
+      if (value === this.selectOption[0]) {
+        this.searchFilter = "stampDateTime";
+      } else if (value === this.selectOption[1]) {
+        this.searchFilter = "employeeID";
+      } else if (value === this.selectOption[2]) {
+        this.searchFilter = "em_firstname";
+      } else if (value === this.selectOption[3]) {
+        this.searchFilter = "type";
+      }
+    },
+    setSortFilter(clickedArrow) {
       this.activeArrow = clickedArrow;
+      if (clickedArrow === 0) {
+        this.sortFilter = "stampDateTime";
+      } else if (clickedArrow === 1) {
+        this.sortFilter = "employeeID";
+      } else if (clickedArrow === 2) {
+        this.sortFilter = "em_firstname";
+      } else if (clickedArrow === 3) {
+        this.sortFilter = "type";
+      }
     },
     sortReturn(direction) {
       this.sortDirection = direction;
@@ -176,6 +198,25 @@ export default {
       } else if (stamp === "O") {
         return "OUT";
       }
+    },
+    searchData() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
+          action: "searchData",
+          keyword: this.keyword,
+          searchFilter: this.searchFilter,
+          sortFilter: this.sortFilter,
+          direction: this.sortDirection,
+        })
+        .then(
+          function(res) {
+            console.log(res.data);
+            this.stampRecord = res.data;
+            if (this.stampRecord == "") {
+              this.errorSearching = true;
+            }
+          }.bind(this)
+        );
     },
   },
 };
