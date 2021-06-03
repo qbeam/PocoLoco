@@ -21,6 +21,7 @@
 
 <script>
 import CustomSelect from "../CustomSelect";
+import axios from "axios";
 
 const lineColors = ["#FFC42E", "#FF0000", "#24BA45"];
 
@@ -30,22 +31,22 @@ export default {
   data() {
     return {
       income: [20, 25, 30, 35, 15, 24, 56, 30, 35, 15, 24, 56],
-      expense: [12, 11, 14, 18, 17, 13, 13, 18, 17, 13, 13, 12],
+      expense: [12, 11, 40, 18, 17, 13, 13, 18, 17, 13, 13, 12],
       profit: [],
-      searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      searchRange: [2021, 2020, 2019, 1, 2],
       displayRange: null,
       series: [
         {
           name: "Earning",
-          data: [20, 25, 30, 35, 15, 24, 56, 30, 35, 15, 24, 56],
+          data: [null,null,null,null,null,null,null,null,null,null,null,null],
         },
         {
           name: "Expense",
-          data: [12, 11, 14, 18, 17, 13, 13, 18, 17, 13, 13, 12],
+          data: [null,null,null,null,null,null,null,null,null,null,null,null],
         },
         {
           name: "Profit",
-          data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], // profit = earning - expense
+          data: [1, 2, -10, 4, 5, 6, 7, 8, 9, 10, 11, 12], // profit = earning - expense
         },
       ],
       chartOptions: {
@@ -128,11 +129,87 @@ export default {
           },
         ],
       },
+      year: "",
+      month: "",
     };
+  },
+  created() {
+    this.month = new Date().getMonth() + 1;
+    this.year = new Date().getFullYear();
+    this.getYear();
   },
   methods: {
     graphRange(value) {
-      this.displayRange = value;
+      this.year = value;
+      this.getEarning();
+      this.getExpense();
+    },
+    getYear(){
+      const year=[];
+      var yearNow = this.year;
+      for (let i = 0; i < 5; i++) {
+        year.push(yearNow);
+        yearNow = yearNow -1;
+      }
+      this.searchRange = year;
+      this.getEarning();
+      this.getExpense();
+    },
+    getEarning() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
+          action: "getEarning",
+          year: this.year,
+        })
+        .then(
+          function(res) {
+            this.setSeries(res.data,'earning');
+          }.bind(this)
+        );
+    },
+    setSeries(data,type) {
+      const temp = [null,null,null,null,null,null,null,null,null,null,null,null];
+      
+      for (let i = 0; i < data.length; i++) {
+        const month = data[i].month;
+        temp[month-1] = Number(data[i].summary);
+      }
+      if(type == "earning"){
+        this.series[0].data = temp;
+      }
+      else if(type == "expense"){
+        this.series[1].data = temp;
+      }
+      this.getProfit();
+
+    },
+    getProfit(){
+      const profit = [];
+
+      for (let i = 0; i < 12; i++) {
+        if(this.series[0].data[i] == null && this.series[1].data[i] == null){
+          profit.push(null);
+        }
+        else{
+          profit.push(this.series[0].data[i] - this.series[1].data[i]);
+        }
+        
+      }
+      this.series[2].data=profit;
+    },
+
+    getExpense() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
+          action: "getExpense",
+          year: this.year,
+        })
+        .then(
+          function(res) {
+            this.setSeries(res.data,'expense');
+
+          }.bind(this)
+        );
     },
   },
 };

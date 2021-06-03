@@ -14,13 +14,13 @@
     <div class="list">
       <div class="item" v-for="(record, i) in absenceSum" :key="i">
         <div class="date">
-          <b>{{ record.date }}</b>
+          <b>{{ record.day }}</b>
           <div class="vl" :style="{ width: '90%', margin: '1px 0' }"></div>
-          <b>{{ record.month }}</b>
+          <b>{{ setMonth(record.month) }}</b>
         </div>
         <div class="detail">
           <p :style="{ fontSize: '12px', margin: 0 }">No. of Employee</p>
-          <b :style="{ fontSize: '24px' }">{{ record.count }}</b>
+          <b :style="{ fontSize: '24px' }">{{ record.numEmployee }}</b>
         </div>
       </div>
     </div>
@@ -29,28 +29,81 @@
 
 <script>
 import CustomSelect from "../CustomSelect";
+import axios from "axios";
 
-const absenceSum = [
-  { date: "16", month: "APR", count: "65" },
-  { date: "12", month: "APR", count: "50" },
-  { date: "01", month: "OCT", count: "20" },
-  { date: "14", month: "FEB", count: "16" },
-  { date: "20", month: "AUG", count: "9" },
-  { date: "17", month: "JUL", count: "7" },
-];
 export default {
   name: "AbsentReport",
   components: { CustomSelect },
   data() {
     return {
-      absenceSum,
+      absenceSum:[],
       searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       displayRange: null,
     };
   },
+  created() {
+    this.year = new Date().getFullYear();
+    this.getYear();
+  },
   methods: {
     graphRange(value) {
-      this.displayRange = value;
+      this.year = value;
+      this.getAbsence();
+    },
+    getYear() {
+      const year = [];
+      var yearNow = this.year;
+      for (let i = 0; i < 5; i++) {
+        year.push(yearNow);
+        yearNow = yearNow - 1;
+      }
+      this.searchRange = year;
+      this.getAbsence();
+    },
+    getAbsence() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
+          action: "getAbsence",
+          year: this.year,
+        })
+        .then(
+          function(res) {
+            for(var i = 0; i < res.data.length ; i++){
+              this.absenceSum.push(res.data[i]);
+            }
+            
+          }.bind(this)
+        );
+    },
+    setMonth(data) {
+      var month = "";
+      if (data == 1) {
+        month = "JAN";
+      } else if (data == 2) {
+        month = "FEB";
+      } else if (data == 3) {
+        month = "MAR";
+      } else if (data == 4) {
+        month = "APR";
+      } else if (data == 5) {
+        month = "MAY";
+      } else if (data == 6) {
+        month = "JUN";
+      } else if (data == 7) {
+        month = "JUL";
+      } else if (data == 8) {
+        month = "AUG";
+      } else if (data == 9) {
+        month = "SEP";
+      } else if (data == 10) {
+        month = "OCT";
+      } else if (data == 11) {
+        month = "NOV";
+      } else if (data == 12) {
+        month = "DEC";
+      }
+
+      return month;
     },
   },
 };

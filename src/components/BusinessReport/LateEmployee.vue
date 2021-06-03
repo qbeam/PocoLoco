@@ -4,6 +4,7 @@
       <p :style="{ fontSize: '16px' }">Punctuality in</p>
       <CustomSelect
         type="Transparent"
+        :defaultChoice="displayRange"
         :options="searchRange"
         @selection="graphRange"
         :style="{ margin: '0 0 0 10px' }"
@@ -12,22 +13,25 @@
 
     <div class="vl"></div>
     <div class="list">
-      <div class="item" v-for="(record, i) in lateSummary" :key="i">
+      <div class="item" v-for="(record, i) in lateEmployee" :key="i">
         <div class="icon">
           <div class="user-icon">
-            <img :src="require(`../../assets/${record.role}.png`)" />
+            <img :src="require(`../../assets/${record.picName}.png`)" />
           </div>
         </div>
 
         <div class="detail">
           <p :style="{ fontWeight: 'bold' }">
-            {{ record.id }} {{ record.name }}
+            {{ record.employeeID }} {{ record.name }}
           </p>
           <div class="item">
             <div class="progress-bar">
-              <div class="progress" :style="{ width: record.late + '%' }"></div>
+              <div
+                class="progress"
+                :style="{ width: record.lateCount + '%' }"
+              ></div>
             </div>
-            <p class="unit">{{ record.late }}% late</p>
+            <p class="unit">{{ record.percentLate }}% late</p>
           </div>
         </div>
       </div>
@@ -37,30 +41,53 @@
 
 <script>
 import CustomSelect from "../CustomSelect";
+import axios from "axios";
 
-const lateSummary = [
-  { id: 123456, name: "Pungkung Carrot", role: "OwnerF", late: 100 },
-  { id: 123456, name: "Pungkung Turtle", role: "ReceptionistF", late: 80 },
-  { id: 123456, name: "Pungkung Rabbit", role: "ManagerF", late: 50 },
-  { id: 123456, name: "Pungkung Broccolli", role: "MaidF", late: 30 },
-  { id: 123456, name: "Pungkung Baby", role: "OwnerF", late: 10 },
-  { id: 123456, name: "Ploypapas Pianchoopat", role: "ChefF", late: 5 },
-  { id: 123456, name: "Supavadee Yingying", role: "ReceptionistF", late: 2 },
-];
+
 export default {
   name: "LateEmployee",
   components: { CustomSelect },
 
   data() {
     return {
-      lateSummary,
-      searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-      displayRange: null,
+      searchRange: [2021, 2020, 2019, 1, 2],
+      displayRange: "",
+      year: "",
+      lateEmployee: "",
     };
   },
+  created() {
+    this.year = new Date().getFullYear();
+    this.getYear();
+    this.getLateEmployee();
+  },
   methods: {
+    getYear() {
+      const year = [];
+      var yearNow = this.year;
+      for (let i = 0; i < 5; i++) {
+        year.push(yearNow);
+        yearNow = yearNow - 1;
+      }
+      this.searchRange = year;
+      this.displayRange = this.searchRange[0];
+    },
     graphRange(value) {
       this.displayRange = value;
+      this.getLateEmployee();
+    },
+    getLateEmployee() {
+      console.log("year", this.displayRange);
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
+          action: "getLateEmployee",
+          year: this.displayRange,
+        })
+        .then(
+          function(res) {
+            this.lateEmployee = res.data;
+          }.bind(this)
+        );
     },
   },
 };

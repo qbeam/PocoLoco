@@ -17,20 +17,84 @@
 </template>
 
 <script>
-const expenseSum = [
-  { type: "Electricity Bill", amount: 1200000 },
-  { type: "Kitchen", amount: 3200000 },
-  { type: "Laundry", amount: 800000 },
-  { type: "Maintenance", amount: 2993578 },
-  { type: "Security", amount: 800000 },
-  { type: "Others", amount: 50000 },
-];
+
+import axios from "axios";
+// const expenseSum = [
+//   { type: "Electricity Bill", amount: 1200000 },
+//   { type: "Kitchen", amount: 3200000 },
+//   { type: "Laundry", amount: 800000 },
+//   { type: "Maintenance", amount: 2993578 },
+//   { type: "Security", amount: 800000 },
+//   { type: "Others", amount: 50000 },
+// ];
 export default {
   name: "ExpenseReport",
   data() {
     return {
-      expenseSum,
+      expenseSum: [
+        { type: "Housekeeping", amount: 0 },
+        { type: "Kitchen", amount: 0 },
+        { type: "Maintenance", amount: 0 },
+        { type: "Electricity", amount: 0 },
+        { type: "Water", amount: 0 },
+        { type: "Advertisement", amount: 0 },
+        { type: "Entertainment", amount: 0 },
+        { type: "Others", amount: 0 },
+      ],
+      date:"",
+      day:"",
+      month:"",
+      year:"",
     };
+  },
+  created() {
+    this.day = new Date().getDate();
+    this.month = new Date().getMonth() + 1;
+    this.year = new Date().getFullYear();
+    this.getDate();
+  },
+  methods: {
+    getDate(){
+      if (this.day < 10) {
+        this.day = "0" + this.day;
+      }
+      if (this.month < 10) {
+        this.month = "0" + this.month;
+      }
+      this.date = this.year + "-" + this.month;
+      this.getExpense();
+    },
+    getExpense(){
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
+          action: "getMontlyExpenses",
+          date: this.date,
+        })
+        .then(
+          function(res) {
+            if(res.data != ""){
+              this.setExpense(res.data);
+            }
+          }.bind(this)
+        );
+    },
+    setExpense(expense){
+      var type = 1;
+      var j = 0;
+
+      for (let i = 0; i < 8; i++) {
+        if(type == Number(expense[j].type)){
+          this.expenseSum[i].amount = expense[j].expense;
+          j=j+1;
+          if(j == expense.length){
+            break;
+          }
+        }
+        type = type+1;
+      }
+      
+      
+    },
   },
 };
 </script>
