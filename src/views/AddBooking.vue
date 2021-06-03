@@ -90,7 +90,7 @@
     </InnerFormContainer>
     <div class="buttons">
       <DefaultButton
-        @click="backToBooking"
+        @click="backToPreviousPage"
         :style="{
           background: 'none',
           marginRight: '110px',
@@ -129,6 +129,7 @@ export default {
       bookingDetail_db: "",
       message: "",
       error: false,
+      prevRoute: null,
     };
   },
 
@@ -138,6 +139,11 @@ export default {
   mounted() {
     this.customerID = this.$store.state.customerID;
   },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.prevRoute = from;
+    });
+  },
   methods: {
     pageReturn(page) {
       this.currentPage = page;
@@ -146,8 +152,8 @@ export default {
       this.$store.state.customerID = this.customerID;
       this.$router.push("/AddBookingDetail");
     },
-    backToBooking() {
-      this.$router.push("/Booking");
+    backToPreviousPage() {
+      this.$router.push(this.prevRoute.path);
     },
     getBookingID() {
       axios
