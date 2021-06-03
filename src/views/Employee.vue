@@ -6,7 +6,7 @@
     </h3>
 
     <!-- Menu For Owner -->
-    <div v-if="role === 'Owner'">
+    <div v-if="role === 'Owner' || role === 'Admin'">
       <button
         class="menu-button"
         v-for="(menu, i) in menus"
@@ -23,7 +23,7 @@
     </div>
 
     <!-- For Business -->
-    <div class="inner-container" v-if="role === 'Owner'">
+    <div class="inner-container" v-if="role === 'Owner' || role === 'Admin'">
       <AllEmployee @countQuery="countQuery" v-if="selected == menus[0]" />
       <AllEmployeeRole @countQuery="countQuery" v-if="selected == menus[1]" />
     </div>
@@ -334,10 +334,9 @@ export default {
       activeArrow: 0,
       sortDirection: "up",
       //role: "Manager",
-      role: "Owner",
-      departmentName: "Receptionist",
+      role: "",
+      departmentName: "",
       countRow: "",
-
       selectOption,
       selectShift,
       sort: "employeeID",
@@ -372,6 +371,9 @@ export default {
   },
 
   created() {
+    this.role = this.$store.state.employeeDetail.role;
+    console.log("role=",this.role);
+    this.departmentName = this.$store.state.employeeDetail.department;
     this.getAllEmployee();
     this.selected = this.$store.state.employeeMenu;
   },
