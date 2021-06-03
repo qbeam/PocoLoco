@@ -11,7 +11,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div
           class="small"
@@ -22,7 +22,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div class="elevator">E</div>
         <div class="elevator">E</div>
@@ -35,7 +35,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div
           class="big"
@@ -46,7 +46,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
       </div>
 
@@ -60,7 +60,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div class="walkway"></div>
         <div
@@ -72,7 +72,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
       </div>
 
@@ -86,7 +86,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div class="path"></div>
         <div
@@ -98,7 +98,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div class="path"></div>
         <div
@@ -110,7 +110,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
       </div>
 
@@ -124,7 +124,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div class="path"></div>
         <div
@@ -136,7 +136,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div class="small" :style="{ background: '#9C9C9C' }"></div>
         <div class="path"></div>
@@ -149,7 +149,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
       </div>
 
@@ -163,7 +163,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div class="walkway"></div>
         <div
@@ -175,7 +175,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
       </div>
 
@@ -189,7 +189,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div
           class="small"
@@ -200,7 +200,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div class="elevator">E</div>
         <div class="elevator">E</div>
@@ -213,7 +213,7 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
         <div
           class="big"
@@ -224,78 +224,119 @@
             cursor: getCursor(detail.status),
           }"
         >
-          {{ detail.roomNumber }}
+          {{ detail.roomID }}
         </div>
       </div>
     </div>
-    <DefaultButton
-      @click="goToAddBooking"
-      :style="{ margin: '50px auto 0 auto' }"
-    >
-      Make Booking</DefaultButton
-    >
   </div>
 </template>
 
 <script>
 import DefaultButton from "../components/DefaultButton";
-const roomStatus = [
-  { roomNumber: 1203, type: "Superior", status: 1 },
-  { roomNumber: 1202, type: "Superior", status: 0 },
-  { roomNumber: 1201, type: "Superior", status: 1 },
-  { roomNumber: 1220, type: "Standard", status: 1 },
-  { roomNumber: 1219, type: "Standard", status: 1 },
-  { roomNumber: 1218, type: "Standard", status: 0 },
-  { roomNumber: 1204, type: "Superior", status: 1 },
-  { roomNumber: 1217, type: "Standard", status: 0 },
-  { roomNumber: 1205, type: "Deluxe", status: 0 },
-  { roomNumber: 1223, type: "Standard", status: 1 },
-  { roomNumber: 1222, type: "Standard", status: 0 },
-  { roomNumber: 1221, type: "Standard", status: 0 },
-  { roomNumber: 1216, type: "Suite", status: 1 },
-  { roomNumber: 1206, type: "Deluxe", status: 1 },
-  { roomNumber: 1224, type: "Deluxe", status: 0 },
-  { roomNumber: 1225, type: "Deluxe", status: 0 },
-  { roomNumber: 1215, type: "Suite", status: 0 },
-  { roomNumber: 1207, type: "Deluxe", status: 1 },
-  { roomNumber: 1214, type: "Suite", status: 0 },
-  { roomNumber: 1208, type: "Deluxe", status: 0 },
-  { roomNumber: 1209, type: "Deluxe", status: 0 },
-  { roomNumber: 1210, type: "Deluxe", status: 0 },
-  { roomNumber: 1211, type: "Suite", status: 0 },
-  { roomNumber: 1212, type: "Suite", status: 0 },
-  { roomNumber: 1223, type: "Suite", status: 0 },
-];
+import axios from "axios";
+
 export default {
   name: "RoomPlan",
-  props: ["floor", "building"],
+  props: ["floor", "building", "date"],
   components: { DefaultButton },
   data() {
     return {
-      roomStatus,
+      roomStatus: "",
     };
   },
+  created() {
+    this.getRoomNumber();
+  },
+  watch: {
+    building: function() {
+      this.getRoomNumber();
+    },
+    floor: function() {
+      this.getRoomNumber();
+    },
+    date: function() {
+      this.getRoomNumber();
+    },
+  },
   methods: {
+    getRoomNumber() {
+      console.log("building", this.building);
+      console.log("floor", this.floor);
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_floorPlan.php", {
+          action: "getRoomNumber",
+          building: this.building,
+          floor: this.floor,
+          date: this.date,
+        })
+        .then(
+          function(res) {
+            const arrangedRooms = this.arrangeHotelRoom(res.data);
+            this.roomStatus = arrangedRooms;
+          }.bind(this)
+        );
+    },
+    arrangeHotelRoom(allRoom) {
+      const roomOrder = [
+        "03",
+        "02",
+        "01",
+        "20",
+        "19",
+        "18",
+        "04",
+        "17",
+        "05",
+        "23",
+        "22",
+        "21",
+        "16",
+        "06",
+        "24",
+        "25",
+        "15",
+        "07",
+        "14",
+        "08",
+        "09",
+        "10",
+        "11",
+        "12",
+        "13",
+      ];
+
+      const arrangedRoom = [];
+      for (let i = 0; i < 25; i++) {
+        const target = roomOrder[i];
+        for (let j = 0; j < 25; j++) {
+          const record = allRoom[j].roomID.slice(2);
+          if (target == record) {
+            arrangedRoom.push(allRoom[j]);
+          }
+        }
+      }
+      return arrangedRoom;
+    },
     getBgColor(detail) {
-      if (detail.type == "Standard") {
+      if (detail.roomType == "Standard") {
         if (detail.status == 0) {
           return "#6A9BA6";
         } else {
           return "#79D7FF";
         }
-      } else if (detail.type == "Superior") {
+      } else if (detail.roomType == "Superior") {
         if (detail.status == 0) {
           return "#AA986B";
         } else {
           return "#FFC42E";
         }
-      } else if (detail.type == "Deluxe") {
+      } else if (detail.roomType == "Deluxe") {
         if (detail.status == 0) {
           return "#AE7C7C";
         } else {
           return "#FFABAB";
         }
-      } else if (detail.type == "Suite") {
+      } else if (detail.roomType == "Suite") {
         if (detail.status == 0) {
           return "#6E9E79";
         } else {
