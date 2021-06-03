@@ -36,7 +36,7 @@ export default {
   components: { CustomSelect },
   data() {
     return {
-      absenceSum:[],
+      absenceSum: [],
       searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       displayRange: null,
     };
@@ -61,6 +61,7 @@ export default {
       this.getAbsence();
     },
     getAbsence() {
+      this.absenceSum = [];
       axios
         .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
           action: "getAbsence",
@@ -68,10 +69,9 @@ export default {
         })
         .then(
           function(res) {
-            for(var i = 0; i < res.data.length ; i++){
+            for (var i = 0; i < res.data.length; i++) {
               this.absenceSum.push(res.data[i]);
             }
-            
           }.bind(this)
         );
     },
