@@ -79,11 +79,11 @@ export default {
   components: { TablePage, CustomSelect, RoomPlan },
   data() {
     return {
-      b1Floor: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-      b2Floor: [1, 2, 3, 4],
+      b1Floor: [2, 3, 4, 5, 6, 7, 8, 9, 10],
+      b2Floor: [2, 3, 4, 5, 6, 7, 8],
       buildingOption: [1, 2],
       building: 1, // set default to b2Floor
-      floorOption: [1, 2, 3, 4, 5, 6, 7, 8, 9], // set default to b1Floor
+      floorOption: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // set default to b1Floor
       floor: 2,
       pickedDate: null,
       dateConfig: {
