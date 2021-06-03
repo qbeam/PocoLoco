@@ -11,7 +11,7 @@
       </div>
       <h2>{{ day }}, {{ month }} {{ date }}, {{ year }}</h2>
       <input v-model="employeeID" type="text" placeholder="Employee ID" />
-      <div >
+      <div>
         <DefaultButton
           @click="goTimeStamp('I')"
           :style="{
@@ -113,6 +113,7 @@ export default {
         })
         .then(
           function(res) {
+            console.log(res.data);
             if (res.data.success == true && type == "I") {
               alert("Employee ID : " + this.employeeID + " In!");
             } else if (res.data.success == true && type == "O") {

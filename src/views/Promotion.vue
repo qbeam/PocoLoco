@@ -308,9 +308,8 @@ export default {
         type: "string",
         mask: "YYYY-MM-DD",
       },
-      role: "Owner",
-      //role: "Manager Reception",
-      //role: "Reception",
+      role: "",
+    
     };
   },
   created() {

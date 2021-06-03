@@ -475,10 +475,7 @@ export default {
   created() {
     this.role = this.$store.state.employeeDetail.role;
     this.details.department = this.$store.state.employeeDetail.department;
-    console.log("First ", this.role);
-    if (this.role != "Admin" && this.role != "Owner") {
-      this.getRole();
-    }
+    this.getRole();
   },
 
   methods: {
@@ -486,23 +483,20 @@ export default {
       this.$router.push("/Employee");
     },
     getRole() {
-      console.log("DE ", this.details.department);
       axios
         .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {
           action: "getRole",
           department: this.details.department,
+          role: this.role,
         })
         .then(
           function(res) {
-            console.log("Role", res.data);
             this.roleDB = res.data;
           }.bind(this)
         );
     },
 
-    addEmployee(e) {
-      e.preventDefault();
-
+    addEmployee() {
       if (this.details.department == "") {
         this.departmentError = false;
       }
@@ -616,9 +610,9 @@ export default {
           .then(
             function(res) {
               if (res.data.success == true) {
+                alert(res.data.message);
                 this.backToEmployee();
               }
-              alert(res.data.message);
             }.bind(this)
           );
       }

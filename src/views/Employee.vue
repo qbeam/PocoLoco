@@ -333,7 +333,6 @@ export default {
       currentPage: 1,
       activeArrow: 0,
       sortDirection: "up",
-      //role: "Manager",
       role: "",
       departmentName: "",
       countRow: "",
@@ -373,6 +372,9 @@ export default {
   created() {
     this.role = this.$store.state.employeeDetail.role;
     this.departmentName = this.$store.state.employeeDetail.department;
+    // if (this.role == "") {
+    //   this.error404();
+    // }
     this.getAllEmployee();
     this.selected = this.$store.state.employeeMenu;
   },
