@@ -7,19 +7,19 @@
       </div>
 
       <InnerFormContainer>
-        <div class="input-group">
+        <div v-if="role == 'Admin' || role == 'Owner'" class="input-group">
           <!-- Department -->
           <div v-if="departmentError">
             <h4>Department</h4>
             <select @change="getRole" v-model="details.department">
               <option value="" disabled selected>Select</option>
-              <option value="1">Admin/Owner</option>
-              <option value="2">Receptionist</option>
-              <option value="3">Kitchen</option>
-              <option value="4">Housekeeping</option>
-              <option value="5">Security</option>
-              <option value="6">Accounts and Credits</option>
-              <option value="7">Maintenance</option>
+              <option value="Admin / Owner">Admin/Owner</option>
+              <option value="Receptionist">Receptionist</option>
+              <option value="Kitchen">Kitchen</option>
+              <option value="Housekeeping">Housekeeping</option>
+              <option value="Security">Security</option>
+              <option value="Accounts and Credits">Accounts and Credits</option>
+              <option value="Maintenance">Maintenance</option>
             </select>
           </div>
           <!-- Department Error-->
@@ -27,16 +27,49 @@
             <h4 style="color:red">Department</h4>
             <select @change="getRole" v-model="details.department">
               <option value="" disabled selected>Select</option>
-              <option value="1">Admin/Owner</option>
-              <option value="2">Receptionist</option>
-              <option value="3">Kitchen</option>
-              <option value="4">Housekeeping</option>
-              <option value="5">Security</option>
-              <option value="6">Accounts and Credits</option>
-              <option value="7">Maintenance</option>
+              <option value="Admin / Owner">Admin/Owner</option>
+              <option value="Receptionist">Receptionist</option>
+              <option value="Kitchen">Kitchen</option>
+              <option value="Housekeeping">Housekeeping</option>
+              <option value="Security">Security</option>
+              <option value="Accounts and Credits">Accounts and Credits</option>
+              <option value="Maintenance">Maintenance</option>
             </select>
           </div>
 
+          <!-- Role -->
+          <div v-if="roleError">
+            <h4>Role</h4>
+            <select v-model="details.roleID">
+              <option value="" disabled selected>Select</option>
+              <option
+                v-for="(role, index) in roleDB"
+                v-bind:key="index"
+                :value="role.roleID"
+              >
+                {{ role.roleName }}
+              </option>
+            </select>
+          </div>
+          <!-- Role Error-->
+          <div v-else>
+            <h4 style="color:red">Role</h4>
+            <select v-model="details.roleID">
+              <option value="" disabled selected>Select</option>
+              <option
+                v-for="(role, index) in roleDB"
+                v-bind:key="index"
+                :value="role.roleID"
+              >
+                {{ role.roleName }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Not Admin / Owner -->
+        <div v-else>
+          <h4>Department : {{ details.department }}</h4>
           <!-- Role -->
           <div v-if="roleError">
             <h4>Role</h4>
@@ -394,6 +427,8 @@ export default {
       startDate: null,
       birthDate: null,
       roleDB: null,
+      role: "",
+      department: "",
 
       departmentError: true,
       roleError: true,
@@ -437,11 +472,21 @@ export default {
     };
   },
 
+  created() {
+    this.role = this.$store.state.employeeDetail.role;
+    this.details.department = this.$store.state.employeeDetail.department;
+    console.log("First ", this.role);
+    if (this.role != "Admin" && this.role != "Owner") {
+      this.getRole();
+    }
+  },
+
   methods: {
     backToEmployee() {
       this.$router.push("/Employee");
     },
     getRole() {
+      console.log("DE ", this.details.department);
       axios
         .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {
           action: "getRole",
@@ -449,6 +494,7 @@ export default {
         })
         .then(
           function(res) {
+            console.log("Role", res.data);
             this.roleDB = res.data;
           }.bind(this)
         );
@@ -549,7 +595,6 @@ export default {
         this.emailError &&
         this.passwordError &&
         this.conPasswordError;
-      console.log(this.check);
       if (this.check) {
         axios
           .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {
