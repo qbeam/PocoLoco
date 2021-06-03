@@ -30,6 +30,7 @@ import OrderChef from "../views/OrderChef.vue";
 import Payment from '../views/Payment.vue';
 import TimeStamp from "../views/TimeStamp.vue";
 import MyAccount from '../views/MyAccount.vue'
+import TimestampRecord from '../views/TimestampRecord.vue';
 
 const routes = [
   {
@@ -181,11 +182,17 @@ const routes = [
     path: '/TimeStamp',
     name: 'TimeStamp',
     component: TimeStamp
-  }, {
+  },
+  {
     path: '/MyAccount',
     name: 'MyAccount',
     component: MyAccount
-  }
+  },
+  {
+    path: '/TimestampRecord',
+    name: 'TimestampRecord',
+    component: TimestampRecord
+  }, 
 ];
 
 const router = createRouter({
