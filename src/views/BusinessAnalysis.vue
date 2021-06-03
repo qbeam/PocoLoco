@@ -76,6 +76,8 @@ import ProfitGraph from "../components/BusinessReport/ProfitGraph";
 import AbsentReport from "../components/BusinessReport/AbsentReport";
 import PieChart from "../components/BusinessReport/PieChart";
 import { useScreenWidth } from "../composables/useScreenWidth";
+import axios from "axios";
+
 
 export default {
   name: "BusinessAnalysis",
@@ -104,7 +106,24 @@ export default {
       orderProgress: 0,
       customerAmount: 0,
       customerProgress: 0,
+      curdate:"",
     };
+  },
+
+  method: {
+    getTotalEarning() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
+          action: "getTotalEarning",
+          
+        })
+        .then(
+          function(res) {
+            console.lor(res);
+           
+          }.bind(this)
+        );
+    },
   },
 };
 </script>
