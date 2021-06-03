@@ -42,10 +42,10 @@ export default {
       this.$router.push("/FloorPlan");
     }
     if (this.role === "Manager" && this.department === "Kitchen") {
-      this.$router.push("/OrderChef");
+      this.$router.push("/ServiceToDo");
     }
     if (this.role === "Chef") {
-      this.$router.push("/OrderChef");
+      this.$router.push("/ServiceToDo");
     }
     if (this.role === "Manager" && this.department === "Housekeeping") {
       this.$router.push("/FloorPlan");

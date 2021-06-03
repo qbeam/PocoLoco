@@ -113,9 +113,9 @@ export default {
         .then(
           function(res) {
             if (res.data.success == true && type == "I") {
-              alert("Employee ID : " + this.employeeID + " Check In!");
+              alert("Employee ID : " + this.employeeID + " In!");
             } else if (res.data.success == true && type == "O") {
-              alert("Employee ID : " + this.employeeID + " Check Out!");
+              alert("Employee ID : " + this.employeeID + " Out!");
             } else {
               alert("Cannot timestamp Employee ID : " + this.employeeID);
             }
