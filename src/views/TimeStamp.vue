@@ -11,13 +11,14 @@
       </div>
       <h2>{{ day }}, {{ month }} {{ date }}, {{ year }}</h2>
       <input v-model="employeeID" type="text" placeholder="Employee ID" />
-      <div class="arrange-button">
+      <div >
         <DefaultButton
           @click="goTimeStamp('I')"
           :style="{
             background: 'var(--button-blue)',
             alignSelf: 'center',
             filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))',
+            marginRight: '30px',
           }"
           >IN
         </DefaultButton>
