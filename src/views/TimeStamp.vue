@@ -10,21 +10,35 @@
         <p>{{ second }}</p>
       </div>
       <h2>{{ day }}, {{ month }} {{ date }}, {{ year }}</h2>
-      <input type="text" placeholder="Employee ID" />
-      <DefaultButton
-        :style="{
-          background: 'var(--primary-red)',
-          alignSelf: 'center',
-          filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))',
-        }"
-        >SUBMIT</DefaultButton
-      >
+      <input v-model="employeeID" type="text" placeholder="Employee ID" />
+      <div class="arrange-button">
+        <DefaultButton
+          @click="goTimeStamp('I')"
+          :style="{
+            background: 'var(--primary-red)',
+            alignSelf: 'center',
+            filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))',
+          }"
+          >CHECK IN
+        </DefaultButton>
+        <DefaultButton
+          @click="goTimeStamp('O')"
+          :style="{
+            background: 'var(--primary-red)',
+            alignSelf: 'center',
+            filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))',
+          }"
+          >CHECK OUT</DefaultButton
+        >
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import DefaultButton from "../components/DefaultButton.vue";
+import axios from "axios";
+
 export default {
   name: "TimeStamp",
   components: {
@@ -84,7 +98,31 @@ export default {
       hour: "",
       minute: "",
       second: "",
+      employeeID: "",
     };
+  },
+
+  methods: {
+    goTimeStamp(type) {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
+          action: "timeStamp",
+          employeeID: this.employeeID,
+          type: type,
+        })
+        .then(
+          function(res) {
+            if (res.data.success == true && type == "I") {
+              alert("Employee ID : " + this.employeeID + " Check In!");
+            } else if (res.data.success == true && type == "O") {
+              alert("Employee ID : " + this.employeeID + " Check Out!");
+            } else {
+              alert("Cannot timestamp Employee ID : " + this.employeeID);
+            }
+            this.employeeID = "";
+          }.bind(this)
+        );
+    },
   },
 };
 </script>
@@ -137,6 +175,7 @@ input {
   font-size: 24px;
   color: var(--text-color);
 }
+
 @media (max-width: 550px) {
   .current-time {
     width: 80%;
