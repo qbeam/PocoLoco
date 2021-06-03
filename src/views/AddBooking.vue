@@ -25,7 +25,7 @@
           @click="
             $router.push({
               name: 'AddBookingDetail',
-              params: { bookingID },
+              params: { bookingID, customerID },
             })
           "
         ></AddButton>
@@ -134,11 +134,10 @@ export default {
   },
 
   created() {
+    this.customerID = this.$route.params.customerID;
     this.getBookingID();
   },
-  mounted() {
-    this.customerID = this.$store.state.customerID;
-  },
+
   methods: {
     pageReturn(page) {
       this.currentPage = page;
@@ -194,7 +193,9 @@ export default {
     },
 
     addBooking() {
-      if (this.customerID != "") {
+      if (this.customerID == "") {
+        alert("Plese fill Customer ID");
+      } else {
         axios
           .post("http://localhost:8080/PocoLoco_db/api_addBooking.php", {
             action: "addBooking",
@@ -203,7 +204,6 @@ export default {
           })
           .then(
             function(res) {
-              console.log(res);
               if (res.data.success == true) {
                 this.getBookingID();
                 alert("Booking Saved Successful");
@@ -211,11 +211,10 @@ export default {
               } else {
                 this.message = res.data.message;
               }
+
               this.resetData();
             }.bind(this)
           );
-      } else {
-        this.error = true;
       }
     },
 

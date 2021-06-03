@@ -135,7 +135,7 @@
 
           <!-- Select Button -->
           <td>
-            <!-- @change="checkOne(details.roomNumber[details.roomNumber.length - 1])" -->
+           
             <input
               type="checkbox"
               v-model="details.roomNumber"
@@ -161,7 +161,12 @@
     </InnerFormContainer>
     <div class="buttons">
       <DefaultButton
-        @click="backToAddBooking()"
+        @click="
+          $router.push({
+            name: 'AddBooking',
+            params: { customerID },
+          })
+        "
         :style="{
           background: 'none',
           marginRight: '110px',
@@ -194,7 +199,7 @@ export default {
       windowWidth: self.innerWidth,
       numberPerPage: 5,
       currentPage: 1,
-
+      customerID: "",
       typeDB: "",
       roomDB: "",
       canGet: false,
@@ -231,6 +236,7 @@ export default {
 
   created() {
     this.details.bookingID = this.$route.params.bookingID;
+    this.customerID = this.$route.params.customerID;
     this.getRoomType();
   },
 
@@ -239,20 +245,8 @@ export default {
       this.currentPage = page;
     },
 
-    backToAddBooking() {
-      this.$router.push("/AddBooking");
-    },
-
     onResize() {
       this.windowWidth = self.innerWidth;
-    },
-
-    checkOne(room) {
-      console.log(this.details.roomNumber);
-      if (this.details.roomNumber.length > 1) {
-        this.details.roomNumber = [];
-        this.details.roomNumber[0] = room;
-      }
     },
 
     getRoomType() {
@@ -290,7 +284,6 @@ export default {
         .then(
           function(res) {
             this.roomDB = res.data;
-            console.log(res);
           }.bind(this)
         );
     },
@@ -310,7 +303,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res);
             if (res.data.success == true) {
               alert("Saved Successful");
               this.$router.push({
