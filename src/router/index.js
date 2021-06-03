@@ -20,10 +20,7 @@ import Employee from "../views/Employee.vue";
 import BookingDetail from "../views/BookingDetail.vue";
 import BusinessAnalysis from "../views/BusinessAnalysis.vue";
 import FloorPlan from "../views/FloorPlan.vue";
-import MyAccountRole from "../views/MyAccountRole.vue";
-import MyAccountProfile from "../views/MyAccountProfile.vue";
-import OrderMaid from "../views/OrderMaid.vue";
-import OrderChef from "../views/OrderChef.vue";
+import ServiceToDo from "../views/ServiceToDo.vue";
 import Payment from "../views/Payment.vue";
 import TimeStamp from "../views/TimeStamp.vue";
 import MyAccount from "../views/MyAccount.vue";
@@ -136,25 +133,11 @@ const routes = [
     component: FloorPlan,
   },
 
+
   {
-    path: "/MyAccountRole",
-    name: "MyAccountRole",
-    component: MyAccountRole,
-  },
-  {
-    path: "/MyAccountProfile",
-    name: "MyAccountProfile",
-    component: MyAccountProfile,
-  },
-  {
-    path: "/OrderMaid",
-    name: "OrderMaid",
-    component: OrderMaid,
-  },
-  {
-    path: "/OrderChef",
-    name: "OrderChef",
-    component: OrderChef,
+    path: "/ServiceToDo",
+    name: "ServiceToDo",
+    component: ServiceToDo,
   },
   {
     path: "/Payment",
