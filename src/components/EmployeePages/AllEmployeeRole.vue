@@ -1,132 +1,136 @@
 <template>
-  <div class="menu-bar">
-    <div class="search-container">
-      <i
-        class="fa fa-search fa-1x"
-        style="
+  <div>
+    <div class="menu-bar">
+      <div class="search-container">
+        <i
+          class="fa fa-search fa-1x"
+          style="
           position: absolute;
           z-index: 5;
           margin: 9px 15px;
           font-size: 16px;
         "
-      ></i>
+        ></i>
 
-      <input
-        class="search-field"
-        type="text"
-        placeholder="search"
-        v-model="search"
-        :style="{ marginBottom: '0' }"
+        <input
+          class="search-field"
+          type="text"
+          placeholder="search"
+          v-model="search"
+          :style="{ marginBottom: '0' }"
+        />
+      </div>
+      <div class="menu-button">
+        <CustomSelect
+          type="Filter"
+          :options="selectOption"
+          :style="{ marginRight: '20px' }"
+          @selection="selectionFilter"
+        />
+        <DefaultButton @click="searchData()" type="small">
+          Search
+        </DefaultButton>
+      </div>
+      <AddButton
+        @click="goToAddRole()"
+        :style="{ position: 'absolute', right: '2%' }"
       />
     </div>
-    <div class="menu-button">
-      <CustomSelect
-        type="Filter"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionFilter"
-      />
-      <DefaultButton @click="searchData()" type="small"> Search </DefaultButton>
+
+    <div class="table-container">
+      <table v-if="role_db.length !== 0">
+        <tr>
+          <th v-for="(colName, i) in colNames" :key="i">
+            <div class="tb-head">
+              {{ colName }}
+              <SortingArrow
+                :active="activeArrow == i ? true : false"
+                @click="setActiveArrow(i)"
+                @sortReturn="sortReturn"
+              />
+            </div>
+          </th>
+          <th>Manage</th>
+        </tr>
+
+        <tr
+          v-for="(role, i) in role_db.slice(
+            currentPage * tableRow - tableRow,
+            currentPage * tableRow
+          )"
+          :key="i"
+          class="row"
+        >
+          <td>{{ role.roleID }}</td>
+          <td>{{ role.roleName }}</td>
+          <td>{{ role.departmentName }}</td>
+          <td>{{ role.salary }}</td>
+          <td>{{ role.bonusRate }}</td>
+
+          <td>
+            <div class="manage">
+              <button class="manage-button" @click="getRecord(role.roleID)">
+                <i class="fa fa-pencil fa-2x"></i>
+              </button>
+              <div class="vl"></div>
+              <button class="manage-button" @click="deleteData(role)">
+                <i class="fa fa-trash fa-2x"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
-    <AddButton
-      @click="goToAddRole()"
-      :style="{ position: 'absolute', right: '2%' }"
+    <PaginationBar
+      :pageCount="Math.ceil(role_db.length / tableRow)"
+      :paginationVisible="role_db.length > tableRow"
+      @pageReturn="pageReturn"
     />
-  </div>
 
-  <div class="table-container">
-    <table v-if="role_db.length !== 0">
-      <tr>
-        <th v-for="(colName, i) in colNames" :key="i">
-          <div class="tb-head">
-            {{ colName }}
-            <SortingArrow
-              :active="activeArrow == i ? true : false"
-              @click="setActiveArrow(i)"
-              @sortReturn="sortReturn"
-            />
-          </div>
-        </th>
-        <th>Manage</th>
-      </tr>
-
-      <tr
-        v-for="(role, i) in role_db.slice(
-          currentPage * tableRow - tableRow,
-          currentPage * tableRow
-        )"
-        :key="i"
-        class="row"
-      >
-        <td>{{ role.roleID }}</td>
-        <td>{{ role.roleName }}</td>
-        <td>{{ role.departmentName }}</td>
-        <td>{{ role.salary }}</td>
-        <td>{{ role.bonusRate }}</td>
-
-        <td>
-          <div class="manage">
-            <button class="manage-button" @click="getRecord(role.roleID)">
-              <i class="fa fa-pencil fa-2x"></i>
-            </button>
-            <div class="vl"></div>
-            <button class="manage-button" @click="deleteData(role)">
-              <i class="fa fa-trash fa-2x"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </div>
-  <PaginationBar
-    :pageCount="Math.ceil(role_db.length / tableRow)"
-    :paginationVisible="role_db.length > tableRow"
-    @pageReturn="pageReturn"
-  />
-
-  <Popup
-    :visible="editVisible"
-    :buttons="true"
-    @popReturn="popReturn"
-    @submit="submit"
-    :style="{ top: '0', left: '0', margin: '0' }"
-  >
-    <div class="popup-head">
-      <div>Department: {{ departmentID }}</div>
-      <div>Role: {{ roleName }}</div>
-    </div>
-    <p>Salary</p>
-    <div :style="{ paddingBottom: '20px' }">
+    <Popup
+      :visible="editVisible"
+      :buttons="true"
+      @popReturn="popReturn"
+      @submit="submit"
+      :style="{ top: '0', left: '0', margin: '0' }"
+    >
+      <div class="popup-head">
+        <div>Department: {{ departmentID }}</div>
+        <div>Role: {{ roleName }}</div>
+      </div>
+      <p>Salary</p>
+      <div :style="{ paddingBottom: '20px' }">
+        <input
+          type="text"
+          v-model="salary"
+          :placeholder="salary"
+          :style="{ marginRight: '10px' }"
+        />
+        Baht
+      </div>
+      <p>Bonus Rate</p>
       <input
         type="text"
-        v-model="salary"
-        :placeholder="salary"
-        :style="{ marginRight: '10px' }"
+        v-model="bonusRate"
+        :placeholder="bonusRate"
+        :style="{ width: '95%', marginBottom: '30px' }"
       />
-      Baht
-    </div>
-    <p>Bonus Rate</p>
-    <input
-      type="text"
-      v-model="bonusRate"
-      :placeholder="bonusRate"
-      :style="{ width: '95%', marginBottom: '30px' }"
-    />
-  </Popup>
+    </Popup>
+  </div>
 </template>
 
 <script>
-import CustomSelect from "../components/CustomSelect";
-import DefaultButton from "../components/DefaultButton";
-import AddButton from "../components/AddButton";
-import { useScreenWidth } from "../composables/useScreenWidth";
-import PaginationBar from "../components/PaginationBar";
-import Popup from "../components/Popup";
-import SortingArrow from "../components/SortingArrow";
-import SearchError from "../components/SearchError";
+import CustomSelect from "../CustomSelect";
+import DefaultButton from "../DefaultButton";
+import AddButton from "../AddButton";
+import { useScreenWidth } from "../../composables/useScreenWidth";
+import PaginationBar from "../../components/PaginationBar";
+import Popup from "../Popup";
+import SortingArrow from "../SortingArrow";
+import SearchError from "../SearchError";
 import axios from "axios";
 
-const colNames = ["RoleID", "Role Name", "Department", "Salary", "Bonus Rate"];
+const colNames = ["ID", "Role Name", "Department", "Salary", "Bonus Rate"];
 const selectOption = ["Name", "Role ID", "Department", "Salary", "Borate Rate"];
 
 export default {
@@ -599,14 +603,19 @@ input {
   }
   table {
     margin-top: 30px;
-    font-size: 14px;
+    font-size: 10px;
   }
   .vl {
-    margin: 0 2px;
+    margin: 0 1px;
   }
   .fa-pencil,
   .fa-trash {
-    font-size: 20px;
+    font-size: 18px;
+  }
+}
+@media (max-width: 550px) {
+  table {
+    font-size: 8px;
   }
 }
 input[type="number"] {

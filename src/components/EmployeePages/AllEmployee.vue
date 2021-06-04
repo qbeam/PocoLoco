@@ -1,268 +1,263 @@
 <template>
-  <div class="menu-bar">
-    <div class="search-container">
-      <i
-        class="fa fa-search fa-1x"
-        style="
+  <div>
+    <div class="menu-bar">
+      <div class="search-container">
+        <i
+          class="fa fa-search fa-1x"
+          style="
           position: absolute;
           z-index: 5;
           margin: 9px 15px;
           font-size: 16px;
         "
-      ></i>
+        ></i>
 
-      <input
-        class="search-field"
-        type="text"
-        placeholder="search"
-        v-model="search"
-        :style="{ marginBottom: '0' }"
+        <input
+          class="search-field"
+          type="text"
+          placeholder="search"
+          v-model="search"
+          :style="{ marginBottom: '0' }"
+        />
+      </div>
+      <div class="menu-button">
+        <CustomSelect
+          type="Filter"
+          :options="selectOption"
+          :style="{ marginRight: '20px' }"
+          @selection="selectionFilter"
+        />
+        <DefaultButton @click="searchData" type="small"> Search </DefaultButton>
+      </div>
+      <AddButton
+        @click="goToEmployeeReg()"
+        :style="{ position: 'absolute', right: '2%' }"
       />
     </div>
-    <div class="menu-button">
-      <CustomSelect
-        type="Filter"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionFilter"
-      />
-      <DefaultButton @click="searchData" type="small"> Search </DefaultButton>
-    </div>
-    <AddButton
-      @click="goToEmployeeReg()"
-      :style="{ position: 'absolute', right: '2%' }"
-    />
-  </div>
 
-  <SearchError v-if="errorSearching" :style="{ marginTop: '80px' }" />
-  <div class="table-container">
-    <table v-if="employee_db.length !== 0">
-      <tr>
-        <th v-for="(colName, i) in colNames" :key="i">
-          <div class="tb-head">
-            {{ colName }}
-            <SortingArrow
-              :active="activeArrow == i ? true : false"
-              @click="setActiveArrow(i)"
-              @sortReturn="sortReturn"
-            />
-          </div>
-        </th>
-        <th>Manage</th>
-      </tr>
-
-      <tr
-        v-for="(employee, i) in employee_db.slice(
-          currentPage * tableRow - tableRow,
-          currentPage * tableRow
-        )"
-        :key="i"
-        class="row"
-      >
-        <td>
-          <div class="profile">
-            <i class="table-circle">
-              <img :src="require(`../assets/${employee.picName}.png`)" />
-            </i>
-            <p>{{ employee.employeeID }}</p>
-          </div>
-        </td>
-        <td>{{ employee.em_name }}</td>
-        <td>{{ employee.roleName }}</td>
-        <td>{{ employee.departmentName }}</td>
-        <td>{{ employee.salary }}</td>
-        <td>
-          <div>
-            <p style="margin-top: 5px; margin-bottom: 2px;">
-              <i
-                v-if="employee.workStatus == 'Employed'"
-                class="fa fa-circle"
-                :style="{ color: '#24BA45' }"
+    <SearchError v-if="errorSearching" :style="{ marginTop: '80px' }" />
+    <div class="table-container">
+      <table v-if="employee_db.length !== 0">
+        <tr>
+          <th v-for="(colName, i) in colNames" :key="i">
+            <div class="tb-head">
+              {{ colName }}
+              <SortingArrow
+                :active="activeArrow == i ? true : false"
+                @click="setActiveArrow(i)"
+                @sortReturn="sortReturn"
               />
-              <i
-                v-if="employee.workStatus == 'Suspended'"
-                class="fa fa-circle"
-                :style="{ color: '#FFC42E' }"
-              />
-              <i
-                v-if="employee.workStatus == 'Quited'"
-                class="fa fa-circle"
-                :style="{ color: '#FF0000' }"
-              />
-              {{ employee.workStatus }}
-            </p>
-            <div v-if="employee.duration == 1 || employee.duration == 0">
-              <p class="sub-row">{{ employee.duration }} year</p>
             </div>
-            <div v-else>
-              <p class="sub-row">{{ employee.duration }} years</p>
-            </div>
-          </div>
-        </td>
-        <td>
-          <div class="manage">
-            <button class="manage-button" @click="viewEmployee(employee)">
-              <i class="fa fa-search fa-2x"></i>
-            </button>
-            <div class="vl"></div>
-            <button class="manage-button" @click="editEmployee(employee)">
-              <i class="fa fa-pencil fa-2x"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </div>
-  <PaginationBar
-    :pageCount="Math.ceil(employee_db.length / tableRow)"
-    :paginationVisible="employee_db.length > tableRow"
-    @pageReturn="pageReturn"
-  />
+          </th>
+          <th>Manage</th>
+        </tr>
 
-  <!-- View -->
-  <Popup
-    :visible="searchVisible"
-    @popReturn="popReturn"
-    :style="{ top: '0', left: '0', margin: '0' }"
-  >
-    <div class="popup-head">
-      <div class="group-row">
-        <div class="group-item">
-          <div class="group-row">
-            <div class="group-item-left">
-              <div class="circle">
-                <img :src="require(`../assets/${employee.picName}.png`)" />
+        <tr
+          v-for="(employee, i) in employee_db.slice(
+            currentPage * tableRow - tableRow,
+            currentPage * tableRow
+          )"
+          :key="i"
+          class="row"
+        >
+          <td>
+            <div class="profile">
+              <i class="table-circle" v-if="width > 700">
+                <img :src="require(`../../assets/${employee.picName}.png`)" />
+              </i>
+              <p>{{ employee.employeeID }}</p>
+            </div>
+          </td>
+          <td>{{ employee.em_name }}</td>
+          <td>{{ employee.roleName }}</td>
+          <td>{{ employee.departmentName }}</td>
+          <td>{{ employee.salary }}</td>
+          <td>
+            <div>
+              <p style="margin-top: 5px; margin-bottom: 2px;">
+                <i
+                  v-if="employee.workStatus == 'Employed'"
+                  class="fa fa-circle"
+                  :style="{ color: '#24BA45' }"
+                />
+                <i
+                  v-if="employee.workStatus == 'Suspended'"
+                  class="fa fa-circle"
+                  :style="{ color: '#FFC42E' }"
+                />
+                <i
+                  v-if="employee.workStatus == 'Quited'"
+                  class="fa fa-circle"
+                  :style="{ color: '#FF0000' }"
+                />
+                {{ employee.workStatus }}
+              </p>
+              <div v-if="employee.duration == 1 || employee.duration == 0">
+                <p class="sub-row">{{ employee.duration }} year</p>
+              </div>
+              <div v-else>
+                <p class="sub-row">{{ employee.duration }} years</p>
               </div>
             </div>
-            <div class="group-item-left" style="margin-top: 7px">
-              {{ employee.employeeID }}
+          </td>
+          <td>
+            <div class="manage">
+              <button class="manage-button" @click="viewEmployee(employee)">
+                <i class="fa fa-search fa-2x"></i>
+              </button>
+              <div class="vl"></div>
+              <button class="manage-button" @click="editEmployee(employee)">
+                <i class="fa fa-pencil fa-2x"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <PaginationBar
+      :pageCount="Math.ceil(employee_db.length / tableRow)"
+      :paginationVisible="employee_db.length > tableRow"
+      @pageReturn="pageReturn"
+    />
+
+    <!-- View -->
+    <Popup
+      :visible="searchVisible"
+      @popReturn="popReturn"
+      :style="{ top: '0', left: '0', margin: '0' }"
+    >
+      <div class="popup-head">
+        <div class="group-row">
+          <div class="group-item">
+            <div class="group-row">
+              <div class="group-item-left">
+                <div class="circle">
+                  <img :src="require(`../../assets/${employee.picName}.png`)" />
+                </div>
+              </div>
+              <div class="group-item-left" style="margin-top: 7px">
+                {{ employee.employeeID }}
+              </div>
+            </div>
+          </div>
+          <div class="group-item">
+            <div style="font-size: 20px">
+              {{ employee.em_name }}
+            </div>
+            <div style="font-weight: normal; font-size: 18px">
+              {{ employee.roleName }}
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="group-row">
         <div class="group-item">
-          <div style="font-size: 20px">
-            {{ employee.em_name }}
-          </div>
-          <div style="font-weight: normal; font-size: 18px">
-            {{ employee.roleName }}
-          </div>
+          <p><b>Department: </b> {{ employee.departmentName }}</p>
+          <p><b>Working time: </b>{{ employee.shift }}</p>
+          <p><b>Identification: </b>{{ employee.identification }}</p>
+          <p><b>Gender: </b>{{ employee.gender }}</p>
+          <p><b>Email: </b>{{ employee.email }}</p>
+        </div>
+        <div class="group-item">
+          <p><b>Salary: </b>{{ employee.salary }}</p>
+          <p><b>Start Date: </b>{{ convertDate(employee.startDate) }}</p>
+          <p>&nbsp;</p>
+          <p><b>Date of Birth: </b>{{ convertDate(employee.DOB) }}</p>
+          <p><b>Phone: </b>{{ employee.phone }}</p>
         </div>
       </div>
-    </div>
+    </Popup>
 
-    <div class="group-row">
-      <div class="group-item">
-        <p><b>Department: </b> {{ employee.departmentName }}</p>
-        <p><b>Working time: </b>{{ employee.shift }}</p>
-        <p><b>Identification: </b>{{ employee.identification }}</p>
-        <p><b>Gender: </b>{{ employee.gender }}</p>
-        <p><b>Email: </b>{{ employee.email }}</p>
+    <!-- Edit -->
+    <Popup
+      :visible="editVisible"
+      :buttons="true"
+      @popReturn="popReturn"
+      @submit="updateData"
+      :style="{ top: '0', left: '0', margin: '0' }"
+    >
+      <div class="group-row">
+        <div class="group-item">
+          <h4>Department</h4>
+          <CustomSelect
+            type="Grey"
+            :defaultChoice="form.departmentName"
+            :options="selectDepartment"
+            @selection="selectionDepartment"
+          />
+          <h4>Shift</h4>
+          <CustomSelect
+            type="Grey"
+            :defaultChoice="form.shift"
+            :options="selectShift"
+            @selection="selectionShift"
+          />
+        </div>
+        <div class="group-item">
+          <h4>Role</h4>
+          <CustomSelect
+            type="Grey"
+            :defaultChoice="form.roleName"
+            :options="role_db"
+            @selection="selectionRole"
+          />
+        </div>
       </div>
-      <div class="group-item">
-        <p><b>Salary: </b>{{ employee.salary }}</p>
-        <p><b>Start Date: </b>{{ convertDate(employee.startDate) }}</p>
-        <p>&nbsp;</p>
-        <p><b>Date of Birth: </b>{{ convertDate(employee.DOB) }}</p>
-        <p><b>Phone: </b>{{ employee.phone }}</p>
+      <h4 style="margin-bottom: 20px">Work status</h4>
+      <div class="choices">
+        <label class="container1">
+          Employed
+          <input type="radio" value="Employed" v-model="form.workStatus" />
+          <span class="checkmark"></span>
+        </label>
+        <label class="container2"
+          >Suspended
+          <input type="radio" value="Suspended" v-model="form.workStatus" />
+          <span class="checkmark"></span>
+        </label>
+        <label class="container3"
+          >Quited
+          <input type="radio" value="Quited" v-model="form.workStatus" />
+          <span class="checkmark"></span>
+        </label>
       </div>
-    </div>
-  </Popup>
-
-  <!-- Edit -->
-  <Popup
-    :visible="editVisible"
-    :buttons="true"
-    @popReturn="popReturn"
-    @submit="updateData"
-    :style="{ top: '0', left: '0', margin: '0' }"
-  >
-    <div class="group-row">
-      <div class="group-item">
-        <h4>Department</h4>
-        <CustomSelect
-          type="Grey"
-          :defaultChoice="form.departmentName"
-          :options="selectDepartment"
-          @selection="selectionDepartment"
-        />
-        <h4>Shift</h4>
-        <CustomSelect
-          type="Grey"
-          :defaultChoice="form.shift"
-          :options="selectShift"
-          @selection="selectionShift"
-        />
+      <div class="group-row">
+        <div class="group-item">
+          <p><b>Name</b></p>
+          <input type="text" :placeholder="name" v-model="form.firstName" />
+          <p><b>Phone</b></p>
+          <input
+            v-model="form.phone"
+            type="number"
+            onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107 && event.keyCode !== 110 && event.keyCode !== 190"
+            :placeholder="phone"
+          />
+        </div>
+        <div class="group-item">
+          <p><b>Lastname</b></p>
+          <input type="text" :placeholder="lastname" v-model="form.lastName" />
+          <p><b>Email</b></p>
+          <input type="text" :placeholder="email" v-model="form.email" />
+        </div>
       </div>
-      <div class="group-item">
-        <h4>Role</h4>
-        <CustomSelect
-          type="Grey"
-          :defaultChoice="form.roleName"
-          :options="role_db"
-          @selection="selectionRole"
-        />
-      </div>
-    </div>
-    <h4 style="margin-bottom: 20px">Work status</h4>
-    <div class="choices">
-      <label class="container1">
-        Employed
-        <input type="radio" value="Employed" v-model="form.workStatus" />
-        <span class="checkmark"></span>
-      </label>
-      <label class="container2"
-        >Suspended
-        <input type="radio" value="Suspended" v-model="form.workStatus" />
-        <span class="checkmark"></span>
-      </label>
-      <label class="container3"
-        >Quited
-        <input type="radio" value="Quited" v-model="form.workStatus" />
-        <span class="checkmark"></span>
-      </label>
-    </div>
-    <div class="group-row">
-      <div class="group-item">
-        <p><b>Name</b></p>
-        <input type="text" :placeholder="name" v-model="form.firstName" />
-        <p><b>Phone</b></p>
-        <input
-          v-model="form.phone"
-          type="number"
-          onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107 && event.keyCode !== 110 && event.keyCode !== 190"
-          :placeholder="phone"
-        />
-      </div>
-      <div class="group-item">
-        <p><b>Lastname</b></p>
-        <input type="text" :placeholder="lastname" v-model="form.lastName" />
-        <p><b>Email</b></p>
-        <input type="text" :placeholder="email" v-model="form.email" />
-      </div>
-    </div>
-  </Popup>
+    </Popup>
+  </div>
 </template>
 
 <script>
-import CustomSelect from "../components/CustomSelect";
-import DefaultButton from "../components/DefaultButton";
-import AddButton from "../components/AddButton";
-import { useScreenWidth } from "../composables/useScreenWidth";
-import { useScreenHeight } from "../composables/useScreenHeight";
-import PaginationBar from "../components/PaginationBar";
-import Popup from "../components/Popup";
-import SortingArrow from "../components/SortingArrow";
-import SearchError from "../components/SearchError";
+import CustomSelect from "../CustomSelect";
+import DefaultButton from "../DefaultButton";
+import AddButton from "../AddButton";
+import { useScreenWidth } from "../../composables/useScreenWidth";
+import { useScreenHeight } from "../../composables/useScreenHeight";
+import PaginationBar from "../PaginationBar";
+import Popup from "../Popup";
+import SortingArrow from "../SortingArrow";
+import SearchError from "../SearchError";
 import axios from "axios";
 
-const colNames = [
-  "Employee ID",
-  "Name",
-  "Role",
-  "Department",
-  "Salary",
-  "Status",
-];
+const colNames = ["ID", "Name", "Role", "Dept", "Salary", "Status"];
 const selectOption = [
   "Employee ID",
   "Name",
@@ -309,7 +304,7 @@ export default {
       editVisible: false,
       currentPage: 1,
       activeArrow: 0,
-      tableRow: 5,
+      tableRow: 7,
       sortDirection: "up",
       selectOption,
       selectDepartment,
@@ -326,7 +321,7 @@ export default {
       totalData: 0,
       isView: false,
       isEdit: false,
-      countRow:"",
+      countRow: "",
 
       form: {
         employeeID: "",
@@ -636,15 +631,15 @@ i {
 }
 .table-container {
   display: flex;
-  height: 460px;
+  height: 580px;
 }
 table {
   width: 100%;
-  max-width: 1000;
+  max-width: 1000px;
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;
-  margin-top: 40px;
+  margin-top: 50px;
   z-index: 0;
 }
 .tb-head {
@@ -778,8 +773,12 @@ td {
   font-size: 10px;
   margin-right: 5px;
 }
+
+.fa-pencil,
+.fa-search {
+  font-size: 25px;
+}
 .fa-pencil:hover,
-.fa-trash:hover,
 .fa-search:hover {
   color: var(--primary-blue);
 }
@@ -857,18 +856,30 @@ input {
     width: 180px;
   }
   .table-container {
-    height: 450px;
+    display: flex;
+    height: 500px;
   }
   table {
     margin-top: 30px;
-    font-size: 14px;
+    font-size: 12px;
+  }
+  td {
+    height: 50px;
   }
   .vl {
-    margin: 0 2px;
+    margin: 0 1px;
   }
   .fa-pencil,
-  .fa-trash {
-    font-size: 20px;
+  .fa-search {
+    font-size: 18px;
+  }
+}
+@media (max-width: 550px) {
+  .table-container {
+    height: 480px;
+  }
+  table {
+    font-size: 8px;
   }
 }
 input[type="number"] {

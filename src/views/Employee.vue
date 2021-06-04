@@ -6,7 +6,7 @@
     </h3>
 
     <!-- Menu For Owner -->
-    <div v-if="role === 'Owner' || role === 'Admin'">
+    <div v-if="role === 'Owner' || role === 'Admin'" class="tabs">
       <button
         class="menu-button"
         v-for="(menu, i) in menus"
@@ -273,8 +273,8 @@
 </template>
 
 <script>
-import AllEmployee from "../components/AllEmployee";
-import AllEmployeeRole from "../components/AllEmployeeRole";
+import AllEmployee from "../components/EmployeePages/AllEmployee";
+import AllEmployeeRole from "../components/EmployeePages/AllEmployeeRole";
 import TablePage from "../components/TablePage";
 import DefaultButton from "../components/DefaultButton.vue";
 import PaginationBar from "../components/PaginationBar.vue";
@@ -621,6 +621,9 @@ h4 {
 .sub-row {
   font-size: 12px;
   margin-top: 2px;
+}
+.tabs {
+  display: flex;
 }
 .menu-button {
   width: 200px;
