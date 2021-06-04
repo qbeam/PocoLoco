@@ -35,7 +35,7 @@
     </div>
 
     <SearchError v-if="errorSearching" />
-    <table v-if="promotion_db.length !== 0">
+    <table v-if="promotion_db.length !== 0" style="margin-top: 50px;">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
