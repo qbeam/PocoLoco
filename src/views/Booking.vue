@@ -92,8 +92,8 @@
     <Popup v-bind:visible="visible" @popReturn="popReturn">
       <div class="popup-head1">Booking ID: {{ bookingID }}</div>
       <div class="popup-head">
-        <div>Name: {{ customerName }}</div>
-        <div>Phone: {{ phone }}</div>
+        <div class="item">Name: {{ customerName }}</div>
+        <div class="item">Phone: {{ phone }}</div>
       </div>
       <table v-if="bookingDetail_db.length !== 0" style="magin-top: 10px;">
         <tr>
@@ -141,34 +141,45 @@
     <Popup :visible="switchInfoPop" :pop2="true" @pop2Return="pop2Return">
       <div class="popup-head1">Booking ID: {{ bookingID }}</div>
       <div class="popup-head">
-        <div>Name: {{ customerName }}</div>
-        <div>Phone: {{ phone }}</div>
+        <div class="item">Name: {{ customerName }}</div>
+        <div class="item">Phone: {{ phone }}</div>
+      </div>
+      <p><b>Booking Detail ID: </b>{{ detail.bookingDetailID }}</p>
+      <p>
+        <b>Guest Name:</b>
+        {{ detail.guestFirstName }} {{ detail.guestLastName }}
+      </p>
+      <div class="group-row">
+        <div class="group-item">
+          <p><b>Room Number: </b>{{ detail.roomID }}</p>
+        </div>
+        <div>
+          <p><b>Room Type: </b>{{ detail.roomType }}</p>
+        </div>
       </div>
       <div class="group-row">
         <div class="group-item">
-          <p><b>Booking Detail ID: </b>{{ detail.bookingDetailID }}</p>
-          <p>
-            <b>Guest Name: </b>{{ detail.guestFirstName }}
-            {{ detail.guestLastName }}
-          </p>
-          <p><b>Room Number: </b>{{ detail.roomID }}</p>
-          <p><b>Check IN: </b>{{ convertDate(detail.checkIn) }}</p>
+          <p><b>From: </b>{{ convertDate(detail.checkIn) }}</p>
+        </div>
+        <div>
+          <p><b>To: </b>{{ convertDate(detail.checkOut) }}</p>
+        </div>
+      </div>
+      <div class="group-row">
+        <div class="group-item">
           <p>
             <b>Status: </b>
             <i class="fa fa-circle" :style="{ color: getBgColor(detail) }" />
             {{ detail.status }}
           </p>
         </div>
-        <div class="group-item">
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p><b>Room Type: </b>{{ detail.roomType }}</p>
-          <p><b>Check OUT: </b>{{ convertDate(detail.checkOut) }}</p>
+        <div>
           <p><b>Total: </b>{{ detail.price }} Bath</p>
         </div>
       </div>
     </Popup>
 
+    <!-- Edit -->
     <Popup
       v-bind:visible="switchPop"
       :buttons="true"
@@ -177,26 +188,26 @@
       @submit="submit"
     >
       <div class="group-row">
-        <div class="group-item">
+        <div class="group-item" :style="{ marginBottom: '15px' }">
           <p>Guest Name</p>
           <input
             type="text"
             v-model="form.guestFirstname"
             :placeholder="name"
+            :style="{ width: '80%' }"
           />
         </div>
-
         <div class="group-item">
           <p>Last Name</p>
           <input
             type="text"
             v-model="form.guestLastname"
             :placeholder="lastname"
+            :style="{ width: '80%' }"
           />
         </div>
       </div>
-
-      <div class="group-row">
+      <div class="group-row" :style="{ marginBottom: '25px' }">
         <div class="group-item">
           <p>Check IN</p>
           <div class="flex x-full">
@@ -209,8 +220,12 @@
             >
               <template v-slot="{ inputValue, inputEvents }">
                 <div :style="{ display: 'flex', flexDirection: 'row' }">
-                  <input :value="inputValue" v-on="inputEvents" />
-                  <i class="fa fa-calendar fa-2x"></i>
+                  <input
+                    :value="inputValue"
+                    v-on="inputEvents"
+                    :style="width < 700 ? { width: '120px' } : {}"
+                  />
+                  <i class="fa fa-calendar fa-2x" />
                 </div>
               </template>
             </v-date-picker>
@@ -228,8 +243,12 @@
             >
               <template v-slot="{ inputValue, inputEvents }">
                 <div :style="{ display: 'flex', flexDirection: 'row' }">
-                  <input :value="inputValue" v-on="inputEvents" />
-                  <i class="fa fa-calendar fa-2x"></i>
+                  <input
+                    :value="inputValue"
+                    v-on="inputEvents"
+                    :style="width < 700 ? { width: '120px' } : {}"
+                  />
+                  <i class="fa fa-calendar fa-2x" />
                 </div>
               </template>
             </v-date-picker>
@@ -661,26 +680,30 @@ table {
 }
 .popup-head1 {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   padding-bottom: 15px;
   margin-bottom: 0px;
   font-weight: bold;
-  font-size: 30px;
+  font-size: 28px;
 }
 .popup-head {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   border-bottom: 3px solid var(--grey-highlight);
-  padding-bottom: 20px;
+  padding-bottom: 15px;
   margin-bottom: 25px;
   font-weight: bold;
 }
+.item {
+  display: flex;
+  margin: 5px 0;
+  font-size: 18px;
+}
 .choices {
   display: flex;
-  justify-content: flex-start;
-  width: 550px;
+  justify-content: space-between;
+  width: 100%;
 }
 .container1,
 .container2,
@@ -690,10 +713,9 @@ table {
   padding: 0 0 0 35px;
   margin: 0 0 15px 0;
   cursor: pointer;
-
   user-select: none;
   background: none;
-  width: 150px;
+  width: 30%;
 }
 .container1 input,
 .container2 input,
@@ -802,6 +824,22 @@ td {
   }
   .popup-head1 {
     font-size: 20px;
+  }
+  .popup-head {
+    font-size: 14px;
+    flex-direction: column;
+  }
+  .item {
+    display: flex;
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  p {
+    font-size: 14px;
+  }
+  .choices {
+    flex-direction: column;
+    font-size: 14px;
   }
 }
 @media (max-width: 550px) {
