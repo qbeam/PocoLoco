@@ -3,11 +3,13 @@
     <h3>
       Role
       <p class="countQuery">({{ countRow }})</p>
-    </h3>    <div class="menu-bar">
-      <div>
-        <span class="icon-wrap">
-          <i class="fa fa-search fa-1x"></i>
-        </span>
+    </h3>
+    <div class="menu-bar">
+      <div class="search-container">
+        <i
+          class="fa fa-search fa-1x"
+          :style="{ position: 'absolute', zIndex: 5, marginLeft: '15px' }"
+        />
 
         <input
           class="search-field"
@@ -109,8 +111,8 @@
       @submit="submit"
     >
       <div class="popup-head">
-        <div>Department: {{ departmentID }}</div>
-        <div>Role: {{ roleName }}</div>
+        <div class="head-item">Department: {{ departmentID }}</div>
+        <div class="head-item">Role: {{ roleName }}</div>
       </div>
       <p>Salary</p>
       <div :style="{ paddingBottom: '20px' }">
@@ -127,7 +129,7 @@
         type="text"
         v-model="bonusRate"
         :placeholder="bonusRate"
-        :style="{ width: '95%', marginBottom: '30px' }"
+        :style="{ marginBottom: '30px' }"
       />
     </Popup>
   </TablePage>
@@ -381,10 +383,16 @@ h3 {
   display: inline-block;
   font-size: 25px;
 }
-.icon-wrap {
-  position: absolute;
-  z-index: 0;
-  padding: 5px 20px;
+.menu-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
 }
 .search-field {
   width: 225px;
@@ -400,11 +408,7 @@ h3 {
 i {
   color: #5f5f5f;
 }
-.menu-bar {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-}
+
 table {
   width: 100%;
   max-width: 1000;
@@ -440,11 +444,11 @@ table {
   justify-content: space-between;
   border-bottom: 3px solid var(--grey-highlight);
   padding-bottom: 20px;
-  margin-bottom: 25px;
+  margin: 25px 0;
   font-weight: bold;
 }
 input {
-  width: 250px;
+  width: 200px;
   height: 35px;
   align-self: center;
   padding-left: 10px;
@@ -485,6 +489,22 @@ td {
   .search-field {
     width: 150px;
     font-size: 16px;
+  }
+  table {
+    font-size: 12px;
+  }
+  .fa-pencil,
+  .fa-trash {
+    font-size: 16px;
+  }
+  .vl {
+    margin: 0 1px;
+  }
+  .popup-head {
+    flex-direction: column;
+  }
+  .head-item {
+    margin: 5px 0;
   }
 }
 </style>

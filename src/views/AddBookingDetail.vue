@@ -4,16 +4,7 @@
       <h2>Add Booking Detail</h2>
     </div>
 
-    <InnerFormContainer
-      class="styled-inner"
-      :style="
-        roomDB.length === 0
-          ? { height: '500px' }
-          : windowWidth <= 1000
-          ? { height: '1100px', position: 'relative' }
-          : { height: '800px', position: 'relative' }
-      "
-    >
+    <InnerFormContainer class="styled-inner">
       <div :style="{ alignSelf: 'center', paddingLeft: '60px' }">
         <div class="input-group">
           <!-- Guest's First Name -->
@@ -135,7 +126,6 @@
 
           <!-- Select Button -->
           <td>
-           
             <input
               type="checkbox"
               v-model="details.roomNumber"
@@ -150,13 +140,6 @@
         :pageCount="Math.ceil(roomDB.length / numberPerPage)"
         :paginationVisible="roomDB.length > numberPerPage"
         @pageReturn="pageReturn"
-        :style="{
-          position: 'absolute',
-          bottom: '35px',
-          margin: '0 auto',
-          left: '0',
-          right: '0',
-        }"
       />
     </InnerFormContainer>
     <div class="buttons">
@@ -247,6 +230,10 @@ export default {
 
     onResize() {
       this.windowWidth = self.innerWidth;
+    },
+
+    setSelectedRoom(roomType) {
+      console.log("SELECTED", roomType);
     },
 
     getRoomType() {
@@ -362,7 +349,7 @@ table {
   align-self: center;
   border: 1px solid black;
   border-collapse: collapse;
-  margin-top: 30px;
+  margin: 20px 0;
 }
 th {
   height: 35px;

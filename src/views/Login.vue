@@ -74,8 +74,10 @@ export default {
               localStorage.setItem("user", res.data.employeeID);
               this.$store.state.employeeDetail.employeeID = res.data.employeeID;
               this.$store.state.employeeDetail.role = res.data.roleName;
-              this.$store.state.employeeDetail.department = res.data.departmentName;
-              this.$store.state.employeeDetail.profilePic = res.data.roleName + res.data.gender;
+              this.$store.state.employeeDetail.department =
+                res.data.departmentName;
+              this.$store.state.employeeDetail.profilePic =
+                res.data.roleName + res.data.gender;
               this.$store.state.user = localStorage.getItem("user");
               this.$router.push({ name: "Home" });
               // this.$router.push({
@@ -106,7 +108,6 @@ export default {
 }
 h1 {
   font-size: 100px;
-  line-height: 117px;
 }
 .login-input {
   width: 440px;
@@ -116,5 +117,41 @@ h1 {
   font-size: 30px;
   outline: none;
   z-index: 1;
+}
+@media (max-width: 750px) {
+  h1 {
+    font-size: 80px;
+  }
+  .login-input {
+    width: 250px;
+    height: 50px;
+    padding: 0 100px;
+    margin: 30px;
+    font-size: 30px;
+    outline: none;
+    z-index: 1;
+  }
+  .fa-user,
+  .fa-lock {
+    font-size: 40px;
+  }
+}
+@media (max-width: 550px) {
+  h1 {
+    font-size: 80px;
+  }
+  .login-input {
+    width: 150px;
+    height: 45px;
+    padding: 0 100px;
+    margin: 30px;
+    font-size: 25px;
+    outline: none;
+    z-index: 1;
+  }
+  .fa-user,
+  .fa-lock {
+    font-size: 30px;
+  }
 }
 </style>

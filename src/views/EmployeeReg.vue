@@ -223,7 +223,7 @@
             </label>
             <label class="container"
               >Passport Number
-              <input type="radio" checked="checked" name="radio" />
+              <input type="radio" name="radio" />
               <span class="checkmark"></span>
             </label>
           </div>

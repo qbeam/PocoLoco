@@ -153,4 +153,9 @@ i {
 *:focus {
   outline: 0;
 }
+@media (max-width: 550px) {
+  .pagination-button {
+    margin: 15px 1px;
+  }
+}
 </style>

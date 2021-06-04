@@ -5,11 +5,11 @@
       <p class="countQuery">({{ countRow }})</p>
     </h3>
     <div class="menu-bar">
-      <div>
-        <span class="icon-wrap">
-          <i class="fa fa-search fa-1x"></i>
-        </span>
-
+      <div class="search-container">
+        <i
+          class="fa fa-search fa-1x"
+          :style="{ position: 'absolute', zIndex: 5, marginLeft: '15px' }"
+        />
         <input
           v-model="search"
           class="search-field"
@@ -540,10 +540,10 @@ h3 {
   display: inline-block;
   font-size: 25px;
 }
-.icon-wrap {
-  position: absolute;
-  z-index: 0;
-  padding: 5px 20px;
+.search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
 }
 .search-field {
   width: 225px;
@@ -590,7 +590,7 @@ table {
   margin-right: 5px;
 }
 .fa-pencil:hover,
-.fa-trash:hover {
+.fa-search:hover {
   color: var(--primary-blue);
 }
 .fa-calendar {
@@ -744,9 +744,20 @@ td {
   }
 }
 @media (max-width: 700px) {
+  h3 {
+    font-size: 44px;
+    margin: 80px 0 35px 0;
+  }
   .search-field {
     width: 150px;
     font-size: 16px;
+  }
+  table {
+    font-size: 12px;
+  }
+  .fa-search,
+  .fa-pencil {
+    font-size: 18px;
   }
 }
 </style>

@@ -1,80 +1,82 @@
 <template>
-  <div class="menu-bar">
-    <div class="search-container">
-      <i class="fa fa-search"></i>
-      <input
-        v-model="search"
-        class="search-field"
-        type="text"
-        placeholder="search"
-      />
+  <div>
+    <div class="menu-bar">
+      <div class="search-container">
+        <i class="fa fa-search"></i>
+        <input
+          v-model="search"
+          class="search-field"
+          type="text"
+          placeholder="search"
+        />
+      </div>
+      <div class="menu-buttons">
+        <CustomSelect
+          type="Filter"
+          :options="selectOption"
+          :style="{ margin: ' 0 20px 18px 0' }"
+          @selection="selectionFilter"
+        />
+        <DefaultButton @click="searchPayment()" type="small">
+          Search
+        </DefaultButton>
+      </div>
     </div>
-    <div class="menu-buttons">
-      <CustomSelect
-        type="Filter"
-        :options="selectOption"
-        :style="{ margin: ' 0 20px 18px 0' }"
-        @selection="selectionFilter"
-      />
-      <DefaultButton @click="searchPayment()" type="small">
-        Search
-      </DefaultButton>
-    </div>
-  </div>
-  <SearchError v-if="errorSearching" :style="{ marginTop: '80px' }" />
-  <div class="table-container">
-    <table v-if="payment_db.length !== 0 && !error">
-      <tr>
-        <th v-for="(colName, i) in colNames" :key="i">
-          <div class="tb-head">
-            {{ colName }}
-            <SortingArrow
-              :active="activeArrow == i ? true : false"
-              @click="setActiveArrow(i)"
-              @sortReturn="sortReturn"
+    <SearchError v-if="errorSearching" :style="{ marginTop: '80px' }" />
+    <div class="table-container">
+      <table v-if="payment_db.length !== 0 && !error">
+        <tr>
+          <th v-for="(colName, i) in colNames" :key="i">
+            <div class="tb-head">
+              {{ colName }}
+              <SortingArrow
+                :active="activeArrow == i ? true : false"
+                @click="setActiveArrow(i)"
+                @sortReturn="sortReturn"
+              />
+            </div>
+          </th>
+        </tr>
+
+        <tr
+          v-for="(payment, i) in payment_db.slice(
+            currentPage * tableRow - tableRow,
+            currentPage * tableRow
+          )"
+          :key="i"
+          class="row"
+        >
+          <td :style="{ width: '15%' }">{{ payment.bookingDetailID }}</td>
+          <td :style="{ width: '10%' }">{{ payment.roomID }}</td>
+          <td :style="{ width: '20%' }">{{ payment.name }}</td>
+          <td :style="{ width: '15%' }">{{ payment.methodName }}</td>
+          <td :style="{ width: '15%' }">
+            <i
+              v-if="payment.type == 'Deposit'"
+              class="fa fa-circle"
+              :style="{ color: '#ffc42e' }"
             />
-          </div>
-        </th>
-      </tr>
+            <i
+              v-if="payment.type == 'Check Out'"
+              class="fa fa-circle"
+              :style="{ color: '#e11818' }"
+            />
 
-      <tr
-        v-for="(payment, i) in payment_db.slice(
-          currentPage * tableRow - tableRow,
-          currentPage * tableRow
-        )"
-        :key="i"
-        class="row"
-      >
-        <td :style="{ width: '15%' }">{{ payment.bookingDetailID }}</td>
-        <td :style="{ width: '10%' }">{{ payment.roomID }}</td>
-        <td :style="{ width: '20%' }">{{ payment.name }}</td>
-        <td :style="{ width: '15%' }">{{ payment.methodName }}</td>
-        <td :style="{ width: '15%' }">
-          <i
-            v-if="payment.type == 'Deposit'"
-            class="fa fa-circle"
-            :style="{ color: '#ffc42e' }"
-          />
-          <i
-            v-if="payment.type == 'Check Out'"
-            class="fa fa-circle"
-            :style="{ color: '#e11818' }"
-          />
+            {{ payment.type }}
+          </td>
+          <td :style="{ width: '10%' }">{{ payment.amountPaid }}</td>
+          <td :style="{ width: '15%' }">{{ convertDate(payment.datePaid) }}</td>
+        </tr>
+      </table>
+    </div>
 
-          {{ payment.type }}
-        </td>
-        <td :style="{ width: '10%' }">{{ payment.amountPaid }}</td>
-        <td :style="{ width: '15%' }">{{ convertDate(payment.datePaid) }}</td>
-      </tr>
-    </table>
+    <PaginationBar
+      v-if="!error"
+      :pageCount="Math.ceil(payment_db.length / tableRow)"
+      :paginationVisible="payment_db.length > tableRow"
+      @pageReturn="pageReturn"
+    />
   </div>
-
-  <PaginationBar
-    v-if="!error"
-    :pageCount="Math.ceil(payment_db.length / tableRow)"
-    :paginationVisible="payment_db.length > tableRow"
-    @pageReturn="pageReturn"
-  />
 </template>
 
 <script>
