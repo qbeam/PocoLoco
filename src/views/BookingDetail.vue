@@ -606,7 +606,6 @@ i {
 
 table {
   width: 100%;
-  max-width: 1000;
   margin-top: 50px;
   border: 1px solid black;
   border-collapse: collapse;

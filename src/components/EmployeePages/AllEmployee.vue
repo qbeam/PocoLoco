@@ -590,11 +590,6 @@ export default {
 </script>
 
 <style scoped>
-.icon-wrap {
-  position: absolute;
-  z-index: 5;
-  padding: 5px 20px;
-}
 .menu-bar {
   display: flex;
   flex-direction: row;

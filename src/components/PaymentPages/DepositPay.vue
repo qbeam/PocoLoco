@@ -351,7 +351,6 @@ input {
 }
 table {
   width: 100%;
-  max-width: 1000;
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;

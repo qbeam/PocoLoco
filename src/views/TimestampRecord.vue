@@ -164,7 +164,6 @@ export default {
         .then(
           function(res) {
             this.stampRecord = res.data;
-            
           }.bind(this)
         );
     },
@@ -228,7 +227,6 @@ export default {
         })
         .then(
           function(res) {
-            
             this.stampRecord = res.data;
 
             if (this.stampRecord == "") {
@@ -281,7 +279,6 @@ h3 {
 }
 table {
   width: 100%;
-  max-width: 1000;
   margin-top: 30px;
   border: 1px solid black;
   border-collapse: collapse;

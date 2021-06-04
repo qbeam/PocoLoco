@@ -250,7 +250,6 @@ export default {
           action: "getAllService",
           role: this.role,
           department: this.departmentName,
-        
         })
         .then(
           function(res) {
@@ -271,7 +270,6 @@ export default {
             type: this.form.type,
             name: this.form.name,
             servicePrice: this.form.servicePrice,
-            
           })
           .then(
             function(res) {
@@ -428,7 +426,6 @@ i {
 }
 table {
   width: 100%;
-  max-width: 1000;
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;

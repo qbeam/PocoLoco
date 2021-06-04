@@ -30,10 +30,16 @@
 
     <!-- Menu For Manager -->
     <div class="menu-bar" v-if="role === 'Manager'">
-      <div>
-        <span class="icon-wrap">
-          <i class="fa fa-search fa-1x"></i>
-        </span>
+      <div class="search-container">
+        <i
+          class="fa fa-search fa-1x"
+          :style="{
+            position: 'absolute',
+            zIndex: 5,
+            marginLeft: '15px',
+            pointerEvents: 'none',
+          }"
+        />
 
         <input
           class="search-field"
@@ -644,10 +650,15 @@ h4 {
   padding: 35px 30px;
   background: white;
 }
-.icon-wrap {
-  position: absolute;
-  z-index: 0;
-  padding: 5px 20px;
+.menu-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
 }
 .search-field {
   width: 225px;
@@ -664,11 +675,6 @@ i {
   color: #5f5f5f;
 }
 
-.menu-bar {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-}
 table {
   width: 100%;
   margin-top: 50px;
