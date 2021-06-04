@@ -5,7 +5,7 @@
     </div>
 
     <InnerFormContainer>
-      <h3>Customer ID:</h3>
+      <h3>Customer ID: {{ form.id }}</h3>
 
       <div class="input-group">
         <!-- FirstName -->
@@ -214,12 +214,26 @@ export default {
     };
   },
 
+  created() {
+    this.getCustomerID();
+  },
+
   methods: {
     backToCustomer() {
       this.$router.push("/Customer");
     },
-    submitData(e) {
-      e.preventDefault();
+    getCustomerID() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_addCustomer.php", {
+          action: "getCustomerID",
+        })
+        .then(
+          function(res) {
+            this.form.id = res.data;
+          }.bind(this)
+        );
+    },
+    submitData() {
       this.validate();
       if (this.check) {
         // Save Data
