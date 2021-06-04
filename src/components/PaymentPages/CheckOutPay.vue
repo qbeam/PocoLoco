@@ -368,26 +368,25 @@ export default {
     },
 
     confirmInf() {
-      if (this.roomID == "") {
-        alert("Please fill Room Number");
-      } else {
-        axios
-          .post("http://localhost:8080/PocoLoco_db/api_paymentCheckOut.php", {
-            action: "confirmInf",
-            method: this.method,
-            amountPaid: this.amountPaid,
-            allRoom: this.allRoom,
-          })
-          .then(
-            function(res) {
-              console.log(res.data);
-              alert(res.data.message);
-              if (res.data.success == true) {
-                this.clearPayment();
-              }
-            }.bind(this)
-          );
+      if (this.allRoom.length == 0) {
+        alert("Please fill room number");
       }
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_paymentCheckOut.php", {
+          action: "confirmInf",
+          method: this.method,
+          amountPaid: this.amountPaid,
+          allRoom: this.allRoom,
+        })
+        .then(
+          function(res) {
+            console.log(res.data);
+            alert(res.data.message);
+            if (res.data.success == true) {
+              this.clearPayment();
+            }
+          }.bind(this)
+        );
     },
     clearPayment() {
       this.$router.go(0);

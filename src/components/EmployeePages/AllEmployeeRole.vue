@@ -37,6 +37,8 @@
       />
     </div>
 
+    <SearchError v-if="errorSearching" :style="{ marginTop: '80px' }" />
+
     <div class="table-container">
       <table v-if="role_db.length !== 0">
         <tr>
@@ -251,7 +253,6 @@ export default {
       this.$emit("countQuery", this.countRow);
     },
     searchData() {
-      console.log("search", this.search);
       axios
         .post("http://localhost:8080/PocoLoco_db/api_role.php", {
           action: "getSearchData",
@@ -263,18 +264,18 @@ export default {
         .then(
           function(res) {
             this.role_db = res.data;
-            this.countRow = this.role_db.length;
-            this.returnQuery();
-            if (this.role_db != "") {
-              this.errorSearching = false;
-            } else {
+            
+            if (this.role_db == "") {
               this.errorSearching = true;
+            } else {
+              this.errorSearching = false;
+              this.countRow = this.role_db.length; 
             }
+            this.returnQuery();
           }.bind(this)
         );
     },
     getRecord(roleID) {
-      console.log("edit");
       this.editVisible = !this.editVisible;
       this.isEdit = true;
       axios
@@ -350,7 +351,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res);
             this.role_db = res.data;
             this.countRow = this.role_db.length;
             this.returnQuery();

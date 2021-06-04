@@ -37,6 +37,10 @@ export default {
   created() {
     this.role = this.$store.state.employeeDetail.role;
     this.department = this.$store.state.employeeDetail.department;
+    this.role = localStorage.getItem("userRole");
+    this.department = localStorage.getItem("userDepartment");
+    console.log("role",this.role);
+    console.log("dep",this.department);
     if (this.role === "Owner" || this.role === "Admin") {
       this.$router.push("/BusinessAnalysis");
     }

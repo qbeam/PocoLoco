@@ -5,10 +5,11 @@
       <p class="countQuery">({{ countRow }})</p>
     </h3>
     <div class="menu-bar">
-      <div>
-        <span class="icon-wrap">
-          <i class="fa fa-search fa-1x"></i>
-        </span>
+      <div class="search-container">
+        <i
+          class="fa fa-search fa-1x"
+          :style="{ position: 'absolute', zIndex: 5, marginLeft: '15px' }"
+        />
 
         <input
           v-model="search"
@@ -34,7 +35,7 @@
       <AddButton
         :style="
           width < 800
-            ? { position: 'fixed', right: '20px', top: '80px' }
+            ? { position: 'fixed', right: '20px', top: '50px' }
             : { position: 'fixed', right: '60px', top: '170px' }
         "
         @click="goToCustomerReg()"
@@ -263,7 +264,13 @@ export default {
   },
 
   created() {
-    this.getAllCustomer();
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Receptionist") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+    else {
+      this.getAllCustomer();
+    }
   },
 
   methods: {
@@ -304,7 +311,6 @@ export default {
     },
 
     selectionFilter(value) {
-      console.log("Filter", value);
       if (value === selectOption[0]) {
         this.filter = "rank";
       }
@@ -451,10 +457,16 @@ h4 {
   font-size: 20px;
   margin-bottom: 0;
 }
-.icon-wrap {
-  position: absolute;
-  z-index: 0;
-  padding: 5px 20px;
+.menu-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
 }
 .search-field {
   width: 225px;
@@ -470,11 +482,7 @@ h4 {
 i {
   color: #5f5f5f;
 }
-.menu-bar {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-}
+
 table {
   width: 100%;
   max-width: 1000;

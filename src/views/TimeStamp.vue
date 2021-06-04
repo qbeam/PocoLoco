@@ -13,7 +13,7 @@
       <input v-model="employeeID" type="text" placeholder="Employee ID" />
       <div>
         <DefaultButton
-          @click="goTimeStamp('I')"
+          @click="stampCheckIn('I')"
           :style="{
             background: 'var(--button-blue)',
             alignSelf: 'center',
@@ -23,7 +23,7 @@
           >IN
         </DefaultButton>
         <DefaultButton
-          @click="goTimeStamp('O')"
+          @click="stampCheckOut('O')"
           :style="{
             background: 'var(--primary-red)',
             alignSelf: 'center',
@@ -102,24 +102,46 @@ export default {
       employeeID: "",
     };
   },
-
+    created() {
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("user") !== "130001") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+  },
   methods: {
-    goTimeStamp(type) {
+    stampCheckIn(type) {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
-          action: "timeStamp",
+          action: "stampChecIn",
           employeeID: this.employeeID,
           type: type,
         })
         .then(
           function(res) {
-            console.log(res.data);
-            if (res.data.success == true && type == "I") {
+            if (res.data.success == true) {
               alert("Employee ID : " + this.employeeID + " In!");
-            } else if (res.data.success == true && type == "O") {
+            } else {
+              alert("Cannot timestamp Employee ID I: " + this.employeeID);
+            }
+            this.employeeID = "";
+          }.bind(this)
+        );
+    },
+
+    stampCheckOut(type) {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
+          action: "stampCheckOut",
+          employeeID: this.employeeID,
+          type: type,
+        })
+        .then(
+          function(res) {
+            console.log("data", res.data);
+            if (res.data.success == true) {
               alert("Employee ID : " + this.employeeID + " Out!");
             } else {
-              alert("Cannot timestamp Employee ID : " + this.employeeID);
+              alert("Cannot timestamp Employee ID O: " + this.employeeID);
             }
             this.employeeID = "";
           }.bind(this)

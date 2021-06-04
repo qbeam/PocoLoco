@@ -187,6 +187,12 @@ export default {
       },
     };
   },
+  created() {
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Accounts and Credits") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+  },
   methods: {
     backToExpenses() {
       this.$router.push("/HotelExpenses");

@@ -77,9 +77,16 @@ export default {
               this.errorSearching = true;
             } else {
               this.errorSearching = false;
-              for (var i = 0; i < res.data.length; i++) {
-                this.absenceSum.push(res.data[i]);
-              }
+              
+                for (var i = 0; i < res.data.length; i++) {
+                  if(res.data[i].numEmployee <= 0){
+                    console.log("5555");
+                  }
+                  else{
+                    this.absenceSum.push(res.data[i]);
+                  } 
+                }
+              
             }
             
           }.bind(this)

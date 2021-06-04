@@ -250,9 +250,15 @@ export default {
   },
 
   created() {
-    this.details.bookingID = this.$route.params.bookingID;
-    this.customerID = this.$route.params.customerID;
-    this.getRoomType();
+    if (localStorage.getItem("userRole") === "Owner" || localStorage.getItem("userRole") === "Admin" || localStorage.getItem("userDepartment") === "Receptionist") {
+      this.details.bookingID = this.$route.params.bookingID;
+      this.customerID = this.$route.params.customerID;
+      this.getRoomType();
+    }
+    else {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
   },
 
   methods: {

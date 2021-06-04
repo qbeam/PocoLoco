@@ -370,13 +370,20 @@ export default {
   },
 
   created() {
-    this.role = localStorage.getItem("userRole");
-    this.departmentName = localStorage.getItem("userDepartment");
-    // if (this.role == "") {
-    //   this.error404();
-    // }
-    this.getAllEmployee();
-    this.selected = this.$store.state.employeeMenu;
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userRole") !== "Manager"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } 
+    else {
+      this.role = localStorage.getItem("userRole");
+      this.departmentName = localStorage.getItem("userDepartment");
+      this.getAllEmployee();
+      this.selected = this.$store.state.employeeMenu;
+    }
   },
 
   methods: {

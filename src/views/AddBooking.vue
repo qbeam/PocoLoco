@@ -19,7 +19,7 @@
           type="number"
           onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
         />
-        <h4 style="color: red">{{ message }}</h4>
+        <!-- <h4 style="color: red">{{ message }}</h4> -->
 
         <AddButton
           @click="
@@ -128,12 +128,21 @@ export default {
   },
 
   created() {
-    if (this.$route.params.customerID != undefined) {
-      this.customerID = this.$route.params.customerID;
+    if (
+      localStorage.getItem("userRole") === "Owner" ||
+      localStorage.getItem("userRole") === "Admin" ||
+      localStorage.getItem("userDepartment") === "Receptionist"
+    ) {
+      if (this.$route.params.customerID != undefined) {
+        this.customerID = this.$route.params.customerID;
+      } else {
+        this.customerID = "";
+      }
+      this.getBookingID();
     } else {
-      this.customerID = "";
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
     }
-    this.getBookingID();
   },
 
   methods: {
@@ -205,12 +214,13 @@ export default {
               if (res.data.success == true) {
                 this.getBookingID();
                 alert("Booking Saved Successful");
-                this.error = false;
+                this.backToBooking();
+                // this.error = false;
               } else {
                 this.message = res.data.message;
+                alert(this.message);
               }
               this.resetData();
-              this.backToBooking();
             }.bind(this)
           );
       }

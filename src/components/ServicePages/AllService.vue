@@ -38,7 +38,7 @@
         Search
       </DefaultButton>
     </div>
-    <AddButton
+    <AddButton v-if="role !== 'Chef' && role !== 'Maid'"
       @click="goToAddService()"
       :style="{ position: 'absolute', right: '2%' }"
     />
@@ -254,7 +254,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res.data);
             this.service_db = res.data;
             this.countRow = this.service_db.length;
             this.returnQuery();

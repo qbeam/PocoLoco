@@ -7,7 +7,6 @@ import AddRole from "../views/AddRole.vue";
 import AddPromo from "../views/AddPromo.vue";
 import AddBooking from "../views/AddBooking.vue";
 import AddBookingDetail from "../views/AddBookingDetail.vue";
-import Role from "../views/Role.vue";
 import AddExpense from "../views/AddExpense.vue";
 import AddNewService from "../views/AddNewService.vue";
 import Customer from "../views/Customer.vue";
@@ -62,11 +61,6 @@ const routes = [
     path: "/AddRole",
     name: "AddRole",
     component: AddRole,
-  },
-  {
-    path: "/Role",
-    name: "Role",
-    component: Role,
   },
   {
     path: "/AddPromo",

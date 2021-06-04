@@ -186,7 +186,7 @@ export default {
       search: "",
       searchSent: "",
       filter: "roomID",
-      sort: "Date",
+      sort: "date",
       sortDirection: "up",
       errorSearching: false,
 
@@ -198,7 +198,6 @@ export default {
   created() {
     this.role = localStorage.getItem("userRole");
     this.departmentName = localStorage.getItem("userDepartment");
-    console.log(this.departmentName);
     this.getServiceActivity();
   },
   methods: {
@@ -300,18 +299,18 @@ export default {
           direction: this.sortDirection,
           type: this.type,
           role: this.role,
-          department: this.department,
+          department: this.departmentName,
         })
         .then(
           function(res) {
             this.history_db = res.data;
-            this.countRow = this.history_db.length;
-            this.returnQuery();
             if (this.history_db != "") {
               this.errorSearching = false;
+              this.countRow = this.history_db.length;
             } else {
               this.errorSearching = true;
             }
+            this.returnQuery();
           }.bind(this)
         );
     },

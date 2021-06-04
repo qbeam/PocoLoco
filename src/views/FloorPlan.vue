@@ -93,7 +93,14 @@ export default {
     };
   },
   created() {
-    this.getDate();
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" 
+    && localStorage.getItem("userDepartment") !== "Receptionist" && localStorage.getItem("userDepartment") !== "Housekeeping") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+    else {
+      this.getDate();
+    }
   },
 
   methods: {

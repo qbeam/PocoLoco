@@ -57,10 +57,6 @@
       >
         <td>{{ booking.bookingDetailID }}</td>
         <td>{{ booking.roomID }}</td>
-        <td>
-          {{ booking.guestFirstName }}
-          {{ booking.guestLastName }}
-        </td>
         <td>{{ convertDate(booking.checkIn) }}</td>
         <td>{{ convertDate(booking.checkOut) }}</td>
         <td>
@@ -85,6 +81,9 @@
             :style="{ color: '#BDBDBD' }"
           />
           {{ booking.status }}
+        </td>
+        <td>
+          {{ booking.statusPayment }}
         </td>
         <td>
           <div
@@ -299,19 +298,19 @@ import axios from "axios";
 const selectOption = [
   "Detail ID",
   "Room No.",
-  "Name",
   "Check In",
   "Check Out",
   "Status",
+  "Payment",
 ];
 
 const colNames = [
   "Detail ID",
   "Room No.",
-  "Guest Name",
   "Check In",
   "Check Out",
   "Status",
+  "Payment",
 ];
 
 export default {
@@ -362,13 +361,23 @@ export default {
         checkIn: "",
         checkOut: "",
         status: "",
+        payment: "",
         isEdit: false,
       },
     };
   },
 
   created() {
-    this.getallBookingDetail();
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userDepartment") !== "Receptionist"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } else {
+      this.getallBookingDetail();
+    }
   },
 
   methods: {
@@ -405,13 +414,13 @@ export default {
       } else if (click == 1) {
         this.sort = "roomID";
       } else if (click == 2) {
-        this.sort = "guestFirstName";
-      } else if (click == 3) {
         this.sort = "checkIn";
-      } else if (click == 4) {
+      } else if (click == 3) {
         this.sort = "checkOut";
-      } else if (click == 5) {
+      } else if (click == 4) {
         this.sort = "status";
+      } else if (click == 5) {
+        this.sort = "statusPayment";
       }
     },
 
@@ -473,28 +482,33 @@ export default {
     updateData(value) {
       this.validate();
       this.visible = value;
-      if (this.check) {
-        axios
-          .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
-            action: "updateData",
-            bookingDetailID: this.form.bookingDetailID,
-            guestFirstName: this.form.guestFirstName,
-            guestLastName: this.form.guestLastName,
-            checkIn: this.form.checkIn,
-            checkOut: this.form.checkOut,
-            status: this.form.status,
-          })
-          .then(
-            function(res) {
-              if (res.data.success == true) {
-                alert(res.data.message);
-                this.resetData();
-                this.getallBookingDetail();
-              } else {
-                alert(res.data.message);
-              }
-            }.bind(this)
-          );
+
+      if (this.form.checkIn > this.form.checkOut) {
+        alert("Please check your date again");
+      } else {
+        if (this.check) {
+          axios
+            .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
+              action: "updateData",
+              bookingDetailID: this.form.bookingDetailID,
+              guestFirstName: this.form.guestFirstName,
+              guestLastName: this.form.guestLastName,
+              checkIn: this.form.checkIn,
+              checkOut: this.form.checkOut,
+              status: this.form.status,
+            })
+            .then(
+              function(res) {
+                if (res.data.success == true) {
+                  alert(res.data.message);
+                  this.resetData();
+                  this.getallBookingDetail();
+                } else {
+                  alert(res.data.message);
+                }
+              }.bind(this)
+            );
+        }
       }
     },
 
@@ -524,16 +538,16 @@ export default {
         this.filter = "roomID";
       }
       if (value === selectOption[2]) {
-        this.filter = "guestFirstName";
-      }
-      if (value === selectOption[3]) {
         this.filter = "checkIn";
       }
-      if (value === selectOption[4]) {
+      if (value === selectOption[3]) {
         this.filter = "checkOut";
       }
-      if (value === selectOption[5]) {
+      if (value === selectOption[4]) {
         this.filter = "status";
+      }
+      if (value === selectOption[5]) {
+        this.filter = "statusPayment";
       }
     },
 

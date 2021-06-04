@@ -121,8 +121,14 @@ export default {
     return { width, height, tableRow };
   },
   created() {
-    this.getTodayDate();
-    this.getTodayTimeStamp();
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+    else {
+      this.getTodayDate();
+      this.getTodayTimeStamp();
+    }
   },
   data() {
     return {
@@ -197,7 +203,7 @@ export default {
       this.currentPage = page;
     },
     getTagColor(type) {
-      if (type == "O") {
+      if (type == "Out") {
         return "#FF0000";
       } else {
         return "#24BA45";

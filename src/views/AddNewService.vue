@@ -103,7 +103,12 @@ export default {
       priceError: false,
     };
   },
-
+  created() {
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userRole") !== "Manager") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+  },
   methods: {
     backToAllService() {
       this.$router.push("/Services");

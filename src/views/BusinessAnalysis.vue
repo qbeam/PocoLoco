@@ -119,12 +119,19 @@ export default {
     };
   },
   created() {
-    this.month = new Date().getMonth() + 1;
-    this.year = new Date().getFullYear();
-    this.getDate();
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+    else {
+      this.getDate();
+    }
   },
   methods: {
     getDate() {
+      console.log("555");
+      this.month = new Date().getMonth() + 1;
+      this.year = new Date().getFullYear();
       if (this.month == 1) {
         this.lastYear = this.year - 1;
         this.lastMonth = 12;
@@ -141,6 +148,7 @@ export default {
       this.getOrderNew();
       this.getCustomerNew();
     },
+    
     //Earning
     getTotal() {
       axios

@@ -16,11 +16,11 @@
         <b :style="{ fontSize: '8px' }">{{ progress }}%</b>
       </div>
     </div>
-    <div class="vl"></div>
-    <button class="refresh">
+    <!-- <div class="vl"></div> -->
+    <!-- <button @click="getDate()" class="refresh">
       <i class="fa fa-refresh"></i>
       Update now
-    </button>
+    </button> -->
   </div>
 </template>
 
@@ -70,6 +70,7 @@ export default {
 }
 .card-content {
   display: flex;
+  margin-top: 10px;
 }
 .card-icon {
   display: flex;

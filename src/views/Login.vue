@@ -84,7 +84,7 @@ export default {
               this.$store.state.user = localStorage.getItem("user");
 
               if (res.data.roleName == "Timestamp") {
-                this.$router.push({ name: "Timestamp" });
+                this.$router.push({ name: "TimeStamp" });
               } else {
                 this.$router.push({ name: "Home" });
               }

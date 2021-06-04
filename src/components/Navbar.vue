@@ -17,10 +17,10 @@
       <i class="fa fa-times fa-2x" v-if="width <= 1000 && visible"></i>
       <i class="fa fa-bars fa-2x" v-if="!visible"></i>
     </button>
-    <div class="circle" v-if="visible || width > 1000">
+    <div @click="goToMyAccount()" class="circle" v-if="visible || width > 1000">
       <img :src="require(`../assets/${profilePic}.png`)" />
     </div>
-    <div class="info" v-if="visible || width > 1000">
+    <div @click="goToMyAccount()" class="info" v-if="visible || width > 1000">
       <b>{{ role }}</b>
       <b>{{ employeeID }}</b>
     </div>
@@ -144,7 +144,7 @@ export default {
       role: "",
       department: "",
       gender: "",
-      profilePic: "",
+      profilePic: "error",
       visible: false,
       permissions: [],
       user: "",
@@ -156,16 +156,21 @@ export default {
   },
 
   created() {
+    if (localStorage.getItem("user") == "130001") {
+      this.$router.push("/TimeStamp")
+      alert("You don't have permission to access this page")
+    }
+    else {
     this.employeeID = localStorage.getItem("user");
     this.role = localStorage.getItem("userRole");
     this.department = localStorage.getItem("userDepartment");
     this.gender = localStorage.getItem("userGender");
-    this.profilePic = this.role + this.gender;
-
+      
     if (this.employeeID == null) {
       this.error404();
     }
-    
+    else {
+    this.profilePic = this.role + this.gender;
     if (this.role === "Owner" || this.role === "Admin") {
       this.permissions = AdminOwner;
     }
@@ -202,11 +207,16 @@ export default {
     if (this.role === "Accountant") {
       this.permissions = Accountant;
     }
+    }
+    }
   },
 
   methods: {
     error404() {
       this.$router.push("/Error404");
+    },
+    goToMyAccount() {
+      this.$router.push("/myAccount");
     },
     logOut() {
       if (confirm("Are you sure you want to log out ?")) {
@@ -288,6 +298,7 @@ i {
   align-self: center;
   border-radius: 50%;
   overflow: hidden;
+  cursor: pointer;
 }
 img {
   width: 55px;

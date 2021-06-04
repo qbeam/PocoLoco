@@ -355,11 +355,28 @@ export default {
         status: "save",
         isEdit: false,
       },
+      startDateConfig: {
+        type: "string",
+        mask: "YYYY-MM-DD",
+      },
+      endDateConfig: {
+        type: "string",
+        mask: "YYYY-MM-DD",
+      },
     };
   },
 
   created() {
-    this.getAllBooking();
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userDepartment") !== "Receptionist"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } else {
+      this.getAllBooking();
+    }
   },
 
   methods: {
@@ -425,7 +442,7 @@ export default {
     },
 
     searchData() {
-      if (this.filter == "date") {
+      if (this.filter == "date" && this.form.search != "") {
         this.searchSent = this.converDateToQuery(this.form.search);
       } else {
         this.searchSent = this.form.search;
@@ -451,7 +468,7 @@ export default {
           }.bind(this)
         );
     },
-    
+
     selectionFilter(value) {
       if (value === selectOption[0]) {
         this.filter = "date";
@@ -482,24 +499,28 @@ export default {
       this.check =
         this.form.guestFirstname != "" && this.form.guestLastname != "";
 
-      if (this.check && this.form.isEdit) {
-        axios
-          .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
-            bookingDetailID: this.form.bookingDetailID,
-            guestFirstname: this.form.guestFirstname,
-            guestLastname: this.form.guestLastname,
-            checkIn: this.form.checkIn,
-            checkOut: this.form.checkOut,
-            statusRoom: this.form.statusRoom,
-            action: "update",
-          })
-          .then(
-            function(res) {
-              alert(res.data.message);
-              this.getAllBooking();
-              this.getBookingDetail(this.bookingID);
-            }.bind(this)
-          );
+      if (this.form.checkIn > this.form.checkOut) {
+        alert("Please check your date again");
+      } else {
+        if (this.check && this.form.isEdit) {
+          axios
+            .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
+              bookingDetailID: this.form.bookingDetailID,
+              guestFirstname: this.form.guestFirstname,
+              guestLastname: this.form.guestLastname,
+              checkIn: this.form.checkIn,
+              checkOut: this.form.checkOut,
+              statusRoom: this.form.statusRoom,
+              action: "update",
+            })
+            .then(
+              function(res) {
+                alert(res.data.message);
+                this.getAllBooking();
+                this.getBookingDetail(this.bookingID);
+              }.bind(this)
+            );
+        }
       }
     },
 
@@ -564,6 +585,7 @@ export default {
       this.visible = !this.visible;
       this.switchPop = !this.switchPop;
       this.form.isEdit = true;
+
       axios
         .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
           action: "getEditDetail",

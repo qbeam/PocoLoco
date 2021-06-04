@@ -261,7 +261,7 @@
           </div>
           <!-- DOBError -->
           <div v-else>
-            <h4 style="color:red">Date of Birth</h4>
+            <h4 style="color:red">Date of Birth (Under age)</h4>
             <div class="flex x-full">
               <v-date-picker
                 v-model="details.DOB"
@@ -329,16 +329,16 @@
         <div v-if="emailError">
           <h4>Email</h4>
           <input
-            type="text"
+            type="email"
             v-model="details.email"
             placeholder="ex. employee@mail.com"
           />
         </div>
         <!-- Email Error-->
         <div v-else>
-          <h4 style="color:red">Email</h4>
+          <h4 style="color:red">Email (Invalid email)</h4>
           <input
-            type="text"
+            type="email"
             v-model="details.email"
             placeholder="ex. employee@mail.com"
           />
@@ -356,7 +356,9 @@
           </div>
           <!-- Password Error-->
           <div v-else>
-            <h4 style="color:red">Password</h4>
+            <h4 style="color:red">
+              Password (Must be at least 8 characters)
+            </h4>
             <input
               type="password"
               v-model="details.password"
@@ -375,7 +377,9 @@
           </div>
           <!-- Confirm Password Error-->
           <div v-else>
-            <h4 style="color:red">Confirm Password</h4>
+            <h4 style="color:red">
+              Confirm Password (Password does not match)
+            </h4>
             <input
               type="password"
               v-model="details.cf_pass"
@@ -461,9 +465,18 @@ export default {
   },
 
   created() {
-    this.role = this.$store.state.employeeDetail.role;
-    this.details.department = this.$store.state.employeeDetail.department;
-    this.getRole();
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userRole") !== "Manager"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } else {
+      this.role = localStorage.getItem("userRole");
+      this.departmentName = localStorage.getItem("userDepartment");
+      this.getRole();
+    }
   },
 
   methods: {
@@ -514,6 +527,43 @@ export default {
           );
       }
     },
+
+    checkEmail() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {
+          action: "checkEmail",
+          email: this.details.email,
+        })
+        .then(
+          function(res) {
+            if (res.data == true) {
+              this.emailError = false;
+            } else {
+              this.emailError = true;
+            }
+          }.bind(this)
+        );
+    },
+    checkDOB() {
+      var today = new Date();
+      var year = today.getFullYear();
+
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {
+          action: "checkDOB",
+          DOB: this.details.DOB,
+          year: year,
+        })
+        .then(
+          function(res) {
+            if (res.data == true) {
+              this.DOBError = true;
+            } else {
+              this.DOBError = false;
+            }
+          }.bind(this)
+        );
+    },
     validateCheck() {
       if (this.details.department == "") {
         this.departmentError = false;
@@ -555,13 +605,17 @@ export default {
         this.identificationError = false;
       }
       if (this.details.identification != "") {
-        this.identificationError = true;
+        if (this.details.identification.length == 13) {
+          this.identificationError = true;
+        } else {
+          this.identificationError = false;
+        }
       }
       if (this.details.DOB == "") {
         this.DOBError = false;
       }
       if (this.details.DOB != "") {
-        this.DOBError = true;
+        this.checkDOB();
       }
       if (this.details.gender == "") {
         this.genderError = false;
@@ -573,25 +627,40 @@ export default {
         this.phoneError = false;
       }
       if (this.details.phone != "") {
-        this.phoneError = true;
+        if (this.details.phone.length == 10) {
+          this.phoneError = true;
+        } else {
+          this.phoneError = false;
+        }
       }
       if (this.details.email == "") {
         this.emailError = false;
       }
       if (this.details.email != "") {
-        this.emailError = true;
+        this.checkEmail();
       }
       if (this.details.password == "") {
         this.passwordError = false;
       }
       if (this.details.password != "") {
-        this.passwordError = true;
+        if (this.details.password.length >= 8) {
+          this.passwordError = true;
+        } else {
+          this.passwordError = false;
+        }
       }
       if (this.details.cf_pass == "") {
         this.conPasswordError = false;
       }
       if (this.details.cf_pass != "") {
-        this.conPasswordError = true;
+        if (
+          this.details.password == this.details.cf_pass &&
+          this.details.cf_pass >= 8
+        ) {
+          this.conPasswordError = true;
+        } else {
+          this.conPasswordError = false;
+        }
       }
       this.check =
         this.departmentError &&

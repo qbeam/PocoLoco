@@ -122,10 +122,17 @@ export default {
       department: "",
     };
   },
+
   created() {
-    this.storeData();
-    this.checkRole();
-    this.getOrder();
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Kitchen" && localStorage.getItem("userDepartment") !== "Housekeeping") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+    else {
+      this.storeData();
+      this.checkRole();
+      this.getOrder();
+    }
   },
   methods: {
     storeData() {
@@ -142,7 +149,7 @@ export default {
       this.sortDirection = direction;
     },
     goToAddOrder() {
-      this.$router.push("/Services");
+      this.$router.push({name: "Services"});
     },
     async getOrder() {
       await axios
@@ -195,13 +202,14 @@ export default {
         this.role == "Maid" ||
         (this.role === "Manager" && this.department === "Housekeeping")
       ) {
-        this.type = "maid";
+        this.type = 1;
       } else if (
         this.role == "Chef" ||
         (this.role === "Manager" && this.department === "Kitchen")
       ) {
-        this.type = "chef";
+        this.type = 2;
       }
+
     },
   },
 };

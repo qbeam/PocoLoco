@@ -197,9 +197,15 @@ export default {
     };
   },
   created() {
-    this.role = this.$store.state.employeeDetail.role;
-    this.departmentName = this.$store.state.employeeDetail.department;
-    this.getAllRoom();
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Receptionist") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+    else {
+      this.role = this.$store.state.employeeDetail.role;
+      this.departmentName = this.$store.state.employeeDetail.department;
+      this.getAllRoom();
+    }
   },
 
   methods: {

@@ -27,7 +27,7 @@
       <DefaultButton @click="searchData()" type="small">
         Search
       </DefaultButton>
-      <AddButton
+      <AddButton v-if="role === 'Admin' || role === 'Owner' || role === 'Manager'"
         :style="
           width < 800
             ? { position: 'fixed', right: '20px', top: '50px' }
@@ -308,9 +308,15 @@ export default {
     };
   },
   created() {
-    this.role = this.$store.state.employeeDetail.role;
-    this.departmentName = this.$store.state.employeeDetail.department;
-    this.getPromotion();
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Receptionist") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+    else {
+      this.role = localStorage.getItem("userRole");
+      this.departmentName = localStorage.getItem("userDepartment");
+      this.getPromotion();
+    }
   },
   methods: {
     pageReturn(page) {

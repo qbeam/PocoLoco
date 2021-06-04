@@ -40,6 +40,12 @@ export default {
     DepositPay,
     CheckOutPay,
   },
+  created() {
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Receptionist") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+  },
   data() {
     return {
       menus,

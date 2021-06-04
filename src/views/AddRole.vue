@@ -184,6 +184,12 @@ export default {
       selected: "role",
     };
   },
+  created() {
+    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin") {
+      this.$router.push("/Home")
+      alert("You don't have permission to access this page")
+    }
+  },
   methods: {
     backToRolePage() {
       this.$router.push("/Employee");

@@ -27,7 +27,7 @@
       </div>
       <div class="group-item">
         <h5>Bonus Rate</h5>
-        <p>{{ account.bonusRate }}</p>
+        <p>{{ account.bonusRate }} %</p>
       </div>
     </div>
   </div>
@@ -52,8 +52,7 @@ export default {
     };
   },
   created() {
-    
-    this.form.employeeID = this.$store.state.employeeDetail.employeeID;
+    this.form.employeeID = localStorage.getItem("user");
     this.getAccountRole();
   },
 

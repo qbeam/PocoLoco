@@ -31,7 +31,7 @@
                 :style="{ width: record.lateCount + '%' }"
               ></div>
             </div>
-            <p class="unit">{{ record.percentLate }}% late</p>
+            <p class="unit">{{ getPercent(record.percentLate) }}% late</p>
           </div>
         </div>
       </div>
@@ -98,6 +98,10 @@ export default {
           }.bind(this)
         );
     },
+    getPercent(data){
+      const num = Number(data).toFixed(2);
+      return num;
+    }
   },
 };
 </script>
