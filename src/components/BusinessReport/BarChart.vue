@@ -67,9 +67,7 @@ const month = [
   "Dec",
 ];
 
-const monthData = [120, 203, 302, 450, 608, 900, 236, 203, 607, 560, 100, 103];
-
-const room = ["Standard", "Deluxe", "Single", "Suite"];
+const room = ["Deluxe", "Standard", "Suite", "Superior"];
 
 const roomData = [140, 100, 350, 220];
 
@@ -83,14 +81,13 @@ export default {
   },
   data() {
     return {
-      month,
-      room,
+      month, // month names
+      room, // room types
       roomData,
-      monthData,
-      searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-      displayRange: null,
+      searchRange: [], // choice of graph year
+      displayRange: null, // selected year of graph
       customWidth: "65%",
-      title: null,
+      title: null, // graph title
       graphHeigth: 0,
       options: {
         chart: {
@@ -104,8 +101,47 @@ export default {
         },
         colors: ["var(--primary-blue)"],
       },
-      series: null,
+      series: "",
     };
+  },
+  created() {
+    this.setUpGraph();
+    if (this.type === "cancel") {
+      this.graphHeigth = 195;
+    } else if (this.type === "guest") {
+      this.graphHeigth = 170;
+    } else if (this.type === "room") {
+      this.graphHeigth = 170;
+    }
+    this.setContainerWidth();
+  },
+  mounted() {
+    // set graph title, x-axis label and bar color
+    if (this.type === "cancel") {
+      this.title = "Number of booking cancelation in";
+      this.options.xaxis.categories = this.month;
+      this.options.colors = "var(--primary-red)";
+    } else if (this.type === "guest") {
+      this.title = "Number of guest in";
+      this.options.xaxis.categories = this.month;
+      this.options.colors = "var(--button-blue)";
+    } else if (this.type === "room") {
+      if (this.width >= 1200) {
+        this.title = "Room reservation in";
+      } else {
+        this.title = "Room reservation";
+      }
+      this.options.xaxis.categories = this.room;
+      this.options.colors = "var(--primary-yellow)";
+    }
+  },
+  watch: {
+    width: function() {
+      this.setContainerWidth(); // responsive graph container
+    },
+    displayRange: function() {
+      this.getRecord();
+    },
   },
   methods: {
     setContainerWidth() {
@@ -135,44 +171,71 @@ export default {
       }
     },
     graphRange(value) {
-      this.displayRange = value;
+      this.displayRange = value; // set graph year to selected choice
     },
-  },
-  created() {
-    if (this.type === "cancel") {
-      this.series = [{ name: this.type, data: this.monthData }];
-      this.graphHeigth = 195;
-    } else if (this.type === "guest") {
-      this.series = [{ name: this.type, data: this.monthData }];
-      this.graphHeigth = 170;
-    } else if (this.type === "room") {
-      this.series = [{ name: this.type, data: this.roomData }];
-      this.graphHeigth = 170;
-    }
-    this.setContainerWidth();
-  },
-  mounted() {
-    if (this.type === "cancel") {
-      this.title = "Number of booking cancelation in";
-      this.options.xaxis.categories = this.month;
-      this.options.colors = "var(--primary-red)";
-    } else if (this.type === "guest") {
-      this.title = "Number of guest in";
-      this.options.xaxis.categories = this.month;
-      this.options.colors = "var(--button-blue)";
-    } else if (this.type === "room") {
-      if (this.width >= 1200) {
-        this.title = "Room reservation in";
-      } else {
-        this.title = "Room reservation";
+    setUpGraph() {
+      const yearRange = [];
+      let currentYear = new Date().getFullYear();
+      for (let i = 0; i < 5; i++) {
+        yearRange.push(currentYear);
+        currentYear = currentYear - 1;
       }
-      this.options.xaxis.categories = this.room;
-      this.options.colors = "var(--primary-yellow)";
-    }
-  },
-  watch: {
-    width: function() {
-      this.setContainerWidth();
+      this.searchRange = yearRange; // set year choice up to past 5 years
+      this.getRecord(); // get record for graph
+    },
+    getAction(type) {
+      if (type === "cancel") {
+        return "getCancel";
+      } else if (type === "guest") {
+        return "getGuest";
+      } else if (type === "room") {
+        return "getRoomReservation";
+      }
+    },
+    getRecord() {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
+          action: this.getAction(this.type),
+          year: this.displayRange,
+        })
+        .then(
+          function(res) {
+            console.log("RES", res.data);
+            if (this.type !== "room") {
+              this.setMonthSeries(res.data);
+            } else {
+              this.setRoomSeries(res.data);
+            }
+          }.bind(this)
+        );
+    },
+    setMonthSeries(data) {
+      const tmp = [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      ];
+      for (let i = 0; i < data.length; i++) {
+        const month = data[i].month;
+        tmp[month - 1] = Number(data[i].num);
+      }
+      this.series = [{ name: this.type, data: tmp }]; // set series to response from query
+    },
+    setRoomSeries(data) {
+      const count = [];
+      for (let i = 0; i < data.length; i++) {
+        count.push(data[i].num);
+      }
+      this.series = [{ name: this.type, data: count }];
     },
   },
 };
