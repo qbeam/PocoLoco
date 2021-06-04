@@ -119,17 +119,18 @@ export default {
     };
   },
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
-    }
-    else {
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } else {
       this.getDate();
     }
   },
   methods: {
     getDate() {
-      console.log("555");
       this.month = new Date().getMonth() + 1;
       this.year = new Date().getFullYear();
       if (this.month == 1) {
@@ -148,7 +149,7 @@ export default {
       this.getOrderNew();
       this.getCustomerNew();
     },
-    
+
     //Earning
     getTotal() {
       axios

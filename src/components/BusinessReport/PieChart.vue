@@ -65,7 +65,7 @@ export default {
     getYear() {
       const year = [];
       var yearNow = this.year;
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 6; i++) {
         year.push(yearNow);
         yearNow = yearNow - 1;
       }
