@@ -9,7 +9,12 @@
       <div class="search-container">
         <i
           class="fa fa-search fa-1x"
-          :style="{ position: 'absolute', zIndex: 5, marginLeft: '15px' }"
+          :style="{
+            position: 'absolute',
+            zIndex: 5,
+            marginLeft: '15px',
+            pointerEvents: 'none',
+          }"
         />
         <input
           v-model="form.search"
@@ -37,64 +42,50 @@
     </div>
 
     <SearchError v-if="errorSearching" />
-    <table v-if="booking_db.length !== 0" style="margin-top: 50px;">
-      <tr>
-        <th v-for="(colName, i) in colNames" :key="i">
-          <div class="tb-head">
-            {{ colName }}
-            <SortingArrow
-              :active="activeArrow == i ? true : false"
-              @click="setActiveArrow(i)"
-              @sortReturn="sortReturn"
-            />
-          </div>
-        </th>
-        <th>Manage</th>
-      </tr>
+    <div class="table-container">
+      <table v-if="booking_db.length !== 0" style="margin-top: 50px;">
+        <tr>
+          <th v-for="(colName, i) in colNames" :key="i">
+            <div class="tb-head">
+              {{ colName }}
+              <SortingArrow
+                :active="activeArrow == i ? true : false"
+                @click="setActiveArrow(i)"
+                @sortReturn="sortReturn"
+              />
+            </div>
+          </th>
+          <th>Manage</th>
+        </tr>
 
-      <tr
-        v-for="(booking, i) in booking_db.slice(
-          currentPage * tableRow - tableRow,
-          currentPage * tableRow
-        )"
-        :key="i"
-        class="row"
-      >
-        <td :style="{ width: '20%' }">{{ booking.bookingID }}</td>
-        <td :style="{ width: '30%' }">{{ booking.customerName }}</td>
-        <td :style="{ width: '20%' }">{{ booking.phone }}</td>
-        <td :style="{ width: '25%' }">{{ booking.email }}</td>
-        <td :style="{ width: '5%' }">
-          <div class="manage">
-            <button class="manage-button" @click="getRecord(booking)">
-              <i class="fa fa-search fa-2x"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    </table>
+        <tr
+          v-for="(booking, i) in booking_db.slice(
+            currentPage * tableRow - tableRow,
+            currentPage * tableRow
+          )"
+          :key="i"
+          class="row"
+        >
+          <td :style="{ width: '15%' }">*10-10-1010</td>
+          <td :style="{ width: '20%' }">{{ booking.bookingID }}</td>
+          <td :style="{ width: '25%' }">{{ booking.customerName }}</td>
+          <td :style="{ width: '15%' }">{{ booking.phone }}</td>
+          <td :style="{ width: '20%' }">{{ booking.email }}</td>
+          <td :style="{ width: '5%' }">
+            <div class="manage">
+              <button class="manage-button" @click="getRecord(booking)">
+                <i class="fa fa-search fa-2x"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
 
     <PaginationBar
       :pageCount="Math.ceil(booking_db.length / tableRow)"
       :paginationVisible="booking_db.length > tableRow"
       @pageReturn="pageReturn"
-      :style="
-        width <= 1000
-          ? {
-              position: 'fixed',
-              bottom: '50px',
-              margin: '0 auto',
-              right: '0',
-              left: '60px',
-            }
-          : {
-              position: 'fixed',
-              bottom: '50px',
-              margin: '0 auto',
-              right: '0',
-              left: '200px',
-            }
-      "
     />
 
     <!-- getRecord -->
@@ -282,8 +273,8 @@ import SortingArrow from "../components/SortingArrow";
 import SearchError from "../components/SearchError";
 import axios from "axios";
 
-const selectOption = ["BookingID", "Name", "Phone", "Email"];
-const colNames = ["Booking ID", "Customer Name", "Phone", "Email"];
+const selectOption = ["Date", "BookingID", "Name", "Phone", "Email"];
+const colNames = ["Date", "Booking ID", "Customer Name", "Phone", "Email"];
 
 export default {
   name: "Booking",
@@ -611,6 +602,9 @@ i {
   flex-direction: row;
   align-items: center;
 }
+.table-container {
+  height: 600px;
+}
 table {
   width: 100%;
   max-width: 1000px;
@@ -634,8 +628,8 @@ table {
   font-size: 10px;
   margin-right: 5px;
 }
-.fa-pencil:hover,
-.fa-trash:hover {
+.fa-search:hover,
+.fa-pencil:hover {
   color: var(--primary-blue);
 }
 .fa-calendar {
@@ -787,8 +781,20 @@ td {
   table {
     font-size: 14px;
   }
-  .fa-search {
-    font-size: 16px;
+  .fa-search,
+  .fa-pencil {
+    font-size: 18px;
+  }
+  .vl {
+    margin: 0 1px;
+  }
+  .popup-head1 {
+    font-size: 20px;
+  }
+}
+@media (max-width: 550px) {
+  table {
+    font-size: 12px;
   }
 }
 </style>
