@@ -41,7 +41,7 @@
       />
     </div>
 
-    <SearchError v-if="errorSearching" />
+    <SearchError v-if="errorSearching" :style="{ marginTop: '100px' }" />
     <div class="table-container">
       <table v-if="booking_db.length !== 0" style="margin-top: 50px;">
         <tr>
@@ -66,12 +66,12 @@
           :key="i"
           class="row"
         >
-          <td :style="{ width: '15%' }">*10-10-1010</td>
-          <td :style="{ width: '20%' }">{{ booking.bookingID }}</td>
+          <td :style="{ width: '15%' }">{{ convertDate(booking.date) }}</td>
+          <td :style="{ width: '15%' }">{{ booking.bookingID }}</td>
           <td :style="{ width: '25%' }">{{ booking.customerName }}</td>
           <td :style="{ width: '15%' }">{{ booking.phone }}</td>
           <td :style="{ width: '20%' }">{{ booking.email }}</td>
-          <td :style="{ width: '5%' }">
+          <td :style="{ width: '10%' }">
             <div class="manage">
               <button class="manage-button" @click="getRecord(booking)">
                 <i class="fa fa-search fa-2x"></i>
@@ -316,8 +316,9 @@ export default {
       statusC: false,
       statusI: false,
       sort: "bookingID",
-      filter: "bookingID",
+      filter: "date",
       countRow: "",
+      searchSent: "",
       form: {
         search: "",
         bookingID: "",
@@ -367,12 +368,14 @@ export default {
 
     setSort(click) {
       if (click == 0) {
-        this.sort = "bookingID";
+        this.sort = "date";
       } else if (click == 1) {
-        this.sort = "customerName";
+        this.sort = "bookingID";
       } else if (click == 2) {
-        this.sort = "phone";
+        this.sort = "customerName";
       } else if (click == 3) {
+        this.sort = "phone";
+      } else if (click == 4) {
         this.sort = "email";
       }
     },
@@ -403,9 +406,15 @@ export default {
     },
 
     searchData() {
+      if (this.filter == "date") {
+        this.searchSent = this.converDateToQuery(this.form.search);
+      } else {
+        this.searchSent = this.form.search;
+      }
+
       axios
         .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
-          search: this.form.search,
+          search: this.searchSent,
           sort: this.sort,
           filter: this.filter,
           action: "SearchData",
@@ -423,17 +432,21 @@ export default {
           }.bind(this)
         );
     },
+    
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "bookingID";
+        this.filter = "date";
       }
       if (value === selectOption[1]) {
-        this.filter = "customerName";
+        this.filter = "bookingID";
       }
       if (value === selectOption[2]) {
-        this.filter = "phone";
+        this.filter = "customerName";
       }
       if (value === selectOption[3]) {
+        this.filter = "phone";
+      }
+      if (value === selectOption[4]) {
         this.filter = "email";
       }
     },
@@ -545,23 +558,23 @@ export default {
             this.form.checkIn = res.data.checkIn;
             this.form.checkOut = res.data.checkOut;
             this.form.statusRoom = res.data.statusRoom;
-            // if (this.form.statusRoom == "R") {
-            //   this.statusR = true;
-            //   this.statusI = false;
-            //   this.statusC = false;
-            // }
-            // if (this.form.statusRoom == "C") {
-            //   this.statusC = true;
-            //   this.statusR = false;
-            //   this.statusI = false;
-            // }
-            // if (this.form.statusRoom == "I") {
-            //   this.statusI = true;
-            //   this.statusR = false;
-            //   this.statusC = false;
-            // }
           }.bind(this)
         );
+    },
+
+    convertDate(date) {
+      var datearray = date.split("-");
+      var newdate = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
+      return newdate;
+    },
+
+    converDateToQuery(date) {
+      var datearray = date.split("/");
+      if (datearray.length != 3 || date.length != 10) {
+        alert("Date format should be dd/mm/yyyy");
+      }
+      var newdate = datearray[2] + "-" + datearray[1] + "-" + datearray[0];
+      return newdate;
     },
   },
 };
@@ -607,7 +620,6 @@ i {
 }
 table {
   width: 100%;
-  max-width: 1000px;
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;
