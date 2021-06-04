@@ -29,7 +29,10 @@
     <table v-if="stampRecord.length !== 0 && !errorSearching">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
-          <div class="tb-head">
+          <div
+            class="tb-head"
+            :style="colName == 'Type' ? { justifyContent: 'flex-start' } : {}"
+          >
             {{ colName }}
             <SortingArrow
               :active="activeArrow == i ? true : false"
@@ -47,17 +50,20 @@
         :key="i"
         class="row"
       >
-        <td :style="{ width: '40%' }">{{ record.stampDateTime }}</td>
+        <td :style="{ width: '25%' }">{{ record.stampDateTime }}</td>
         <td :style="{ width: '15%' }">{{ record.employeeID }}</td>
-        <td :style="{ width: '40%' }">
+        <td :style="{ width: '35%' }">
           {{ record.em_firstname }} {{ record.em_lastname }}
         </td>
-        <td :style="{ width: '5%', textAlign: 'start' }">
+        <td :style="{ width: '10%', textAlign: 'start' }">
           <i
             class="fa fa-circle"
             :style="{ color: getTagColor(record.type) }"
           />
           {{ getStampType(record.type) }}
+        </td>
+        <td :style="{ width: '15%', color: '#FF0000', fontWeight: 'bold' }">
+          {{ record.late }}
         </td>
       </tr>
     </table>
@@ -124,9 +130,9 @@ export default {
       stampRecord: "",
 
       keyword: "",
-      selectOption: ["Date", "Employee ID", "Name", "Type"],
-      searchFilter: null,
-      colNames: ["Date", "ID", "Name", "Type"],
+      selectOption: ["Date", "Employee ID", "Name", "Type", "Punctuality"],
+      searchFilter: "stampDateTime",
+      colNames: ["Date", "Employee ID", "Name", "Type", "Punctuality"],
       errorSearching: false,
       activeArrow: 0,
       sortFilter: "stampDateTime",
@@ -162,9 +168,11 @@ export default {
       } else if (value === this.selectOption[1]) {
         this.searchFilter = "employeeID";
       } else if (value === this.selectOption[2]) {
-        this.searchFilter = "em_firstname";
+        this.searchFilter = "name";
       } else if (value === this.selectOption[3]) {
         this.searchFilter = "type";
+      } else if (value === this.selectOption[4]) {
+        this.searchFilter = "late";
       }
     },
     setSortFilter(clickedArrow) {
@@ -174,13 +182,16 @@ export default {
       } else if (clickedArrow === 1) {
         this.sortFilter = "employeeID";
       } else if (clickedArrow === 2) {
-        this.sortFilter = "em_firstname";
+        this.sortFilter = "name";
       } else if (clickedArrow === 3) {
         this.sortFilter = "type";
+      } else if (clickedArrow === 4) {
+        this.sortFilter = "late";
       }
     },
     sortReturn(direction) {
       this.sortDirection = direction;
+      this.searchData();
     },
     pageReturn(page) {
       this.currentPage = page;
@@ -199,6 +210,7 @@ export default {
         return "OUT";
       }
     },
+
     searchData() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
@@ -210,10 +222,13 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res.data);
+            console.log("DATA", res.data);
             this.stampRecord = res.data;
+
             if (this.stampRecord == "") {
               this.errorSearching = true;
+            } else {
+              this.errorSearching = false;
             }
           }.bind(this)
         );
