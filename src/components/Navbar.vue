@@ -297,6 +297,10 @@ img {
   flex-direction: column;
   padding: 10px 0;
 }
+.info:hover {
+  text-decoration: underline white;
+  cursor: pointer;
+}
 b {
   font-size: 18px;
   color: white;
