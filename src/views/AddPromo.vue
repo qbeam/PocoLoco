@@ -319,7 +319,6 @@ export default {
         .then(
           function(res) {
             this.seasonDB = res.data;
-            console.log(res);
           }.bind(this)
         );
     },
@@ -332,7 +331,6 @@ export default {
         .then(
           function(res) {
             this.typeDB = res.data;
-            console.log(res);
           }.bind(this)
         );
     },

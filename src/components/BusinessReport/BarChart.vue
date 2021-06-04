@@ -172,6 +172,7 @@ export default {
     },
     graphRange(value) {
       this.displayRange = value; // set graph year to selected choice
+      this.getRecord();
     },
     setUpGraph() {
       const yearRange = [];
@@ -200,7 +201,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log("RES", res.data);
             if (this.type !== "room") {
               this.setMonthSeries(res.data);
             } else {

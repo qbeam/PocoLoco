@@ -80,7 +80,7 @@ export default {
     };
   },
   created() {
-    this.form.employeeID = this.$store.state.employeeDetail.employeeID;
+    this.form.employeeID = localStorage.getItem("user");
     this.getAccountProfile();
   },
 

@@ -84,6 +84,7 @@
       <p>Payment Method</p>
       <CustomSelect
         type="Grey"
+        :defaultChoice="paymentMethods[0]"
         :options="paymentMethods"
         @selection="selectMethod"
         :style="{ margin: 'auto 10px' }"
@@ -187,6 +188,7 @@ export default {
 
   created() {
     this.getChargeRate();
+    console.log("re");
   },
 
   methods: {
@@ -305,14 +307,7 @@ export default {
       }
     },
     reset() {
-      // this.bookingID = "";
-      // this.customerID = "";
-      // this.name = "";
-      // this.firstName = "";
-      // this.lastName = "";
-      // this.phone = "";
-      // this.payment = "";
-      this.$router.push("/payment");
+      this.$router.go(0);
     },
   },
 };

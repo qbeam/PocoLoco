@@ -383,14 +383,14 @@ export default {
               console.log(res.data);
               alert(res.data.message);
               if (res.data.success == true) {
-                // this.clearPayment();
+                this.clearPayment();
               }
             }.bind(this)
           );
       }
     },
     clearPayment() {
-      // vm.$forceUpdate();
+      this.$router.go(0);
     },
   },
 };

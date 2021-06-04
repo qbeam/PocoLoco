@@ -10,12 +10,12 @@
       />
     </div>
 
-    <div class="seasons">
+    <div v-if="!errorSearching" class="seasons">
       <button class="season-button" v-for="(season, i) in seasons" :key="i">
         <div class="head" :style="i % 2 !== 0 ? { background: '#455A64' } : {}">
-          <b>{{ season.date }}</b>
+          <b>{{ setDate(season.startDate, season.endDate) }}</b>
           <div class="vl"></div>
-          <b>{{ season.month }}</b>
+          <b>{{ setMonth(season.startMonth, season.endMonth) }}</b>
         </div>
         <div class="detail">
           <p>{{ season.name }}</p>
@@ -23,78 +23,127 @@
         </div>
       </button>
     </div>
+    <div class="error-img">
+      <img src="../../assets/search-icon.png" v-if="errorSearching" />
+    </div>
   </div>
 </template>
 
 <script>
 import CustomSelect from "../CustomSelect";
-
-const seasons = [
-  {
-    date: "25-27",
-    start: "2020-12-25",
-    end: "2020-12-27",
-    month: "DEC",
-    name: "Chirstmas",
-    amount: 150,
-  },
-  {
-    date: "12-15",
-    month: "FEB",
-    name: "Valentines",
-    amount: 132,
-  },
-  {
-    date: "10-15",
-    month: "AUG",
-    name: "Mother's Day",
-    amount: 100,
-  },
-  {
-    date: "13-15",
-    month: "APR",
-    name: "Songkran",
-    amount: 90,
-  },
-  {
-    date: "13-15",
-    month: "APR",
-    name: "Songkran",
-    amount: 90,
-  },
-  {
-    date: "13-15",
-    month: "APR",
-    name: "Songkran",
-    amount: 90,
-  },
-  {
-    date: "13-15",
-    month: "APR",
-    name: "Songkran",
-    amount: 90,
-  },
-  {
-    date: "13-15",
-    month: "APR",
-    name: "Songkran",
-    amount: 90,
-  },
-];
+import axios from "axios";
 
 export default {
   name: "BookingReport",
   components: { CustomSelect },
   data() {
     return {
-      seasons,
+      errorSearching: false,
+      seasons: [],
       searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       displayRange: null,
     };
   },
+  created() {
+    this.year = new Date().getFullYear();
+    this.getYear();
+  },
   methods: {
     graphRange(value) {
-      this.displayRange = value;
+      this.year = value;
+      this.getBookingPro();
+    },
+    getYear() {
+      const year = [];
+      var yearNow = this.year;
+      for (let i = 0; i < 5; i++) {
+        year.push(yearNow);
+        yearNow = yearNow - 1;
+      }
+      this.searchRange = year;
+      this.getBookingPro();
+    },
+    getBookingPro() {
+      this.seasons = [];
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
+          action: "getBookingPro",
+          year: this.year,
+        })
+        .then(
+          function(res) {
+            if (res.data == null) {
+              this.errorSearching = true;
+            } else {
+              this.errorSearching = false;
+              for (var i = 0; i < res.data.length; i++) {
+                this.seasons.push(res.data[i]);
+              }
+            }
+          }.bind(this)
+        );
+    },
+    setMonth(startMonth, endMonth) {
+      var month = "";
+      var monthEnd = "";
+      if (startMonth == 1) {
+        month = "JAN";
+      } else if (startMonth == 2) {
+        month = "FEB";
+      } else if (startMonth == 3) {
+        month = "MAR";
+      } else if (startMonth == 4) {
+        month = "APR";
+      } else if (startMonth == 5) {
+        month = "MAY";
+      } else if (startMonth == 6) {
+        month = "JUN";
+      } else if (startMonth == 7) {
+        month = "JUL";
+      } else if (startMonth == 8) {
+        month = "AUG";
+      } else if (startMonth == 9) {
+        month = "SEP";
+      } else if (startMonth == 10) {
+        month = "OCT";
+      } else if (startMonth == 11) {
+        month = "NOV";
+      } else if (startMonth == 12) {
+        month = "DEC";
+      }
+      if (startMonth == endMonth) {
+        return month;
+      } else {
+        if (endMonth == 1) {
+          monthEnd = "JAN";
+        } else if (endMonth == 2) {
+          monthEnd = "FEB";
+        } else if (endMonth == 3) {
+          monthEnd = "MAR";
+        } else if (endMonth == 4) {
+          monthEnd = "APR";
+        } else if (endMonth == 5) {
+          monthEnd = "MAY";
+        } else if (endMonth == 6) {
+          monthEnd = "JUN";
+        } else if (endMonth == 7) {
+          monthEnd = "JUL";
+        } else if (endMonth == 8) {
+          monthEnd = "AUG";
+        } else if (endMonth == 9) {
+          monthEnd = "SEP";
+        } else if (endMonth == 10) {
+          monthEnd = "OCT";
+        } else if (endMonth == 11) {
+          monthEnd = "NOV";
+        } else if (endMonth == 12) {
+          monthEnd = "DEC";
+        }
+        return (month = month + " - " + monthEnd);
+      }
+    },
+    setDate(startDate, endDate) {
+      return startDate + " - " + endDate;
     },
   },
 };
@@ -115,6 +164,14 @@ export default {
 .header {
   display: flex;
   align-items: center;
+}
+.error-img {
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  }
+img{
+  width: 80%;
 }
 .title {
   font-size: 16px;

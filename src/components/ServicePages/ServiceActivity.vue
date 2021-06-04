@@ -196,8 +196,8 @@ export default {
     };
   },
   created() {
-    this.role = this.$store.state.employeeDetail.role;
-    this.departmentName = this.$store.state.employeeDetail.department;
+    this.role = localStorage.getItem("userRole");
+    this.departmentName = localStorage.getItem("userDepartment");
     console.log(this.departmentName);
     this.getServiceActivity();
   },

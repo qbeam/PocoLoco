@@ -48,7 +48,7 @@ export default {
       optionStyle: "default-list",
       dropdownVisible: false,
       selection: null,
-      label: null,
+      label: this.options[0],
       arrowColor: "white",
       optionsWidth: "120px",
     };

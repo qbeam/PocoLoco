@@ -169,13 +169,12 @@ export default {
         );
     },
     getEarningProgress() {
-      var getEarningProgress = 0;
-
-      getEarningProgress = (this.earningAmount / this.lastMEarningAmount) * 100;
+      const getEarningProgress =
+        (this.earningAmount / this.lastMEarningAmount) * 100;
       if (getEarningProgress > 100) {
         this.earningProgress = 100;
       } else {
-        this.earningProgress = getEarningProgress;
+        this.earningProgress = getEarningProgress.toFixed(2);
       }
     },
     //Booking
@@ -212,7 +211,7 @@ export default {
       if (getBookingProgress > 100) {
         this.bookingProgress = 100;
       } else {
-        this.bookingProgress = getBookingProgress;
+        this.bookingProgress = getBookingProgress.toFixed(2);
       }
     },
     //Order
@@ -248,7 +247,7 @@ export default {
       if (getOrderProgress > 100) {
         this.orderProgress = 100;
       } else {
-        this.orderProgress = getOrderProgress;
+        this.orderProgress = getOrderProgress.toFixed(2);
       }
     },
     //Customer
@@ -288,7 +287,7 @@ export default {
       if (getCustomerProgress > 100) {
         this.customerProgress = 100;
       } else {
-        this.customerProgress = getCustomerProgress;
+        this.customerProgress = getCustomerProgress.toFixed(2);
       }
     },
   },

@@ -129,18 +129,10 @@ export default {
     this.checkRole();
     this.getOrder();
   },
-    // watch: {
-    // role: function() {
-    //   this.storeData();
-    //   },
-    // },
   methods: {
     storeData() {
-      this.role = this.$store.state.employeeDetail.role;
-      this.department = this.$store.state.employeeDetail.department;
-      console.log("STORE ROLE", this.$store.state.employeeDetail.role);
-      console.log("ROLE", this.role);
-      console.log("department", this.department);
+      this.role = localStorage.getItem("userRole");
+      this.department = localStorage.getItem("userDepartment");
     },
     pageReturn(page) {
       this.currentPage = page;
@@ -162,7 +154,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res.data);
             this.order_db = res.data;
             this.countRow = this.order_db.length;
             if (this.order_db != "") {

@@ -10,51 +10,41 @@
       />
     </div>
     <apexchart
+      v-if="!errorSearching"
       type="pie"
       :width="pieSize"
       :options="options"
       :series="series"
     />
+    <div class="error-img">
+      <img src="../../assets/search-icon.png" v-if="errorSearching" />
+    </div>
   </div>
 </template>
 
 <script>
 import CustomSelect from "../CustomSelect";
 import axios from "axios";
-
-// const topService = [
-//   { name: "Extra Pillow", portion: 50 },
-//   { name: "Extra Towel", portion: 23 },
-//   { name: "Extra Bed", portion: 17 },
-//   { name: "Others", portion: 10 },
-// ];
-
-// const topMenu = [
-//   { name: "Crab Fried Rice", portion: 33 },
-//   { name: "Coke", portion: 18 },
-//   { name: "American Breakfast", portion: 7 },
-//   { name: "Others", portion: 42 },
-// ];
-
 export default {
   name: "PieChart",
   props: ["type"],
   components: { CustomSelect },
   data() {
     return {
+      errorSearching: false,
       title: null,
       topService: [
-                    { name: "Extra Pillow", portion: 50 },
-                    { name: "Extra Towel", portion: 23 },
-                    { name: "Extra Bed", portion: 17 },
-                    { name: "Others", portion: 10 },
-                  ],
+        { name: "Extra Pillow", portion: 50 },
+        { name: "Extra Towel", portion: 23 },
+        { name: "Extra Bed", portion: 17 },
+        { name: "Others", portion: 10 },
+      ],
       topMenu: [
-                  { name: "Crab Fried Rice", portion: 33 },
-                  { name: "Coke", portion: 18 },
-                  { name: "American Breakfast", portion: 7 },
-                  { name: "Others", portion: 42 },
-                ],
+        { name: "Crab Fried Rice", portion: 33 },
+        { name: "Coke", portion: 18 },
+        { name: "American Breakfast", portion: 7 },
+        { name: "Others", portion: 42 },
+      ],
       pieSize: 320,
       searchRange: [2021, 2020, 2019, 1, 2],
       displayRange: null,
@@ -65,31 +55,31 @@ export default {
         },
         labels: null,
       },
-      year:"",
-      month:"",
-      typeID:"",
+      year: "",
+      month: "",
+      typeID: "",
     };
   },
-  
+
   methods: {
-    getYear(){
-      const year=[];
+    getYear() {
+      const year = [];
       var yearNow = this.year;
       for (let i = 0; i < 5; i++) {
         year.push(yearNow);
-        yearNow = yearNow -1;
+        yearNow = yearNow - 1;
       }
       this.searchRange = year;
-      
     },
     graphRange(value) {
       this.year = value;
+      this.getService();
     },
     extractArray(inputList) {
       this.options.labels = inputList.map((item) => item.name);
       this.series = inputList.map((item) => item.portion);
     },
-    getService(){
+    getService() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
           action: "getRoomService",
@@ -98,11 +88,16 @@ export default {
         })
         .then(
           function(res) {
-            this.setService(res.data,this.typeID);
+            if (res.data == null) {
+              this.errorSearching = true;
+            } else {
+              this.errorSearching = false;
+              this.setService(res.data, this.typeID);
+            }
           }.bind(this)
         );
     },
-    setService(service,type){
+    setService(service, type) {
       var total = 0;
       var totalOther = 0;
       var other = 0;
@@ -113,23 +108,22 @@ export default {
       for (let j = 3; j < service.length; j++) {
         totalOther = totalOther + Number(service[j].numService);
       }
-      other = totalOther/total*100;
-          
-      if(type == 1){
-        this.topService[0].portion = (service[0].numService/total)*100
-        this.topService[1].portion = (service[1].numService/total)*100
-        this.topService[2].portion = (service[2].numService/total)*100
+      other = (totalOther / total) * 100;
+
+      if (type == 1) {
+        this.topService[0].portion = (service[0].numService / total) * 100;
+        this.topService[1].portion = (service[1].numService / total) * 100;
+        this.topService[2].portion = (service[2].numService / total) * 100;
         this.topService[3].portion = other;
         this.extractArray(this.topService);
-      }
-      else if(type == 2){
-        this.topMenu[0].portion = (service[0].numService/total)*100
-        this.topMenu[1].portion = (service[1].numService/total)*100
-        this.topMenu[2].portion = (service[2].numService/total)*100
+      } else if (type == 2) {
+        this.topMenu[0].portion = (service[0].numService / total) * 100;
+        this.topMenu[1].portion = (service[1].numService / total) * 100;
+        this.topMenu[2].portion = (service[2].numService / total) * 100;
         this.topMenu[3].portion = other;
         this.extractArray(this.topMenu);
-      }   
-    }
+      }
+    },
   },
   created() {
     this.month = new Date().getMonth() + 1;
@@ -148,10 +142,8 @@ export default {
   mounted() {
     if (this.type == "service") {
       this.title = "Service popularity in";
-      
     } else if (this.type == "food") {
       this.title = "Menu popularity in";
-      
     }
   },
 };
@@ -172,6 +164,14 @@ export default {
 .header {
   display: flex;
   align-items: center;
+}
+.error-img {
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  }
+img{
+  width: 80%;
 }
 @media (max-width: 1200px) {
   .chart-container {

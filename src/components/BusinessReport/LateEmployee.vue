@@ -12,7 +12,7 @@
     </div>
 
     <div class="vl"></div>
-    <div class="list">
+    <div v-if="!errorSearching" class="list">
       <div class="item" v-for="(record, i) in lateEmployee" :key="i">
         <div class="icon">
           <div class="user-icon">
@@ -36,6 +36,11 @@
         </div>
       </div>
     </div>
+    <img
+      class="error-img"
+      src="../../assets/search-icon.png"
+      v-if="errorSearching"
+    />
   </div>
 </template>
 
@@ -43,13 +48,13 @@
 import CustomSelect from "../CustomSelect";
 import axios from "axios";
 
-
 export default {
   name: "LateEmployee",
   components: { CustomSelect },
 
   data() {
     return {
+      errorSearching: false,
       searchRange: [2021, 2020, 2019, 1, 2],
       displayRange: "",
       year: "",
@@ -77,7 +82,6 @@ export default {
       this.getLateEmployee();
     },
     getLateEmployee() {
-      console.log("year", this.displayRange);
       axios
         .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
           action: "getLateEmployee",
@@ -85,7 +89,12 @@ export default {
         })
         .then(
           function(res) {
-            this.lateEmployee = res.data;
+            if (res.data == null) {
+              this.errorSearching = true;
+            } else {
+              this.errorSearching = false;
+              this.lateEmployee = res.data;
+            }
           }.bind(this)
         );
     },
@@ -108,6 +117,14 @@ export default {
   align-items: center;
   justify-content: center;
 }
+.error-img {
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  width: 42%;
+  height: 37%;
+}
+
 .list {
   display: flex;
   flex-direction: column;

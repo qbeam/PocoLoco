@@ -214,19 +214,7 @@
 
         <!-- Identification -->
         <div v-if="identificationError">
-          <h4>ID Number / Passport Number</h4>
-          <div class="choices">
-            <label class="container">
-              ID Number
-              <input type="radio" checked="checked" name="radio" />
-              <span class="checkmark"></span>
-            </label>
-            <label class="container"
-              >Passport Number
-              <input type="radio" checked="checked" name="radio" />
-              <span class="checkmark"></span>
-            </label>
-          </div>
+          <h4>ID Number</h4>
 
           <input
             type="number"
@@ -237,7 +225,7 @@
         </div>
         <!-- Identification Error-->
         <div v-else>
-          <h4 style="color:red">ID Number / Passport Number</h4>
+          <h4 style="color:red">ID Number (13 digits)</h4>
           <input
             type="number"
             onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
@@ -328,7 +316,7 @@
         </div>
         <!-- Phone Error -->
         <div v-else>
-          <h4 style="color:red">Phone</h4>
+          <h4 style="color:red">Phone (10 digits)</h4>
           <input
             type="number"
             onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
@@ -446,7 +434,7 @@ export default {
       check: false,
 
       details: {
-        department: "",
+        department: "Housekeeping",
         roleID: "",
         startDate: "",
         shift: "",
@@ -474,7 +462,7 @@ export default {
 
   created() {
     this.role = this.$store.state.employeeDetail.role;
-    this.details.department = this.$store.state.employeeDetail.department;
+    // this.details.department = this.$store.state.employeeDetail.department;
     this.getRole();
   },
 
@@ -497,6 +485,36 @@ export default {
     },
 
     addEmployee() {
+      this.validateCheck();
+      if (this.check) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {
+            action: "addEmployee",
+            department: this.details.department,
+            roleID: this.details.roleID,
+            shift: this.details.shift,
+            startDate: this.details.startDate,
+            firstName: this.details.firstName,
+            lastName: this.details.lastName,
+            identification: this.details.identification,
+            DOB: this.details.DOB,
+            gender: this.details.gender,
+            phone: this.details.phone,
+            email: this.details.email,
+            password: this.details.password,
+            cf_pass: this.details.cf_pass,
+          })
+          .then(
+            function(res) {
+              if (res.data.success == true) {
+                alert(res.data.message);
+                this.backToEmployee();
+              }
+            }.bind(this)
+          );
+      }
+    },
+    validateCheck() {
       if (this.details.department == "") {
         this.departmentError = false;
       }
@@ -589,33 +607,6 @@ export default {
         this.emailError &&
         this.passwordError &&
         this.conPasswordError;
-      if (this.check) {
-        axios
-          .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {
-            action: "addEmployee",
-            department: this.details.department,
-            roleID: this.details.roleID,
-            shift: this.details.shift,
-            startDate: this.details.startDate,
-            firstName: this.details.firstName,
-            lastName: this.details.lastName,
-            identification: this.details.identification,
-            DOB: this.details.DOB,
-            gender: this.details.gender,
-            phone: this.details.phone,
-            email: this.details.email,
-            password: this.details.password,
-            cf_pass: this.details.cf_pass,
-          })
-          .then(
-            function(res) {
-              if (res.data.success == true) {
-                alert(res.data.message);
-                this.backToEmployee();
-              }
-            }.bind(this)
-          );
-      }
     },
   },
 };

@@ -72,12 +72,23 @@ export default {
             console.log(res);
             if (res.data.login == 1) {
               localStorage.setItem("user", res.data.employeeID);
+              localStorage.setItem("userRole", res.data.roleName);
+              localStorage.setItem("userDepartment", res.data.departmentName);
+              localStorage.setItem("userGender", res.data.gender);
               this.$store.state.employeeDetail.employeeID = res.data.employeeID;
               this.$store.state.employeeDetail.role = res.data.roleName;
-              this.$store.state.employeeDetail.department = res.data.departmentName;
-              this.$store.state.employeeDetail.profilePic = res.data.roleName + res.data.gender;
+              this.$store.state.employeeDetail.department =
+                res.data.departmentName;
+              this.$store.state.employeeDetail.profilePic =
+                res.data.roleName + res.data.gender;
               this.$store.state.user = localStorage.getItem("user");
-              this.$router.push({ name: "Home" });
+
+              if (res.data.roleName == "Timestamp") {
+                this.$router.push({ name: "Timestamp" });
+              } else {
+                this.$router.push({ name: "Home" });
+              }
+
               // this.$router.push({
               //   name: "Home",
               //   params: {
@@ -87,6 +98,8 @@ export default {
               //     gender: res.data.gender,
               //   },
               // });
+            } else {
+              alert("The username or password is incorrect");
             }
           }.bind(this)
         );

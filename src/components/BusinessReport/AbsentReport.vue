@@ -11,7 +11,7 @@
     </div>
 
     <div class="vl"></div>
-    <div class="list">
+    <div v-if="!errorSearching" class="list">
       <div class="item" v-for="(record, i) in absenceSum" :key="i">
         <div class="date">
           <b>{{ record.day }}</b>
@@ -23,6 +23,9 @@
           <b :style="{ fontSize: '24px' }">{{ record.numEmployee }}</b>
         </div>
       </div>
+    </div>
+    <div class="error-img">
+      <img src="../../assets/search-icon.png" v-if="errorSearching" />
     </div>
   </div>
 </template>
@@ -36,6 +39,7 @@ export default {
   components: { CustomSelect },
   data() {
     return {
+      errorSearching: false,
       absenceSum: [],
       searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       displayRange: null,
@@ -69,9 +73,15 @@ export default {
         })
         .then(
           function(res) {
-            for (var i = 0; i < res.data.length; i++) {
-              this.absenceSum.push(res.data[i]);
+            if (res.data == null) {
+              this.errorSearching = true;
+            } else {
+              this.errorSearching = false;
+              for (var i = 0; i < res.data.length; i++) {
+                this.absenceSum.push(res.data[i]);
+              }
             }
+            
           }.bind(this)
         );
     },
@@ -128,6 +138,14 @@ export default {
   width: 100%;
   height: 1px;
   background: var(--grey-highlight);
+}
+.error-img {
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  }
+img{
+  width: 80%;
 }
 .list {
   display: flex;
