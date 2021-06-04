@@ -49,7 +49,6 @@
 
 <script>
 import { useScreenWidth } from "../composables/useScreenWidth";
-import axios from "axios";
 
 const AdminOwner = [
   { name: "Overview", path: "BusinessAnalysis" },
@@ -61,8 +60,8 @@ const AdminOwner = [
   { name: "Booking Detail", path: "BookingDetail" },
   { name: "Services", path: "Services" },
   { name: "Payment", path: "Payment" },
-  { name: "Hotel Expenses", path: "HotelExpenses" },
-  { name: "Time Stamp Record", path: "TimestampRecord" },
+  { name: "Expenses", path: "HotelExpenses" },
+  { name: "Timestamp ", path: "TimestampRecord" },
 ];
 const ReceptionManager = [
   { name: "Home", path: "FloorPlan" },
@@ -157,14 +156,16 @@ export default {
   },
 
   created() {
-    if (this.employeeID == "") {
-      this.error404();
-    }
     this.employeeID = localStorage.getItem("user");
     this.role = localStorage.getItem("userRole");
     this.department = localStorage.getItem("userDepartment");
     this.gender = localStorage.getItem("userGender");
     this.profilePic = this.role + this.gender;
+
+    if (this.employeeID == null) {
+      this.error404();
+    }
+    
     if (this.role === "Owner" || this.role === "Admin") {
       this.permissions = AdminOwner;
     }
@@ -212,6 +213,7 @@ export default {
         localStorage.removeItem("user");
         localStorage.removeItem("userRole");
         localStorage.removeItem("userDepartment");
+        localStorage.removeItem("userGender");
         this.$router.push("/");
       }
     },

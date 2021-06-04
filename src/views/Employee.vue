@@ -107,7 +107,7 @@
               <i
                 v-if="employee.workStatus == 'Suspended'"
                 class="fa fa-circle"
-                :style="{ color: 'FFC42E#' }"
+                :style="{ color: '#FFC42E' }"
               />
               <i
                 v-if="employee.workStatus == 'Quited'"
@@ -428,7 +428,6 @@ export default {
     },
 
     getAllEmployee() {
-      console.log(this.departmentName);
       axios
         .post("http://localhost:8080/PocoLoco_db/api_employee.php", {
           action: "getEmployeeManager",
@@ -436,7 +435,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res);
             this.employee_db = res.data;
             this.countRow = this.employee_db.length;
             if (this.employee_db != "") {
@@ -498,7 +496,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res.data);
             if (res.data.success == true) {
               alert(res.data.message);
               this.getAllEmployee();
@@ -521,7 +518,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res);
             this.employee_db = res.data;
             this.countRow = this.employee_db.length;
             if (this.employee_db != "") {

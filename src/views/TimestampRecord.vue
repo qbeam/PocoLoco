@@ -60,7 +60,7 @@
             class="fa fa-circle"
             :style="{ color: getTagColor(record.type) }"
           />
-          {{ getStampType(record.type) }}
+          {{ record.type }}
         </td>
         <td :style="{ width: '15%', color: '#FF0000', fontWeight: 'bold' }">
           {{ record.late }}
@@ -158,7 +158,7 @@ export default {
         .then(
           function(res) {
             this.stampRecord = res.data;
-            console.log("STA", this.stampRecord);
+            
           }.bind(this)
         );
     },
@@ -222,7 +222,7 @@ export default {
         })
         .then(
           function(res) {
-            console.log("DATA", res.data);
+            
             this.stampRecord = res.data;
 
             if (this.stampRecord == "") {
