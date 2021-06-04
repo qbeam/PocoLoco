@@ -434,7 +434,7 @@ export default {
       check: false,
 
       details: {
-        department: "Housekeeping",
+        department: "",
         roleID: "",
         startDate: "",
         shift: "",
@@ -462,7 +462,7 @@ export default {
 
   created() {
     this.role = this.$store.state.employeeDetail.role;
-    // this.details.department = this.$store.state.employeeDetail.department;
+    this.details.department = this.$store.state.employeeDetail.department;
     this.getRole();
   },
 
