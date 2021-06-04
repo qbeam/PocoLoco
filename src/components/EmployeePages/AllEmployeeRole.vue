@@ -362,11 +362,6 @@ export default {
 </script>
 
 <style scoped>
-.icon-wrap {
-  position: absolute;
-  z-index: 5;
-  padding: 5px 20px;
-}
 .menu-bar {
   display: flex;
   flex-direction: row;
@@ -407,7 +402,6 @@ i {
 }
 table {
   width: 100%;
-  max-width: 1000;
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;

@@ -354,11 +354,6 @@ export default {
   display: flex;
   align-items: center;
 }
-.icon-wrap {
-  position: absolute;
-  z-index: 0;
-  padding: 5px 20px;
-}
 .search-container {
   display: flex;
   position: relative;
@@ -380,7 +375,6 @@ i {
 }
 table {
   width: 100%;
-  max-width: 1000;
   margin-top: 30px;
   border: 1px solid black;
   border-collapse: collapse;

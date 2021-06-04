@@ -216,11 +216,6 @@ h3 {
   display: inline-block;
   font-size: 25px;
 }
-.icon-wrap {
-  position: absolute;
-  z-index: 0;
-  padding: 5px 20px;
-}
 .search-field {
   width: 225px;
   height: 30px;
@@ -243,8 +238,6 @@ i {
 }
 table {
   width: 100%;
-  max-width: 1000;
-  /* margin-top: 50px; */
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;
