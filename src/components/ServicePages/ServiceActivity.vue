@@ -182,6 +182,7 @@ export default {
       order_db: [],
       countRow: "",
       serviceName: "",
+      year: "",
 
       search: "",
       searchSent: "",
@@ -274,6 +275,7 @@ export default {
           action: "getServiceActivity",
           role: this.role,
           department: this.departmentName,
+          year: 2020,
         })
         .then(
           function(res) {
@@ -300,6 +302,7 @@ export default {
           type: this.type,
           role: this.role,
           department: this.departmentName,
+          year: 2021,
         })
         .then(
           function(res) {

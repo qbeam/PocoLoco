@@ -305,6 +305,7 @@ export default {
       filter: "em_firstName",
       expenseDetail_db: "",
       countRow: "",
+      year: "",
       form: {
         expenseID: "",
         employeeID: "",
@@ -328,11 +329,13 @@ export default {
     };
   },
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
-    }
-    else {
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } else {
       this.getAllExpense();
     }
   },
@@ -411,6 +414,7 @@ export default {
           sort: this.sort,
           filter: this.filter,
           direction: this.sortDirection,
+          year: 2020,
         })
         .then(
           function(res) {
@@ -474,6 +478,7 @@ export default {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_hotelExpense.php", {
           action: "getAll",
+          year: 2020,
         })
         .then(
           function(res) {

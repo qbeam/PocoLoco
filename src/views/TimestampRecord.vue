@@ -121,11 +121,13 @@ export default {
     return { width, height, tableRow };
   },
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
-    }
-    else {
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } else {
       this.getTodayDate();
       this.getTodayTimeStamp();
     }
@@ -144,6 +146,7 @@ export default {
       sortFilter: "stampDateTime",
       sortDirection: "down",
       currentPage: 1,
+      year: "",
     };
   },
   methods: {
@@ -160,6 +163,7 @@ export default {
         .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
           action: "getTodayTimeStamp",
           today: this.todayDate,
+          year: 2021,
         })
         .then(
           function(res) {
@@ -224,6 +228,7 @@ export default {
           searchFilter: this.searchFilter,
           sortFilter: this.sortFilter,
           direction: this.sortDirection,
+          year: 2021,
         })
         .then(
           function(res) {

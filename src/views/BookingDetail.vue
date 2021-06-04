@@ -354,6 +354,7 @@ export default {
       filter: "bookingDetailID",
       sort: "bookingDetailID",
       countRow: "",
+      year: "",
       form: {
         bookingDetailID: "",
         guestFirstName: "",
@@ -433,6 +434,7 @@ export default {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
           action: "getAll",
+          year: 2021,
         })
         .then(
           function(res) {
@@ -455,6 +457,7 @@ export default {
           filter: this.filter,
           sort: this.sort,
           direction: this.sortDirection,
+          year: 2021,
         })
         .then(
           function(res) {

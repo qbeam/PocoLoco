@@ -338,6 +338,7 @@ export default {
       filter: "date",
       countRow: "",
       searchSent: "",
+      year: "",
       form: {
         search: "",
         bookingID: "",
@@ -455,6 +456,7 @@ export default {
           filter: this.filter,
           action: "SearchData",
           direction: this.sortDirection,
+          year: 2021,
         })
         .then(
           function(res) {
@@ -548,6 +550,7 @@ export default {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
           action: "getAll",
+          year: 2021,
         })
         .then(
           function(res) {

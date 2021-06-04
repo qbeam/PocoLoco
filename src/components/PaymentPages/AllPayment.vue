@@ -135,6 +135,7 @@ export default {
       filter: "roomID",
       sort: "datePaid",
       res: "",
+      year: "",
     };
   },
 
@@ -200,6 +201,7 @@ export default {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_allPayment.php", {
           action: "getAll",
+          year: 2020,
         })
         .then(
           function(res) {
@@ -222,6 +224,7 @@ export default {
           filter: this.filter,
           sort: this.sort,
           direction: this.sortDirection,
+          year: 2020,
         })
         .then(
           function(res) {
