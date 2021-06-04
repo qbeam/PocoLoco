@@ -1,13 +1,26 @@
 <template>
   <div class="warning">
-    <img src="../assets/noOrderChef.png" />
+    <img :src="require(`../../assets/${icon}.png`)" />
     <h2>There is no current order</h2>
   </div>
 </template>
 
 <script>
 export default {
-  name: "NoOrderChef",
+  name: "NoServiceOrder",
+  props: ["type"],
+  data() {
+    return {
+      icon: "",
+    };
+  },
+  created() {
+    if (this.type == "chef") {
+      this.icon = "noOrderChef";
+    } else if (this.type == "maid") {
+      this.icon = "noOrderMaid";
+    }
+  },
 };
 </script>
 
@@ -19,10 +32,10 @@ export default {
   align-items: center;
   text-align: center;
   align-self: center;
-  margin: 150px;
+  margin: 100px;
 }
 img {
-  width: 220px;
+  width: 180px;
 }
 h2 {
   margin: 20px 0 5px 0;

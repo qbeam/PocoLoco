@@ -10,9 +10,8 @@
         @click="goToAddOrder()"
       />
     </div>
+    <NoServiceOrder v-if="noOrder" :type="type" />
 
-    <NoOrderMaid v-if="noOrder == true && type == 1" />
-    <NoOrderChef v-if="noOrder == true && type == 2" />
     <table v-if="order_db.length !== 0" style="margin-top: 20px">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
@@ -84,8 +83,7 @@ import Popup from "../components/Popup.vue";
 import { useScreenWidth } from "../composables/useScreenWidth";
 import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
-import NoOrderChef from "../components/NoOrderChef";
-import NoOrderMaid from "../components/NoOrderMaid";
+import NoServiceOrder from "../components/ServicePages/NoServiceOrder";
 import axios from "axios";
 
 const colNames = ["Room Number", "Detail", "Amount"];
@@ -99,8 +97,8 @@ export default {
     AddButton,
     Popup,
     CustomSelect,
-    NoOrderChef,
-    NoOrderMaid,
+
+    NoServiceOrder,
   },
   setup() {
     const { width } = useScreenWidth();
@@ -168,7 +166,7 @@ export default {
     finishOrderChef(order) {
       if (
         confirm(
-          "Are you done " + order.serviceName + " of Room " + order.roomID + "?"
+          'Served "' + order.serviceName + '" to Room ' + order.roomID + "?"
         )
       ) {
         axios
@@ -197,13 +195,12 @@ export default {
         this.role == "Maid" ||
         (this.role === "Manager" && this.department === "Housekeeping")
       ) {
-        this.type = 1;
-      }
-      if (
+        this.type = "maid";
+      } else if (
         this.role == "Chef" ||
         (this.role === "Manager" && this.department === "Kitchen")
       ) {
-        this.type = 2;
+        this.type = "chef";
       }
     },
   },
@@ -397,6 +394,9 @@ td {
   .search-field {
     width: 150px;
     font-size: 16px;
+  }
+  table {
+    font-size: 14px;
   }
 }
 </style>

@@ -6,7 +6,10 @@
     </h3>
     <div class="menu-bar">
       <div class="search-container">
-        <i class="fa fa-search fa-1x"></i>
+        <i
+          class="fa fa-search fa-1x"
+          :style="{ position: 'absolute', zIndex: 5, marginLeft: '15px' }"
+        />
         <input
           v-model="search"
           class="search-field"
@@ -554,6 +557,7 @@ h4 {
 .search-container {
   display: flex;
   align-items: center;
+  position: relative;
 }
 .search-field {
   width: 225px;
@@ -686,11 +690,8 @@ td {
   .menu-bar {
     margin-top: 25px;
   }
-  th {
-    font-size: 14px;
-  }
-  td {
-    font-size: 14px;
+  table {
+    font-size: 10px;
   }
   .search-field {
     width: 150px;
@@ -717,6 +718,14 @@ td {
   .fa-pencil,
   .fa-trash {
     font-size: 20px;
+  }
+  .vl {
+    margin: 0 1px;
+  }
+  @media (max-width: 550px) {
+    table {
+      font-size: 8px;
+    }
   }
 }
 </style>
