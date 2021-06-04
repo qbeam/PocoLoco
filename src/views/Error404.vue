@@ -29,4 +29,12 @@ img {
 p {
   margin-top: 0;
 }
+@media (max-width: 550px) {
+  h1 {
+    font-size: 24px;
+  }
+  p {
+    font-size: 14px;
+  }
+}
 </style>

@@ -20,7 +20,7 @@
           onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
         />
         <h4 style="color: red">{{ message }}</h4>
-        <!-- Add Booking Detail -->
+
         <AddButton
           @click="
             $router.push({
@@ -29,10 +29,8 @@
             })
           "
         ></AddButton>
-        <!-- <AddButton @click="goToAddBookingDetail()"></AddButton> -->
       </div>
 
-      <!-- Table -->
       <table
         v-bind:style="bookingDetail_db.length !== 0 ? {} : { display: 'none' }"
       >
@@ -52,16 +50,12 @@
           :value="detail"
           class="row"
         >
-          <!-- BookingDetail ID -->
           <td>{{ detail.bookingDetailID }}</td>
 
-          <!-- Room Number -->
           <td>{{ detail.roomID }}</td>
 
-          <!-- Room Type -->
           <td>{{ detail.roomType }}</td>
 
-          <!-- Select Button -->
           <td>
             <div class="manage">
               <button
@@ -242,11 +236,14 @@ h3 {
   font-size: 24px;
   padding-bottom: 15px;
 }
+h4 {
+  font-size: 16px;
+}
 .input-group {
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  align-items: center;
 }
 input {
   width: 250px;
@@ -339,6 +336,12 @@ i:hover {
     margin: 0 10px 0 5px;
     align-self: center;
     padding-left: 10px;
+  }
+  h3 {
+    font-size: 20px;
+  }
+  h4 {
+    font-size: 14px;
   }
 }
 input[type="number"] {

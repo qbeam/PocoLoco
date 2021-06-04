@@ -5,11 +5,11 @@
       <p class="countQuery">({{ countRow }})</p>
     </h3>
     <div class="menu-bar">
-      <div>
-        <span class="icon-wrap">
-          <i class="fa fa-search fa-1x"></i>
-        </span>
-
+      <div class="search-container">
+        <i
+          class="fa fa-search fa-1x"
+          :style="{ position: 'absolute', zIndex: 5, marginLeft: '15px' }"
+        />
         <input
           v-model="search"
           class="search-field"
@@ -570,10 +570,16 @@ h4 {
   font-size: 20px;
   margin-bottom: 0;
 }
-.icon-wrap {
-  position: absolute;
-  z-index: 0;
-  padding: 5px 20px;
+.menu-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
 }
 .search-field {
   width: 225px;
@@ -589,11 +595,7 @@ h4 {
 i {
   color: #5f5f5f;
 }
-.menu-bar {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-}
+
 table {
   width: 100%;
   max-width: 1000;
@@ -611,7 +613,8 @@ table {
   justify-content: center;
 }
 .fa-pencil:hover,
-.fa-search:hover {
+.fa-search:hover,
+.fa-trash:hover {
   color: var(--primary-blue);
 }
 .manage-button {
@@ -715,7 +718,7 @@ td {
   flex-direction: row;
 }
 .view-item {
-  width: 45%;
+  width: 50%;
 }
 *:focus {
   outline: 0;
@@ -746,8 +749,16 @@ td {
   input {
     width: 180px;
   }
+  .fa-pencil,
+  .fa-search,
+  .fa-trash {
+    font-size: 22px;
+  }
 }
 @media (max-width: 700px) {
+  h3 {
+    font-size: 44px;
+  }
   .search-field {
     width: 150px;
     font-size: 16px;
@@ -766,6 +777,17 @@ td {
     height: 35px;
     margin: 10px 15px 0 0;
     font-size: 14px;
+  }
+  table {
+    font-size: 14px;
+  }
+  .fa-pencil,
+  .fa-search,
+  .fa-trash {
+    font-size: 18px;
+  }
+  .vl {
+    margin: 0;
   }
 }
 </style>

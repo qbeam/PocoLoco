@@ -6,11 +6,11 @@
     </h3>
 
     <div class="menu-bar">
-      <div>
-        <span class="icon-wrap">
-          <i class="fa fa-search fa-1x"></i>
-        </span>
-
+      <div class="search-container">
+        <i
+          class="fa fa-search fa-1x"
+          :style="{ position: 'absolute', zIndex: 5, marginLeft: '15px' }"
+        />
         <input
           v-model="form.search"
           class="search-field"
@@ -60,11 +60,11 @@
         :key="i"
         class="row"
       >
-        <td>{{ booking.bookingID }}</td>
-        <td>{{ booking.customerName }}</td>
-        <td>{{ booking.phone }}</td>
-        <td>{{ booking.email }}</td>
-        <td>
+        <td :style="{ width: '20%' }">{{ booking.bookingID }}</td>
+        <td :style="{ width: '30%' }">{{ booking.customerName }}</td>
+        <td :style="{ width: '20%' }">{{ booking.phone }}</td>
+        <td :style="{ width: '25%' }">{{ booking.email }}</td>
+        <td :style="{ width: '5%' }">
           <div class="manage">
             <button class="manage-button" @click="getRecord(booking)">
               <i class="fa fa-search fa-2x"></i>
@@ -585,10 +585,10 @@ h3 {
   display: inline-block;
   font-size: 25px;
 }
-.icon-wrap {
-  position: absolute;
-  z-index: 0;
-  padding: 5px 20px;
+.search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
 }
 .search-field {
   width: 225px;
@@ -609,11 +609,11 @@ i {
   width: 100%;
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 table {
   width: 100%;
-  max-width: 1000;
-  /* margin-top: 50px; */
+  max-width: 1000px;
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;
@@ -782,6 +782,12 @@ td {
 @media (max-width: 700px) {
   .search-field {
     width: 150px;
+    font-size: 16px;
+  }
+  table {
+    font-size: 14px;
+  }
+  .fa-search {
     font-size: 16px;
   }
 }

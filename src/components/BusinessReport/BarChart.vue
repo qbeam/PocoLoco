@@ -204,7 +204,13 @@ export default {
             if (this.type !== "room") {
               this.setMonthSeries(res.data);
             } else {
-              this.setRoomSeries(res.data);
+              if (res.data != null) {
+                this.setRoomSeries(res.data);
+              } else {
+                this.series = [
+                  { name: this.type, data: [null, null, null, null] },
+                ];
+              }
             }
           }.bind(this)
         );

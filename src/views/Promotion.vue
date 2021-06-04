@@ -5,11 +5,8 @@
       <p class="countQuery">({{ countRow }})</p>
     </h3>
     <div class="menu-bar">
-      <div>
-        <span class="icon-wrap">
-          <i class="fa fa-search fa-1x"></i>
-        </span>
-
+      <div class="search-container">
+        <i class="fa fa-search fa-1x"></i>
         <input
           v-model="search"
           class="search-field"
@@ -24,18 +21,14 @@
         :style="{ marginRight: '20px' }"
         @selection="selectionFilter"
       />
-      <DefaultButton
-        @click="searchData()"
-        type="small"
-        :style="width < 650 ? { width: '70px' } : {}"
-      >
+      <DefaultButton @click="searchData()" type="small">
         Search
       </DefaultButton>
       <AddButton
         :style="
           width < 800
-            ? { position: 'fixed', right: '20px', top: '80px' }
-            : { position: 'fixed', right: '60px', top: '170px' }
+            ? { position: 'fixed', right: '20px', top: '50px' }
+            : { position: 'fixed', right: '60px', top: '150px' }
         "
         @click="goToAddPromotion()"
       />
@@ -309,7 +302,6 @@ export default {
         mask: "YYYY-MM-DD",
       },
       role: "",
-    
     };
   },
   created() {
@@ -553,10 +545,15 @@ h4 {
   font-size: 20px;
   margin-bottom: 5px;
 }
-.icon-wrap {
-  position: absolute;
-  z-index: 0;
-  padding: 5px 20px;
+.menu-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.search-container {
+  display: flex;
+  align-items: center;
 }
 .search-field {
   width: 225px;
@@ -569,18 +566,19 @@ h4 {
   border-radius: 50px;
   margin-right: 20px;
 }
+.fa-search {
+  z-index: 5;
+  position: absolute;
+  margin-left: 15px;
+}
 i {
   color: #5f5f5f;
 }
-.menu-bar {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-}
+
 table {
   width: 100%;
   max-width: 1000;
-  margin-top: 50px;
+  margin-top: 30px;
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;
@@ -685,6 +683,9 @@ td {
   }
 }
 @media (max-width: 700px) {
+  .menu-bar {
+    margin-top: 25px;
+  }
   th {
     font-size: 14px;
   }

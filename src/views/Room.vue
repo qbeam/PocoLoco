@@ -5,11 +5,8 @@
       <p class="countQuery">({{ countRow }})</p>
     </h3>
     <div class="menu-bar">
-      <div>
-        <span class="icon-wrap">
-          <i class="fa fa-search fa-1x"></i>
-        </span>
-
+      <div class="search-container">
+        <i class="fa fa-search fa-1x"></i>
         <input
           v-model="search"
           class="search-field"
@@ -21,15 +18,11 @@
       <CustomSelect
         type="Filter"
         :options="selectOption"
-        :style="{ marginRight: '20px' }"
+        :style="{ margin: '0 20px 20px 0' }"
         @selection="selectionFilter"
       />
 
-      <DefaultButton
-        @click="searchData"
-        type="small"
-        :style="width < 650 ? { width: '70px' } : {}"
-      >
+      <DefaultButton @click="searchData" type="small">
         Search
       </DefaultButton>
     </div>
@@ -48,7 +41,9 @@
           </div>
         </th>
 
-        <th v-if="role == 'Owner' || role == 'Admin' || role == 'Manager'">Edit</th>
+        <th v-if="role == 'Owner' || role == 'Admin' || role == 'Manager'">
+          Edit
+        </th>
       </tr>
 
       <tr
@@ -354,11 +349,23 @@ h4 {
   font-size: 20px;
   margin-bottom: 5px;
 }
-.icon-wrap {
-  position: absolute;
-  z-index: 0;
-  padding: 5px 20px;
+.search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
 }
+.menu-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.fa-search {
+  margin-left: 15px;
+  position: absolute;
+  z-index: 5;
+}
+
 .search-field {
   width: 225px;
   height: 30px;
@@ -373,15 +380,11 @@ h4 {
 i {
   color: #5f5f5f;
 }
-.menu-bar {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-}
+
 table {
   width: 100%;
   max-width: 1000;
-  margin-top: 50px;
+  margin-top: 30px;
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;
