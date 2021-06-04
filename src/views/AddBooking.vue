@@ -134,7 +134,11 @@ export default {
   },
 
   created() {
-    this.customerID = this.$route.params.customerID;
+    if (this.$route.params.customerID != undefined) {
+      this.customerID = this.$route.params.customerID;
+    } else {
+      this.customerID = "";
+    }
     this.getBookingID();
   },
 
@@ -211,8 +215,8 @@ export default {
               } else {
                 this.message = res.data.message;
               }
-
               this.resetData();
+              this.backToBooking();
             }.bind(this)
           );
       }

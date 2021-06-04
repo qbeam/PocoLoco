@@ -18,7 +18,12 @@
         <div class="input-group">
           <!-- Guest's First Name -->
           <div>
-            <h4>Guest's First Name</h4>
+            <div v-if="firstNameError">
+              <h4>Guest's First Name</h4>
+            </div>
+            <div v-else>
+              <h4 style="color:red">Guest's First Name</h4>
+            </div>
             <input
               v-model="details.guestFirstName"
               @change="validate"
@@ -29,7 +34,12 @@
 
           <!-- Guest's Last Name -->
           <div>
-            <h4>Guest's Last Name</h4>
+            <div v-if="lastNameError">
+              <h4>Guest's Last Name</h4>
+            </div>
+            <div v-else>
+              <h4 style="color:red">Guest's Last Name</h4>
+            </div>
             <input
               v-model="details.guestLastName"
               @change="validate"
@@ -41,7 +51,13 @@
 
         <!-- Room Type -->
         <div>
-          <h4>Room Type</h4>
+          <div v-if="roomTypeError">
+            <h4>Room Type</h4>
+          </div>
+          <div v-else>
+            <h4 style="color:red">Room Type</h4>
+          </div>
+
           <select v-model="details.roomType" @change="validate">
             <option value="" disabled selected>Select</option>
             <option
@@ -57,7 +73,12 @@
         <!-- Check In Date -->
         <div class="input-group">
           <div>
-            <h4>Check In Date</h4>
+            <div v-if="inDateError">
+              <h4>Check In Date</h4>
+            </div>
+            <div v-else>
+              <h4 style="color:red">Check In Date</h4>
+            </div>
             <div class="flex x-full">
               <v-date-picker
                 v-model="details.checkIn"
@@ -83,7 +104,12 @@
 
           <!-- Check Out Date -->
           <div>
-            <h4>Check Out Date</h4>
+            <div v-if="outDateError">
+              <h4>Check Out Date</h4>
+            </div>
+            <div v-else>
+              <h4 style="color:red">Check Out Date</h4>
+            </div>
             <div class="flex x-full">
               <v-date-picker
                 v-model="details.checkOut"
@@ -135,7 +161,6 @@
 
           <!-- Select Button -->
           <td>
-           
             <input
               type="checkbox"
               v-model="details.roomNumber"
@@ -221,6 +246,12 @@ export default {
         type: "string",
         mask: "YYYY-MM-DD",
       },
+
+      firstNameError: true,
+      lastNameError: true,
+      roomTypeError: true,
+      inDateError: true,
+      outDateError: true,
     };
   },
 
@@ -274,44 +305,94 @@ export default {
     },
 
     getRoomNumber() {
-      axios
-        .post("http://localhost:8080/PocoLoco_db/api_addBookingDetail.php", {
-          action: "getRoomNumber",
-          roomType: this.details.roomType,
-          checkIn: this.details.checkIn,
-          checkOut: this.details.checkOut,
-        })
-        .then(
-          function(res) {
-            this.roomDB = res.data;
-          }.bind(this)
-        );
+      if (this.details.checkIn > this.details.checkOut) {
+        alert("Please check your date again");
+      } else {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_addBookingDetail.php", {
+            action: "getRoomNumber",
+            roomType: this.details.roomType,
+            checkIn: this.details.checkIn,
+            checkOut: this.details.checkOut,
+          })
+          .then(
+            function(res) {
+              this.roomDB = res.data;
+            }.bind(this)
+          );
+      }
     },
 
-    addBookingDetail(e) {
-      e.preventDefault();
-      axios
-        .post("http://localhost:8080/PocoLoco_db/api_addBookingDetail.php", {
-          action: "addBookingDetail",
-          bookingID: this.details.bookingID,
-          guestFirstName: this.details.guestFirstName,
-          guestLastName: this.details.guestLastName,
-          roomNumber: this.details.roomNumber,
-          checkIn: this.details.checkIn,
-          checkOut: this.details.checkOut,
-          roomType: this.details.roomType,
-        })
-        .then(
-          function(res) {
-            if (res.data.success == true) {
-              alert("Saved Successful");
-              this.$router.push({
-                name: "AddBooking",
-                params: { bookingID: this.$bookingID },
-              });
-            }
-          }.bind(this)
-        );
+    addBookingDetail() {
+      if (this.roomNumber == "") {
+        alert("Please choose room number");
+      }
+      this.validateCheck();
+      if (this.check) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_addBookingDetail.php", {
+            action: "addBookingDetail",
+            bookingID: this.details.bookingID,
+            guestFirstName: this.details.guestFirstName,
+            guestLastName: this.details.guestLastName,
+            roomNumber: this.details.roomNumber,
+            checkIn: this.details.checkIn,
+            checkOut: this.details.checkOut,
+            roomType: this.details.roomType,
+          })
+          .then(
+            function(res) {
+              if (res.data.success == true) {
+                alert("Saved Successful");
+                this.$router.push({
+                  name: "AddBooking",
+                  params: { customerID: this.customerID },
+                });
+              }
+            }.bind(this)
+          );
+      }
+    },
+
+    validateCheck() {
+      this.check =
+        this.details.guestFirstName != "" &&
+        this.details.guestLastName != "" &&
+        this.details.roomNumber != "" &&
+        this.details.roomType != "" &&
+        this.details.checkIn != "" &&
+        this.details.checkOut != "";
+
+      if (this.details.guestFirstName == "") {
+        this.firstNameError = false;
+      }
+      if (this.details.guestLastName == "") {
+        this.lastNameError = false;
+      }
+      if (this.details.roomType == "") {
+        this.roomTypeError = false;
+      }
+      if (this.details.checkIn == "") {
+        this.inDateError = false;
+      }
+      if (this.details.checkOut == "") {
+        this.outDateError = false;
+      }
+      if (this.details.guestFirstName != "") {
+        this.firstNameError = true;
+      }
+      if (this.details.guestLastName != "") {
+        this.lastNameError = true;
+      }
+      if (this.details.roomType != "") {
+        this.roomTypeError = true;
+      }
+      if (this.details.checkIn != "") {
+        this.inDateError = true;
+      }
+      if (this.details.checkOut != "") {
+        this.outDateError = true;
+      }
     },
   },
 };

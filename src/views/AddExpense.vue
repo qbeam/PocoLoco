@@ -286,7 +286,7 @@ export default {
       }
     },
 
-    resetData(e) {
+    resetData() {
       this.form.roomNumber = "";
       this.form.detail = "";
       this.form.expense = "";
