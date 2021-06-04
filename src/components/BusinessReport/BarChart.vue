@@ -270,9 +270,4 @@ p {
   font-size: 16px;
   color: var(--grey-text);
 }
-/*@media (max-width: 750px) {
-    .chart-container {
-      margin: 5px auto;
-    }
-  }*/
 </style>
