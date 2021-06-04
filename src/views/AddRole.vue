@@ -112,13 +112,13 @@
 
         <!-- Bonus Rate -->
         <div v-if="bonusRateError">
-          <h4>Bonus Rate</h4>
+          <h4>% Bonus Rate</h4>
           <input
             type="number"
             :style="{ width: '150px' }"
             v-model="details.bonusRate"
             onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
-            placeholder="0.4"
+            placeholder="0 - 100"
             step="0.01"
             min="0"
             oninvalid="alert('Please enter a valid Bonus Rate')"
@@ -127,13 +127,13 @@
         </div>
         <!-- Bonus Rate Error-->
         <div v-else>
-          <h4 style="color:red">Bonus Rate</h4>
+          <h4 style="color:red">% Bonus Rate</h4>
           <input
             type="number"
             :style="{ width: '150px' }"
             v-model="details.bonusRate"
             onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
-            placeholder="0.4"
+            placeholder="0 - 100"
             step="0.01"
             min="0"
             oninvalid="alert('Please enter a valid Bonus Rate')"
@@ -221,7 +221,14 @@ export default {
         this.bonusRateError = false;
       }
       if (this.details.bonusRate != "") {
-        this.bonusRateError = true;
+        var bonus = 0;
+        bonus = Number(this.details.bonusRate);
+        if (bonus < 0 || bonus > 100) {
+          // console.log(bonus);
+          this.bonusRateError = false;
+        } else {
+          this.bonusRateError = true;
+        }
       }
 
       this.check =
@@ -230,11 +237,8 @@ export default {
         this.salaryError &&
         this.bonusRateError;
     },
-    addRoleFn(e) {
-      e.preventDefault();
-
+    addRoleFn() {
       this.validateCheck();
-
       if (this.check) {
         axios
           .post("http://localhost:8080/PocoLoco_db/api_addRole.php", {
