@@ -8,7 +8,12 @@
       <div class="search-container">
         <i
           class="fa fa-search fa-1x"
-          :style="{ position: 'absolute', zIndex: 5, marginLeft: '15px' }"
+          :style="{
+            position: 'absolute',
+            zIndex: 5,
+            marginLeft: '15px',
+            pointerEvents: 'none',
+          }"
         />
         <input
           v-model="search"
@@ -132,48 +137,46 @@
     <Popup :visible="searchVisible" @popReturn="popReturn">
       <div class="popup-head1">Booking ID: {{ booking.bookingDetailID }}</div>
       <div class="popup-head">
-        <div>Name: {{ booking.firstName }} {{ booking.lastName }}</div>
-        <div>Phone: {{ booking.phone }}</div>
+        <div class="item">
+          Name: {{ booking.firstName }} {{ booking.lastName }}
+        </div>
+        <div class="item">Phone: {{ booking.phone }}</div>
+      </div>
+      <p :style="{ marginBottom: '30px' }">
+        <b>Booking Detail ID: </b>{{ booking.bookingDetailID }}
+      </p>
+      <p>
+        <b>Guest Name: </b>
+        {{ booking.guestFirstName }} {{ booking.guestLastName }}
+      </p>
+      <div class="group-row">
+        <div class="group-item">
+          <p><b>Room Number: </b>{{ booking.roomID }}</p>
+        </div>
+        <div>
+          <p><b>Room Type: </b>{{ booking.roomType }}</p>
+        </div>
       </div>
       <div class="group-row">
         <div class="group-item">
-          <p><b>Booking Detail ID: </b>{{ booking.bookingDetailID }}</p>
-          <p>
-            <b>Guest Name: </b>{{ booking.guestFirstName }}
-            {{ booking.guestLastName }}
-          </p>
-          <p><b>Room Number: </b>{{ booking.roomID }}</p>
-          <p><b>Check IN: </b>{{ convertDate(booking.checkIn) }}</p>
+          <p><b>From: </b>{{ convertDate(booking.checkIn) }}</p>
+        </div>
+        <div>
+          <p><b>To: </b>{{ convertDate(booking.checkOut) }}</p>
+        </div>
+      </div>
+      <div class="group-row">
+        <div class="group-item">
           <p>
             <b>Status: </b>
             <i
-              v-if="booking.status == 'Check In'"
               class="fa fa-circle"
-              :style="{ color: '#24BA45' }"
-            />
-            <i
-              v-if="booking.status == 'Reserve'"
-              class="fa fa-circle"
-              :style="{ color: '#FFC42E' }"
-            />
-            <i
-              v-if="booking.status == 'Cancel'"
-              class="fa fa-circle"
-              :style="{ color: '#FF0000' }"
-            />
-            <i
-              v-if="booking.status == 'Check Out'"
-              class="fa fa-circle"
-              :style="{ color: '#BDBDBD' }"
+              :style="{ color: getBgColor(booking.status) }"
             />
             {{ booking.status }}
           </p>
         </div>
-        <div class="group-item">
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p><b>Room Type: </b>{{ booking.roomType }}</p>
-          <p><b>Check OUT: </b>{{ convertDate(booking.checkOut) }}</p>
+        <div>
           <p><b>Total: </b>{{ booking.price }} Bath</p>
         </div>
       </div>
@@ -185,13 +188,14 @@
       @popReturn="popReturn"
       @submit="updateData"
     >
-      <div class="group-row">
+      <div class="group-row" :style="{ marginBottom: '25px' }">
         <div class="group-item">
           <p>Guest Name</p>
           <input
             type="text"
             v-model="form.guestFirstName"
             :placeholder="firstname"
+            :style="{ width: '80%' }"
           />
         </div>
 
@@ -201,11 +205,12 @@
             type="text"
             v-model="form.guestLastName"
             :placeholder="lastname"
+            :style="{ width: '80%' }"
           />
         </div>
       </div>
 
-      <div class="group-row">
+      <div class="group-row" :style="{ marginBottom: '25px' }">
         <div class="group-item">
           <p>Check In</p>
           <div class="flex x-full">
@@ -218,7 +223,11 @@
             >
               <template v-slot="{ inputValue, inputEvents }">
                 <div :style="{ display: 'flex', flexDirection: 'row' }">
-                  <input :value="inputValue" v-on="inputEvents" />
+                  <input
+                    :value="inputValue"
+                    v-on="inputEvents"
+                    :style="width < 700 ? { width: '120px' } : {}"
+                  />
                   <i class="fa fa-calendar fa-2x"></i>
                 </div>
               </template>
@@ -237,7 +246,11 @@
             >
               <template v-slot="{ inputValue, inputEvents }">
                 <div :style="{ display: 'flex', flexDirection: 'row' }">
-                  <input :value="inputValue" v-on="inputEvents" />
+                  <input
+                    :value="inputValue"
+                    v-on="inputEvents"
+                    :style="width < 700 ? { width: '120px' } : {}"
+                  />
                   <i class="fa fa-calendar fa-2x"></i>
                 </div>
               </template>
@@ -293,8 +306,8 @@ const selectOption = [
 ];
 
 const colNames = [
-  "Booking Detail ID",
-  "Room Number",
+  "Detail ID",
+  "Room No.",
   "Guest Name",
   "Check In",
   "Check Out",
@@ -315,7 +328,7 @@ export default {
   },
   setup() {
     const { width } = useScreenWidth();
-    const { height, tableRow } = useScreenHeight(420);
+    const { height, tableRow } = useScreenHeight(430);
     return { width, height, tableRow };
   },
   data() {
@@ -359,6 +372,17 @@ export default {
   },
 
   methods: {
+    getBgColor(status) {
+      if (status == "Check In") {
+        return "#24BA45";
+      } else if (status == "Reserve") {
+        return "#ffc42e";
+      } else if (status == "Cancel") {
+        return "#e11818";
+      } else if (status == "Check Out") {
+        return "#BDBDBD";
+      }
+    },
     pageReturn(page) {
       this.currentPage = page;
     },
@@ -540,6 +564,12 @@ h3 {
   display: inline-block;
   font-size: 25px;
 }
+.menu-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 .search-container {
   display: flex;
   align-items: center;
@@ -560,11 +590,6 @@ i {
   color: #5f5f5f;
 }
 
-.menu-bar {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-}
 table {
   width: 100%;
   max-width: 1000;
@@ -610,21 +635,25 @@ table {
 }
 .popup-head1 {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   padding-bottom: 15px;
   margin-bottom: 0px;
   font-weight: bold;
-  font-size: 30px;
+  font-size: 28px;
 }
 .popup-head {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   border-bottom: 3px solid var(--grey-highlight);
-  padding-bottom: 20px;
+  padding-bottom: 15px;
   margin-bottom: 25px;
   font-weight: bold;
+}
+.item {
+  display: flex;
+  margin: 5px 0;
+  font-size: 18px;
 }
 .status {
   position: absolute;
@@ -637,8 +666,8 @@ table {
 }
 .choices {
   display: flex;
-  justify-content: flex-start;
-  width: 550px;
+  justify-content: space-between;
+  width: 100%;
 }
 .container1,
 .container2,
@@ -650,7 +679,7 @@ table {
   cursor: pointer;
   user-select: none;
   background: none;
-  width: 150px;
+  width: 30%;
 }
 .container1 input,
 .container2 input,
@@ -755,9 +784,23 @@ td {
   table {
     font-size: 12px;
   }
+  .popup-head1 {
+    font-size: 20px;
+  }
+  .popup-head {
+    font-size: 14px;
+    flex-direction: column;
+  }
   .fa-search,
   .fa-pencil {
     font-size: 18px;
+  }
+  p {
+    font-size: 14px;
+  }
+  .choices {
+    flex-direction: column;
+    font-size: 14px;
   }
 }
 </style>
