@@ -120,7 +120,7 @@ export default {
   created() {
     this.month = new Date().getMonth() + 1;
     this.year = new Date().getFullYear();
-    this.searchRange = Mixins.methods.getPastYears(5);
+    this.searchRange = Mixins.methods.getPastYears(6);
     if (this.type == "service") {
       this.extractArray(this.topService);
       this.typeID = 1;

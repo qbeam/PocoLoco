@@ -22,11 +22,10 @@ export default {
     return {
       role: "",
       department: "",
-      employeeID:"",
-      profilePic:"",
+      employeeID: "",
+      profilePic: "",
       visible: false,
       user: "",
-
     };
   },
   methods: {
@@ -39,8 +38,6 @@ export default {
     this.department = this.$store.state.employeeDetail.department;
     this.role = localStorage.getItem("userRole");
     this.department = localStorage.getItem("userDepartment");
-    console.log("role",this.role);
-    console.log("dep",this.department);
     if (this.role === "Owner" || this.role === "Admin") {
       this.$router.push("/BusinessAnalysis");
     }

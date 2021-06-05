@@ -48,7 +48,8 @@ export default {
   },
   created() {
     this.year = new Date().getFullYear();
-    this.searchRange = Mixins.methods.getPastYears(5);
+    this.searchRange = Mixins.methods.getPastYears(6);
+    this.getAbsence();
   },
   methods: {
     graphRange(value) {

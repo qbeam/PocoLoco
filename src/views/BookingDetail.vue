@@ -379,6 +379,8 @@ export default {
   },
 
   created() {
+    this.past5Years = Mixins.methods.getPastYears(6);
+    this.year = this.past5Years[0];
     if (
       localStorage.getItem("userRole") !== "Owner" &&
       localStorage.getItem("userRole") !== "Admin" &&
@@ -389,8 +391,6 @@ export default {
     } else {
       this.getallBookingDetail();
     }
-    this.past5Years = Mixins.methods.getPastYears(5);
-    this.year = this.past5Years[0];
   },
 
   methods: {

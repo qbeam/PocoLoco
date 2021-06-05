@@ -91,7 +91,7 @@ import Mixins from "../../Mixins";
 const selectOption = [
   "Room No.",
   "Book Detail",
-  "Customer",
+  "Name",
   "Method",
   "Type",
   "Date",
@@ -100,7 +100,7 @@ const selectOption = [
 const colNames = [
   "Book Detail",
   "Room No.",
-  "Customer",
+  "Customer Name",
   "Method",
   "Type",
   "Amount",
@@ -140,9 +140,10 @@ export default {
   },
 
   created() {
+    
+    this.past5Years = Mixins.methods.getPastYears(6);
+    this.year = this.past5Years[0];
     this.getallPayment();
-    this.past5Years = Mixins.methods.getPastYears(5);
-    this.year = this.past5Years[0]; // set default selected year to current year
   },
 
   methods: {

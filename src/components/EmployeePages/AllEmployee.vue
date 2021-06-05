@@ -259,8 +259,8 @@ import axios from "axios";
 
 const colNames = ["ID", "Name", "Role", "Dept", "Salary", "Status"];
 const selectOption = [
-  "Employee ID",
   "Name",
+  "ID",
   "Role",
   "Department",
   "Salary",
@@ -312,7 +312,7 @@ export default {
       workStatus,
       employee: [],
       sort: "employeeID",
-      filter: "employeeID",
+      filter: "em_name",
       search: "",
       employee_db: "",
       department_db: "",
@@ -370,9 +370,9 @@ export default {
     },
     setSort(click) {
       if (click == 0) {
-        this.sort = "employeeID";
-      } else if (click == 1) {
         this.sort = "em_name";
+      } else if (click == 1) {
+        this.sort = "employeeID";
       } else if (click == 2) {
         this.sort = "roleName";
       } else if (click == 3) {
@@ -534,10 +534,10 @@ export default {
 
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "employeeID";
+        this.filter = "em_name";
       }
       if (value === selectOption[1]) {
-        this.filter = "em_name";
+        this.filter = "employeeID";
       }
       if (value === selectOption[2]) {
         this.filter = "roleName";

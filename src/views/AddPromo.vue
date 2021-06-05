@@ -225,6 +225,7 @@
           type="number"
           onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
           name="discount"
+          placeholder="0 - 100"
           v-model="details.discount"
           :style="{ width: '200px' }"
         />
@@ -232,11 +233,12 @@
 
       <!-- Discount Error -->
       <div v-else>
-        <h4 style="color:red">Discount</h4>
+        <h4 style="color:red">% Discount (0 - 100)</h4>
         <input
           type="number"
           onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
           name="discount"
+          placeholder="0 - 100"
           v-model="details.discount"
           :style="{ width: '200px' }"
         />
@@ -373,14 +375,28 @@ export default {
         this.endDateError = false;
       }
       if (this.details.endDate != "") {
-        this.endDateError = true;
+        if (
+          this.details.startDate >= this.details.endDate ||
+          this.details.startDate == this.details.endDate
+        ) {
+          alert("Please check your date again");
+          this.startDateError = false;
+          this.endDateError = false;
+        } else {
+          this.startDateError = true;
+          this.endDateError = true;
+        }
       }
       if (this.details.discount == "") {
         this.discountError = false;
       }
       if (this.details.discount != "") {
-        
-        this.discountError = true;
+        this.details.discount = Number(this.details.discount);
+        if (this.details.discount >= 0 && this.details.discount < 100) {
+          this.discountError = true;
+        } else {
+          this.discountError = false;
+        }
       }
 
       this.check =
@@ -394,38 +410,30 @@ export default {
 
     addPromotionFn() {
       this.validatecCheck();
-      if (
-        this.details.startDate >= this.details.endDate ||
-        this.details.startDate == this.details.endDate
-      ) {
-        alert("Please check your date again");
-        this.startDateError = false;
-        this.endDateError = false;
-      } else {
-        if (this.check) {
-          axios
-            .post("http://localhost:8080/PocoLoco_db/api_addPromo.php", {
-              action: "addPromotion",
-              seasonID: this.details.seasonID,
-              roomTypeID: this.details.roomTypeID,
-              promotionName: this.details.promotionName,
-              startDate: this.details.startDate,
-              endDate: this.details.endDate,
-              discount: this.details.discount,
-            })
-            .then(
-              function(res) {
-                console.log(res.date);
-                if (res.data.success == true) {
-                  alert(res.data.message);
-                  this.backToPromo();
-                  this.resetData();
-                } else {
-                  alert(res.data.message);
-                }
-              }.bind(this)
-            );
-        }
+
+      if (this.check) {
+        axios
+          .post("http://localhost:8080/PocoLoco_db/api_addPromo.php", {
+            action: "addPromotion",
+            seasonID: this.details.seasonID,
+            roomTypeID: this.details.roomTypeID,
+            promotionName: this.details.promotionName,
+            startDate: this.details.startDate,
+            endDate: this.details.endDate,
+            discount: this.details.discount,
+          })
+          .then(
+            function(res) {
+              console.log(res.date);
+              if (res.data.success == true) {
+                alert(res.data.message);
+                this.backToPromo();
+                this.resetData();
+              } else {
+                alert(res.data.message);
+              }
+            }.bind(this)
+          );
       }
     },
 

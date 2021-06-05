@@ -11,7 +11,8 @@
       <input
         v-model="employeeID"
         class="login-input"
-        type="text"
+        type="number"
+        onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107 && event.keyCode !== 110 && event.keyCode !== 190"
         placeholder="Username"
       />
     </div>
@@ -59,6 +60,11 @@ export default {
     };
   },
 
+  created() {
+    if (localStorage.getItem("user") != null) {
+      this.$router.push({ name: "Home" });
+    }
+  },
   methods: {
     goLogin() {
       axios
@@ -69,7 +75,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res);
             if (res.data.login == 1) {
               localStorage.setItem("user", res.data.employeeID);
               localStorage.setItem("userRole", res.data.roleName);
@@ -89,15 +94,6 @@ export default {
                 this.$router.push({ name: "Home" });
               }
 
-              // this.$router.push({
-              //   name: "Home",
-              //   params: {
-              //     employeeID: res.data.employeeID,
-              //     roleName: res.data.roleName,
-              //     departmentName: res.data.departmentName,
-              //     gender: res.data.gender,
-              //   },
-              // });
             } else {
               alert("The username or password is incorrect");
             }
@@ -165,4 +161,11 @@ h1 {
     font-size: 30px;
   }
 }
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+} 
 </style>

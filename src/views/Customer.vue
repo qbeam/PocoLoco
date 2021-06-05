@@ -215,7 +215,7 @@ import SearchError from "../components/SearchError";
 import SortingArrow from "../components/SortingArrow";
 import axios from "axios";
 
-const selectOption = ["Name","ID","Rank", "No. of visit"];
+const selectOption = ["Name", "ID", "Rank", "No. of visit"];
 const colNames = ["Rank", "Customer ID", "Name", "Phone", "Number of visit"];
 
 export default {
@@ -246,7 +246,7 @@ export default {
 
       search: "",
       sort: "rank",
-      filter: "rank",
+      filter: "name",
       customer_db: "",
       check: false,
       closeTable: false,

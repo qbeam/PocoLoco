@@ -172,7 +172,7 @@ export default {
       this.getExpense();
     },
     getYear() {
-      this.searchRange = Mixins.methods.getPastYears(5);
+      this.searchRange = Mixins.methods.getPastYears(6);
       this.getEarning();
       this.getExpense();
     },

@@ -313,7 +313,7 @@ export default {
       search: "",
       sortDirection: "up",
       sort: "expenseDate",
-      filter: "em_firstName",
+      filter: "em_firstname",
       expenseDetail_db: "",
       countRow: "",
       year: "",
@@ -340,6 +340,8 @@ export default {
     };
   },
   created() {
+    this.past5Years = Mixins.methods.getPastYears(6);
+    this.year = this.past5Years[0];
     if (
       localStorage.getItem("userRole") !== "Owner" &&
       localStorage.getItem("userRole") !== "Admin"
@@ -349,8 +351,6 @@ export default {
     } else {
       this.getAllExpense();
     }
-    this.past5Years = Mixins.methods.getPastYears(5);
-    this.year = this.past5Years[0];
   },
 
   methods: {
@@ -466,7 +466,6 @@ export default {
           })
           .then(
             function(res) {
-              console.log(this.form.type);
               if (res.data.success == true) {
                 alert(res.data.message);
                 this.resetData();

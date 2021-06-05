@@ -182,7 +182,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res.data);
             this.stampRecord = res.data;
           }.bind(this)
         );

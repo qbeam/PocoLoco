@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     getYear() {
-      this.searchRange = Mixins.methods.getPastYears(5);
+      this.searchRange = Mixins.methods.getPastYears(6);
       this.displayRange = this.searchRange[0];
     },
     graphRange(value) {

@@ -188,7 +188,6 @@ export default {
 
   created() {
     this.getChargeRate();
-    console.log("re");
   },
 
   methods: {
@@ -196,7 +195,6 @@ export default {
       this.currentPage = page;
     },
     selectMethod(value) {
-      console.log(value);
       if (value === paymentMethods[0]) {
         this.method = 1;
       }

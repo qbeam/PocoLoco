@@ -394,6 +394,8 @@ export default {
   },
 
   created() {
+    this.past5Years = Mixins.methods.getPastYears(6);
+    this.year = this.past5Years[0];
     if (
       localStorage.getItem("userRole") !== "Owner" &&
       localStorage.getItem("userRole") !== "Admin" &&
@@ -404,8 +406,6 @@ export default {
     } else {
       this.getAllBooking();
     }
-    this.past5Years = Mixins.methods.getPastYears(5);
-    this.selectedYear = this.past5Years[0];
   },
 
   methods: {
@@ -427,7 +427,8 @@ export default {
       this.searchData();
     },
     setSelectedYear(year) {
-      this.selectedYear = year;
+      this.year = year;
+      this.searchData();
     },
     sortReturn(direction) {
       this.sortDirection = direction;
@@ -486,7 +487,7 @@ export default {
           filter: this.filter,
           action: "SearchData",
           direction: this.sortDirection,
-          year: 2021,
+          year: this.year,
         })
         .then(
           function(res) {
@@ -580,7 +581,7 @@ export default {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
           action: "getAll",
-          year: 2021,
+          year: this.year,
         })
         .then(
           function(res) {

@@ -176,7 +176,7 @@ export default {
       this.getRecord();
     },
     setUpGraph() {
-      this.searchRange = Mixins.methods.getPastYears(5); // set year choice up to past 5 years
+      this.searchRange = Mixins.methods.getPastYears(6); // set year choice up to past 5 years
       this.getRecord(); // get record for graph
     },
     getAction(type) {

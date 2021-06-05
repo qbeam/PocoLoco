@@ -38,7 +38,8 @@
         Search
       </DefaultButton>
     </div>
-    <AddButton v-if="role !== 'Chef' && role !== 'Maid'"
+    <AddButton
+      v-if="role !== 'Chef' && role !== 'Maid'"
       @click="goToAddService()"
       :style="{ position: 'absolute', right: '2%' }"
     />
@@ -356,13 +357,13 @@ export default {
       }
     },
     selectionFilterOwner(value) {
-      if (value === selectOption[0]) {
+      if (value === selectOptionOwner[0]) {
         this.filter = "name";
       }
-      if (value === selectOption[1]) {
+      if (value === selectOptionOwner[1]) {
         this.filter = "type";
       }
-      if (value === selectOption[2]) {
+      if (value === selectOptionOwner[2]) {
         this.filter = "servicePrice";
       }
     },

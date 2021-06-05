@@ -295,16 +295,9 @@ import axios from "axios";
 
 const menus = ["All Employees", "All Employees Roles"];
 
-const selectOption = [
-  "Employee ID",
-  "Name",
-  "Role",
-  "Salary",
-  "Status",
-  "Duration",
-];
+const selectOption = ["Name", "ID", "Role", "Salary", "Status", "Duration"];
 
-const colNames = ["Employee ID", "Name", "Role", "Salary", "Status"];
+const colNames = ["Name", "ID", "Role", "Salary", "Status"];
 const selectShift = ["05:00 - 13:00", "13:00 - 21:00", "21:00 - 05:00"];
 const workStatus = ["Employed", "Suspended", "Quited"];
 
@@ -345,7 +338,7 @@ export default {
       selectOption,
       selectShift,
       sort: "employeeID",
-      filter: "employeeID",
+      filter: "em_name",
       search: "",
       employee_db: "",
       department_db: "",
@@ -569,10 +562,10 @@ export default {
 
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "employeeID";
+        this.filter = "em_name";
       }
       if (value === selectOption[1]) {
-        this.filter = "em_name";
+        this.filter = "employeeID";
       }
       if (value === selectOption[2]) {
         this.filter = "roleName";

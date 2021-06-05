@@ -208,9 +208,10 @@ export default {
   created() {
     this.role = localStorage.getItem("userRole");
     this.departmentName = localStorage.getItem("userDepartment");
-    this.getServiceActivity();
-    this.past5Years = Mixins.methods.getPastYears(5);
+
+    this.past5Years = Mixins.methods.getPastYears(6);
     this.year = this.past5Years[0];
+    this.getServiceActivity();
   },
   methods: {
     pageReturn(page) {
