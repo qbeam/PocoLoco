@@ -25,6 +25,7 @@
 <script>
 import CustomSelect from "../CustomSelect";
 import axios from "axios";
+import Mixins from "../../Mixins";
 export default {
   name: "PieChart",
   props: ["type"],
@@ -62,15 +63,6 @@ export default {
   },
 
   methods: {
-    getYear() {
-      const year = [];
-      var yearNow = this.year;
-      for (let i = 0; i < 6; i++) {
-        year.push(yearNow);
-        yearNow = yearNow - 1;
-      }
-      this.searchRange = year;
-    },
     graphRange(value) {
       this.year = value;
       this.getService();
@@ -128,7 +120,7 @@ export default {
   created() {
     this.month = new Date().getMonth() + 1;
     this.year = new Date().getFullYear();
-    this.getYear();
+    this.searchRange = Mixins.methods.getPastYears(5);
     if (this.type == "service") {
       this.extractArray(this.topService);
       this.typeID = 1;
@@ -169,8 +161,8 @@ export default {
   display: flex;
   margin: auto;
   justify-content: center;
-  }
-img{
+}
+img {
   width: 80%;
 }
 @media (max-width: 1200px) {

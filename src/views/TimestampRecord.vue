@@ -3,20 +3,26 @@
     <h3>Timestamp</h3>
     <div class="menu-bar">
       <div class="search-container">
-        <i class="fa fa-search fa-1x"></i>
+        <i
+          class="fa fa-search"
+          :style="{
+            position: 'absolute',
+            zIndex: 5,
+            marginLeft: '15px',
+          }"
+        />
         <input
           v-model="keyword"
           class="search-field"
           type="text"
           placeholder="search"
-          :style="{ marginBottom: '0' }"
         />
       </div>
       <div class="search-buttons">
         <CustomSelect
           type="Filter"
           :options="selectOption"
-          :style="{ margin: '0 20px 20px 0' }"
+          :style="{ marginRight: '20px' }"
           @selection="setSearchFilter"
         />
         <CustomSelect
@@ -32,6 +38,7 @@
     </div>
 
     <SearchError v-if="errorSearching" />
+
     <table v-if="stampRecord.length > 0 && !errorSearching">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
@@ -61,12 +68,18 @@
         <td :style="{ width: '35%' }">
           {{ record.em_firstname }} {{ record.em_lastname }}
         </td>
-        <td :style="{ width: '10%', textAlign: 'start' }">
+        <td
+          :style="
+            width > 750
+              ? { width: '10%', textAlign: 'start' }
+              : { width: '10%' }
+          "
+        >
           <i
             class="fa fa-circle"
             :style="{ color: getTagColor(record.type) }"
           />
-          {{ getStampType(record.type) }}
+          {{ record.type }}
         </td>
         <td :style="{ width: '15%', color: '#FF0000', fontWeight: 'bold' }">
           {{ record.late }}
@@ -83,7 +96,7 @@
         width <= 1000
           ? {
               position: 'fixed',
-              bottom: '50px',
+              bottom: '30px',
               margin: '0 auto',
               right: '0',
               left: '60px',
@@ -124,7 +137,7 @@ export default {
   },
   setup() {
     const { width } = useScreenWidth();
-    const { height, tableRow } = useScreenHeight(420);
+    const { height, tableRow } = useScreenHeight(430);
     return { width, height, tableRow };
   },
   created() {
@@ -135,7 +148,6 @@ export default {
       this.$router.push("/Home");
       alert("You don't have permission to access this page");
     } else {
-      this.getTodayDate();
       this.getTodayTimeStamp();
     }
     this.past5Years = Mixins.methods.getPastYears(5);
@@ -161,23 +173,16 @@ export default {
     };
   },
   methods: {
-    getTodayDate() {
-      var today = new Date();
-      var dd = String(today.getDate()).padStart(2, "0");
-      var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-      var yyyy = today.getFullYear();
-      today = yyyy + "-" + mm + "-" + dd;
-      this.todayDate = today;
-    },
     getTodayTimeStamp() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
           action: "getTodayTimeStamp",
-          today: this.todayDate,
+          today: Mixins.methods.getTodayDate(),
           year: 2021,
         })
         .then(
           function(res) {
+            console.log(res.data);
             this.stampRecord = res.data;
           }.bind(this)
         );
@@ -220,20 +225,12 @@ export default {
       this.currentPage = page;
     },
     getTagColor(type) {
-      if (type == "O") {
+      if (type == "Out") {
         return "#FF0000";
       } else {
         return "#24BA45";
       }
     },
-    getStampType(stamp) {
-      if (stamp === "I") {
-        return "IN";
-      } else if (stamp === "O") {
-        return "OUT";
-      }
-    },
-
     searchData() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
@@ -265,27 +262,6 @@ h3 {
   font-size: 48px;
   margin: 80px 0 35px 0;
 }
-.search-container {
-  display: flex;
-  align-items: center;
-}
-.search-field {
-  width: 225px;
-  height: 30px;
-  padding-left: 45px;
-  font-size: 16px;
-  outline: none;
-  z-index: 1;
-  border: none;
-  border-radius: 50px;
-  margin-right: 20px;
-}
-.fa-search {
-  color: #5f5f5f;
-  margin-left: 15px;
-  position: absolute;
-  z-index: 5;
-}
 .menu-bar {
   width: 100%;
   display: flex;
@@ -296,9 +272,26 @@ h3 {
   display: flex;
   align-items: center;
 }
+.search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.search-field {
+  width: 225px;
+  height: 30px;
+  padding-left: 45px;
+  font-size: 18px;
+  outline: none;
+  z-index: 1;
+  border: none;
+  border-radius: 50px;
+  margin-right: 20px;
+}
+
 table {
   width: 100%;
-  margin-top: 30px;
+  margin-top: 50px;
   border: 1px solid black;
   border-collapse: collapse;
   align-self: flex-start;
@@ -344,12 +337,11 @@ td {
   td {
     font-size: 14px;
   }
-  .search-field {
-    width: 250px;
-    font-size: 16px;
-  }
+
   h3 {
-    margin: 40px 0 25px 0;
+    font-size: 44px;
+    margin: 20px 0;
+    padding: 0;
   }
 
   p {
@@ -360,8 +352,17 @@ td {
     align-items: flex-start;
   }
   .search-buttons {
-    margin-top: 20px;
+    margin-top: 30px;
   }
+  .search-field {
+    width: 280px;
+    font-size: 16px;
+  }
+  .table-container {
+    height: 450px;
+  }
+}
+@media (max-width: 550px) {
   table {
     margin-top: 15px;
   }

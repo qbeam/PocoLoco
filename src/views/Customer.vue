@@ -8,7 +8,12 @@
       <div class="search-container">
         <i
           class="fa fa-search fa-1x"
-          :style="{ position: 'absolute', zIndex: 5, marginLeft: '15px' }"
+          :style="{
+            position: 'absolute',
+            zIndex: 5,
+            marginLeft: '15px',
+            pointerEvents: 'none',
+          }"
         />
 
         <input
@@ -43,7 +48,7 @@
     </div>
 
     <SearchError v-if="errorSearching" />
-    <table v-if="customer_db.length !== 0">
+    <table v-if="customer_db.length > 0">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
@@ -264,11 +269,14 @@ export default {
   },
 
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Receptionist") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
-    }
-    else {
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userDepartment") !== "Receptionist"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } else {
       this.getAllCustomer();
     }
   },
@@ -634,7 +642,9 @@ td {
     width: 125px;
   }
   h3 {
-    margin: 40px 0 20px 0;
+    font-size: 44px;
+    margin: 20px 0;
+    padding: 0;
   }
   h4 {
     font-size: 14px;

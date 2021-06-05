@@ -788,7 +788,7 @@ td {
 }
 @media (max-width: 700px) {
   h3 {
-    font-size: 44px;
+    font-size: 42px;
     margin: 20px 0;
     padding: 0;
   }

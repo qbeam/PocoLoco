@@ -36,17 +36,16 @@
         </div>
       </div>
     </div>
-    <img
-      class="error-img"
-      src="../../assets/search-icon.png"
-      v-if="errorSearching"
-    />
+    <div class="error-wrapper" v-if="errorSearching">
+      <img src="../../assets/search-icon.png" class="error-icon" />
+    </div>
   </div>
 </template>
 
 <script>
 import CustomSelect from "../CustomSelect";
 import axios from "axios";
+import Mixins from "../../Mixins";
 
 export default {
   name: "LateEmployee",
@@ -68,13 +67,7 @@ export default {
   },
   methods: {
     getYear() {
-      const year = [];
-      var yearNow = this.year;
-      for (let i = 0; i < 5; i++) {
-        year.push(yearNow);
-        yearNow = yearNow - 1;
-      }
-      this.searchRange = year;
+      this.searchRange = Mixins.methods.getPastYears(5);
       this.displayRange = this.searchRange[0];
     },
     graphRange(value) {
@@ -98,10 +91,10 @@ export default {
           }.bind(this)
         );
     },
-    getPercent(data){
+    getPercent(data) {
       const num = Number(data).toFixed(2);
       return num;
-    }
+    },
   },
 };
 </script>
@@ -121,14 +114,15 @@ export default {
   align-items: center;
   justify-content: center;
 }
-.error-img {
+.error-wrapper {
   display: flex;
   margin: auto;
   justify-content: center;
-  width: 42%;
-  height: 37%;
 }
-
+.error-icon {
+  width: 80%;
+  height: 100%;
+}
 .list {
   display: flex;
   flex-direction: column;
