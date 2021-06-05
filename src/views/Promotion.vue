@@ -416,6 +416,7 @@ export default {
       } else {
         this.searchSent = this.search;
       }
+
       axios
         .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
           action: "searchData",

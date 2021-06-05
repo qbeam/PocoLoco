@@ -231,6 +231,7 @@ export default {
         return "#24BA45";
       }
     },
+
     searchData() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
