@@ -302,11 +302,14 @@ export default {
   },
 
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userRole") !== "Manager") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
-    }
-    else {
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userRole") !== "Manager"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } else {
       this.getRoomType();
       this.getSeason();
     }
@@ -376,7 +379,8 @@ export default {
         this.discountError = false;
       }
       if (this.details.discount != "") {
-        this.discountError;
+        
+        this.discountError = true;
       }
 
       this.check =
@@ -388,32 +392,40 @@ export default {
         this.discountError;
     },
 
-    addPromotionFn(e) {
-      e.preventDefault();
-
+    addPromotionFn() {
       this.validatecCheck();
-      if (this.check) {
-        axios
-          .post("http://localhost:8080/PocoLoco_db/api_addPromo.php", {
-            action: "addPromotion",
-            seasonID: this.details.seasonID,
-            roomTypeID: this.details.roomTypeID,
-            promotionName: this.details.promotionName,
-            startDate: this.details.startDate,
-            endDate: this.details.endDate,
-            discount: this.details.discount,
-          })
-          .then(
-            function(res) {
-              if (res.data.success == true) {
-                alert(res.data.message);
-                this.backToPromo();
-                this.resetData();
-              } else {
-                alert(res.data.message);
-              }
-            }.bind(this)
-          );
+      if (
+        this.details.startDate >= this.details.endDate ||
+        this.details.startDate == this.details.endDate
+      ) {
+        alert("Please check your date again");
+        this.startDateError = false;
+        this.endDateError = false;
+      } else {
+        if (this.check) {
+          axios
+            .post("http://localhost:8080/PocoLoco_db/api_addPromo.php", {
+              action: "addPromotion",
+              seasonID: this.details.seasonID,
+              roomTypeID: this.details.roomTypeID,
+              promotionName: this.details.promotionName,
+              startDate: this.details.startDate,
+              endDate: this.details.endDate,
+              discount: this.details.discount,
+            })
+            .then(
+              function(res) {
+                console.log(res.date);
+                if (res.data.success == true) {
+                  alert(res.data.message);
+                  this.backToPromo();
+                  this.resetData();
+                } else {
+                  alert(res.data.message);
+                }
+              }.bind(this)
+            );
+        }
       }
     },
 

@@ -293,7 +293,7 @@ import SortingArrow from "../components/SortingArrow";
 import SearchError from "../components/SearchError";
 import axios from "axios";
 
-const selectOption = ["Date", "BookingID", "Name", "Phone", "Email"];
+const selectOption = ["Name", "Date", "BookingID", "Phone", "Email"];
 const colNames = ["Date", "Booking ID", "Customer Name", "Phone", "Email"];
 
 export default {
@@ -336,7 +336,7 @@ export default {
       statusC: false,
       statusI: false,
       sort: "bookingID",
-      filter: "date",
+      filter: "customerName",
       countRow: "",
       searchSent: "",
       year: "",
@@ -406,11 +406,11 @@ export default {
 
     setSort(click) {
       if (click == 0) {
-        this.sort = "date";
+        this.sort = "customerName";
       } else if (click == 1) {
         this.sort = "bookingID";
       } else if (click == 2) {
-        this.sort = "customerName";
+        this.sort = "date";
       } else if (click == 3) {
         this.sort = "phone";
       } else if (click == 4) {
@@ -474,13 +474,13 @@ export default {
 
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "date";
+        this.filter = "customerName";
       }
       if (value === selectOption[1]) {
-        this.filter = "bookingID";
+        this.filter = "date";
       }
       if (value === selectOption[2]) {
-        this.filter = "customerName";
+        this.filter = "bookingID";
       }
       if (value === selectOption[3]) {
         this.filter = "phone";

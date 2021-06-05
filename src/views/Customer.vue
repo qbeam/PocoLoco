@@ -210,7 +210,7 @@ import SearchError from "../components/SearchError";
 import SortingArrow from "../components/SortingArrow";
 import axios from "axios";
 
-const selectOption = ["Rank", "ID", "Name", "No. of visit"];
+const selectOption = ["Name","ID","Rank", "No. of visit"];
 const colNames = ["Rank", "Customer ID", "Name", "Phone", "Number of visit"];
 
 export default {
@@ -298,11 +298,11 @@ export default {
     },
     setSort(click) {
       if (click == 0) {
-        this.sort = "rank";
+        this.sort = "name";
       } else if (click == 1) {
         this.sort = "customerID";
       } else if (click == 2) {
-        this.sort = "firstName";
+        this.sort = "rank";
       } else if (click == 3) {
         this.sort = "phone";
       } else if (click == 4) {
@@ -312,13 +312,13 @@ export default {
 
     selectionFilter(value) {
       if (value === selectOption[0]) {
-        this.filter = "rank";
+        this.filter = "name";
       }
       if (value === selectOption[1]) {
         this.filter = "customerID";
       }
       if (value === selectOption[2]) {
-        this.filter = "firstName";
+        this.filter = "rank";
       }
       if (value === selectOption[3]) {
         this.filter = "numberVisit";
