@@ -342,7 +342,6 @@ export default {
   data() {
     return {
       past5Years: "",
-      selectedYear: "",
       currentPage: 1,
       visible: false,
       searchVisible: false,
@@ -391,7 +390,7 @@ export default {
       this.getallBookingDetail();
     }
     this.past5Years = Mixins.methods.getPastYears(5);
-    this.selectedYear = this.past5Years[0];
+    this.year = this.past5Years[0];
   },
 
   methods: {
@@ -446,7 +445,7 @@ export default {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_bookingDetail.php", {
           action: "getAll",
-          year: 2021,
+          year: this.year,
         })
         .then(
           function(res) {
@@ -469,7 +468,7 @@ export default {
           filter: this.filter,
           sort: this.sort,
           direction: this.sortDirection,
-          year: 2021,
+          year: this.year,
         })
         .then(
           function(res) {
@@ -567,7 +566,8 @@ export default {
       }
     },
     setSelectedYear(year) {
-      this.selectedYear = year;
+      this.year = year;
+      this.searchData();
     },
 
     convertDate(date) {

@@ -122,7 +122,6 @@ export default {
   data() {
     return {
       past5Years: null,
-      selectedYear: null, // selected year to search
       selectOption,
       sortDirection: "up",
       colNames,
@@ -143,7 +142,7 @@ export default {
   created() {
     this.getallPayment();
     this.past5Years = Mixins.methods.getPastYears(5);
-    this.selectedYear = this.past5Years[0]; // set default selected year to current year
+    this.year = this.past5Years[0]; // set default selected year to current year
   },
 
   methods: {
@@ -197,7 +196,8 @@ export default {
       }
     },
     setSelectedYear(year) {
-      this.searchYear = year;
+      this.year = year;
+      this.searchPayment();
     },
     goToCustomerReg() {
       this.$router.push("/CustomerReg");
@@ -213,7 +213,7 @@ export default {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_allPayment.php", {
           action: "getAll",
-          year: 2020,
+          year: this.year,
         })
         .then(
           function(res) {
@@ -236,7 +236,7 @@ export default {
           filter: this.filter,
           sort: this.sort,
           direction: this.sortDirection,
-          year: 2020,
+          year: this.year,
         })
         .then(
           function(res) {

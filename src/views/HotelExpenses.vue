@@ -302,7 +302,6 @@ export default {
   data() {
     return {
       past5Years: null,
-      selectedYear: null, // selected year to search
       selectOption,
       colNames,
       expenseType,
@@ -351,7 +350,7 @@ export default {
       this.getAllExpense();
     }
     this.past5Years = Mixins.methods.getPastYears(5);
-    this.selectedYear = this.past5Years[0];
+    this.year = this.past5Years[0];
   },
 
   methods: {
@@ -388,7 +387,8 @@ export default {
       }
     },
     setSelectedYear(year) {
-      this.searchYear = year;
+      this.year = year;
+      this.searchData();
     },
     getExpenseData(type, expense) {
       if (type === "view") {
@@ -431,7 +431,7 @@ export default {
           sort: this.sort,
           filter: this.filter,
           direction: this.sortDirection,
-          year: 2020,
+          year: this.year,
         })
         .then(
           function(res) {
@@ -495,7 +495,7 @@ export default {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_hotelExpense.php", {
           action: "getAll",
-          year: 2020,
+          year: this.year,
         })
         .then(
           function(res) {

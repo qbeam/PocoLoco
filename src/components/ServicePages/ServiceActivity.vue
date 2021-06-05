@@ -179,7 +179,6 @@ export default {
   data() {
     return {
       past5Years: "",
-      selectedYear: "",
       selectOption,
       colNames,
       currentPage: 1,
@@ -211,7 +210,7 @@ export default {
     this.departmentName = localStorage.getItem("userDepartment");
     this.getServiceActivity();
     this.past5Years = Mixins.methods.getPastYears(5);
-    this.selectedYear = this.past5Years[0];
+    this.year = this.past5Years[0];
   },
   methods: {
     pageReturn(page) {
@@ -256,7 +255,8 @@ export default {
       }
     },
     setSelectedYear(year) {
-      this.selectedYear = year;
+      this.year = year;
+      this.searchData();
     },
     // ORDER_DB (Popup)
     getServiceData(record) {
@@ -289,7 +289,7 @@ export default {
           action: "getServiceActivity",
           role: this.role,
           department: this.departmentName,
-          year: 2020,
+          year: this.year,
         })
         .then(
           function(res) {
@@ -316,7 +316,7 @@ export default {
           type: this.type,
           role: this.role,
           department: this.departmentName,
-          year: 2021,
+          year: this.year,
         })
         .then(
           function(res) {

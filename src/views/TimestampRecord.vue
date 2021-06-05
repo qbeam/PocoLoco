@@ -139,7 +139,7 @@ export default {
       this.getTodayTimeStamp();
     }
     this.past5Years = Mixins.methods.getPastYears(5);
-    this.selectedYear = this.past5Years[0];
+    this.year = this.past5Years[0];
   },
   data() {
     return {
@@ -174,7 +174,7 @@ export default {
         .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
           action: "getTodayTimeStamp",
           today: this.todayDate,
-          year: 2021,
+          year: this.year,
         })
         .then(
           function(res) {
@@ -210,7 +210,8 @@ export default {
       }
     },
     setSelectedYear(year) {
-      this.selectedYear = year;
+      this.year = year;
+      this.searchData();
     },
     sortReturn(direction) {
       this.sortDirection = direction;
@@ -242,7 +243,7 @@ export default {
           searchFilter: this.searchFilter,
           sortFilter: this.sortFilter,
           direction: this.sortDirection,
-          year: 2021,
+          year: this.year,
         })
         .then(
           function(res) {

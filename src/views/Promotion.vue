@@ -410,10 +410,13 @@ export default {
     },
     searchData() {
       if (this.filter == "startDate" || this.filter == "endDate") {
+        this.searchSent = this.searchSent.trim();
+        console.log("--", this.searchSent);
         this.searchSent = this.converDateToQuery(this.search);
       } else {
         this.searchSent = this.search;
       }
+
       axios
         .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
           action: "searchData",

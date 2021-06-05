@@ -23,6 +23,7 @@
           placeholder="search"
         />
       </div>
+
       <CustomSelect
         type="Filter"
         :options="selectOption"
