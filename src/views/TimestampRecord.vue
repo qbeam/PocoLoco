@@ -25,12 +25,7 @@
           :style="{ marginRight: '20px' }"
           @selection="setSearchFilter"
         />
-        <CustomSelect
-          type="Year"
-          :options="past5Years"
-          :style="{ marginRight: '20px' }"
-          @selection="setSelectedYear"
-        />
+       
         <DefaultButton @click="searchData" type="small">
           Search
         </DefaultButton>
@@ -150,16 +145,12 @@ export default {
     } else {
       this.getTodayTimeStamp();
     }
-    this.past5Years = Mixins.methods.getPastYears(5);
-    this.selectedYear = this.past5Years[0];
+  
   },
   data() {
     return {
-      past5Years: "",
-      selectedYear: "",
       todayDate: "",
       stampRecord: "",
-
       keyword: "",
       selectOption: ["Date", "Employee ID", "Name", "Type", "Punctuality"],
       searchFilter: "stampDateTime",
@@ -169,7 +160,6 @@ export default {
       sortFilter: "stampDateTime",
       sortDirection: "down",
       currentPage: 1,
-      year: "",
     };
   },
   methods: {
@@ -178,7 +168,6 @@ export default {
         .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
           action: "getTodayTimeStamp",
           today: Mixins.methods.getTodayDate(),
-          year: 2021,
         })
         .then(
           function(res) {
@@ -213,9 +202,7 @@ export default {
         this.sortFilter = "late";
       }
     },
-    setSelectedYear(year) {
-      this.selectedYear = year;
-    },
+
     sortReturn(direction) {
       this.sortDirection = direction;
       this.searchData();
@@ -239,7 +226,6 @@ export default {
           searchFilter: this.searchFilter,
           sortFilter: this.sortFilter,
           direction: this.sortDirection,
-          year: 2021,
         })
         .then(
           function(res) {

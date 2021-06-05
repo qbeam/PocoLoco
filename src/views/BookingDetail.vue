@@ -197,7 +197,7 @@
     >
       <div class="group-row" :style="{ marginBottom: '25px' }">
         <div class="group-item">
-          <p>Guest Name</p>
+          <p><b>Guest Name</b></p>
           <input
             type="text"
             v-model="form.guestFirstName"
@@ -207,7 +207,7 @@
         </div>
 
         <div class="group-item">
-          <p>Last Name</p>
+          <p><b>Last Name</b></p>
           <input
             type="text"
             v-model="form.guestLastName"
@@ -217,57 +217,8 @@
         </div>
       </div>
 
-      <div class="group-row" :style="{ marginBottom: '25px' }">
-        <div class="group-item">
-          <p>Check In</p>
-          <div class="flex x-full">
-            <v-date-picker
-              v-model="form.checkIn"
-              :masks="{ input: ['DD/MM/YYYY'] }"
-              :model-config="checkInDateConfig"
-              mode="single"
-              class="flex-grow"
-            >
-              <template v-slot="{ inputValue, inputEvents }">
-                <div :style="{ display: 'flex', flexDirection: 'row' }">
-                  <input
-                    :value="inputValue"
-                    v-on="inputEvents"
-                    :style="width < 700 ? { width: '120px' } : {}"
-                  />
-                  <i class="fa fa-calendar fa-2x"></i>
-                </div>
-              </template>
-            </v-date-picker>
-          </div>
-        </div>
-        <div class="group-item">
-          <p>Check Out</p>
-          <div class="flex x-full">
-            <v-date-picker
-              v-model="form.checkOut"
-              :masks="{ input: ['DD/MM/YYYY'] }"
-              :model-config="checkOutDateConfig"
-              mode="single"
-              class="flex-grow"
-            >
-              <template v-slot="{ inputValue, inputEvents }">
-                <div :style="{ display: 'flex', flexDirection: 'row' }">
-                  <input
-                    :value="inputValue"
-                    v-on="inputEvents"
-                    :style="width < 700 ? { width: '120px' } : {}"
-                  />
-                  <i class="fa fa-calendar fa-2x"></i>
-                </div>
-              </template>
-            </v-date-picker>
-          </div>
-        </div>
-      </div>
-
       <div>
-        <p>Status</p>
+        <p><b>Status</b></p>
         <div class="choices">
           <label class="container1">
             Reserve

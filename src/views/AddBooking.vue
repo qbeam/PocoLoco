@@ -215,7 +215,6 @@ export default {
                 this.getBookingID();
                 alert("Booking Saved Successful");
                 this.backToBooking();
-                // this.error = false;
               } else {
                 this.message = res.data.message;
                 alert(this.message);

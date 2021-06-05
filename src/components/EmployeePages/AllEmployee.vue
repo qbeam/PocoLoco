@@ -174,7 +174,7 @@
       :visible="editVisible"
       :buttons="true"
       @popReturn="popReturn"
-      @submit="updateData"
+      @submit="validateCheck"
       :style="{ top: '0', left: '0', margin: '0' }"
     >
       <div class="group-row">
@@ -322,7 +322,6 @@ export default {
       isView: false,
       isEdit: false,
       countRow: "",
-
       form: {
         employeeID: "",
         firstName: "",
@@ -370,9 +369,9 @@ export default {
     },
     setSort(click) {
       if (click == 0) {
-        this.sort = "em_name";
-      } else if (click == 1) {
         this.sort = "employeeID";
+      } else if (click == 1) {
+        this.sort = "em_name";
       } else if (click == 2) {
         this.sort = "roleName";
       } else if (click == 3) {
@@ -451,13 +450,47 @@ export default {
         employee.roleName = "Owner";
       }
       this.form.picName = employee.roleName + employee.gender;
-      console.log(this.form.picName);
     },
 
-    updateData(value) {
-      this.editVisible = value;
+    validateCheck(value) {
+      if (this.form.firstName == "") {
+        alert("Please fill name");
+      } else if (this.form.lastName == "") {
+        alert("Please fill lastname");
+      } else if (this.form.phone == "") {
+        alert("Please fill phone number");
+      } else if (this.form.phone != "") {
+        if (this.form.phone.length != 10) {
+          alert("Phone number must be 10 digits");
+        } else if (this.form.email == "") {
+          alert("Please fill email");
+        } else if (this.form.email != "") {
+          this.checkEmail(value);
+        }
+      }
+    },
+
+    checkEmail(value) {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {
+          action: "checkEmail",
+          email: this.form.email,
+        })
+        .then(
+          function(res) {
+            if (res.data == true) {
+              alert("Invalid Email");
+            } else {
+              this.saveData(value);
+            }
+          }.bind(this)
+        );
+    },
+
+    saveData(value) {
       this.form.workStatus = this.convertWorkStatus(this.form.workStatus);
       this.form.shift = this.converShift(this.form.shift);
+
       axios
         .post("http://localhost:8080/PocoLoco_db/api_employee.php", {
           action: "updateData",
@@ -475,6 +508,7 @@ export default {
           function(res) {
             if (res.data.success == true) {
               alert(res.data.message);
+              this.editVisible = value;
               this.getAllEmployee();
             } else {
               alert(res.data.message);
@@ -555,10 +589,12 @@ export default {
         this.filter = "duration";
       }
     },
+
     selectionDepartment(value) {
       this.form.department = value;
       this.getRole(value);
     },
+
     selectionRole(value) {
       this.roleName = value;
     },
@@ -626,7 +662,7 @@ i {
 }
 .table-container {
   display: flex;
-  height: 580px;
+  height: 500px;
 }
 table {
   width: 100%;
@@ -851,7 +887,7 @@ input {
   }
   .table-container {
     display: flex;
-    height: 500px;
+    height: 450px;
   }
   table {
     margin-top: 30px;

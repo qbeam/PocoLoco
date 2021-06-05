@@ -166,7 +166,7 @@
       v-bind:visible="editVisible"
       :buttons="true"
       @popReturn="editReturn"
-      @submit="submit"
+      @submit="validateCheck"
     >
       <div class="input-group">
         <p
@@ -174,9 +174,9 @@
             width > 700 ? { marginRight: '130px' } : { marginRight: '90px' }
           "
         >
-          First Name
+          <b>First Name</b>
         </p>
-        <p>Last Name</p>
+        <p><b>Last Name</b></p>
       </div>
       <div class="input-group">
         <input
@@ -187,16 +187,16 @@
         />
         <input type="text" v-model="form.lastName" :placeholder="lname" />
       </div>
-      <p>Phone</p>
-      <input type="text" v-model="form.phone" :placeholder="phone" />
-      <p>Email</p>
+      <p><b>Phone</b></p>
+      <input type="number" v-model="form.phone" :placeholder="phone" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107 && event.keyCode !== 110 && event.keyCode !== 190"/>
+      <p><b>Email</b></p>
       <input
         type="text"
         v-model="form.email"
         :placeholder="email"
         :style="{ width: '250px' }"
       />
-      <p>Address</p>
+      <p><b>Address</b></p>
       <textarea v-model="form.address" />
     </Popup>
   </TablePage>
@@ -401,43 +401,63 @@ export default {
         );
     },
 
-    updateData() {
-      this.validate();
-
-      if (this.check && this.form.isEdit) {
-        axios
-          .post("http://localhost:8080/PocoLoco_db/api_customer.php", {
-            action: "updateData",
-            customerID: this.form.customerID,
-            firstName: this.form.firstName,
-            lastName: this.form.lastName,
-            DOB: this.form.DOB,
-            phone: this.form.phone,
-            email: this.form.email,
-            address: this.form.address,
-          })
-          .then(
-            function(res) {
-              if (res.data.success == true) {
-                alert(res.data.message);
-                this.resetData();
-                this.getAllCustomer();
-              } else {
-                alert(res.data.message);
-              }
-            }.bind(this)
-          );
+    validateCheck(value) {
+      if (
+        this.form.firstName == "" ||
+        this.form.lastName == "" ||
+        this.form.phone == "" ||
+        this.form.email == "" ||
+        this.form.address == ""
+      ) {
+        alert("Please fill the required fields");
+      } else if (this.form.phone.length != 10) {
+        alert("Phone number must be 10 digits");
+      } else if (this.form.email != "") {
+        this.checkEmail(value);
       }
     },
 
-    validate() {
-      this.check =
-        this.form.firstName != "" &&
-        this.form.lastName != "" &&
-        this.form.DOB != "" &&
-        this.form.phone != "" &&
-        this.form.email != "" &&
-        this.form.address != "";
+    checkEmail(value) {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {
+          action: "checkEmail",
+          email: this.form.email,
+        })
+        .then(
+          function(res) {
+            if (res.data == true) {
+              alert("Invalid Email");
+            } else {
+              this.updateData(value);
+            }
+          }.bind(this)
+        );
+    },
+
+    updateData(value) {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_customer.php", {
+          action: "updateData",
+          customerID: this.form.customerID,
+          firstName: this.form.firstName,
+          lastName: this.form.lastName,
+          DOB: this.form.DOB,
+          phone: this.form.phone,
+          email: this.form.email,
+          address: this.form.address,
+        })
+        .then(
+          function(res) {
+            if (res.data.success == true) {
+              alert(res.data.message);
+              this.editVisible = value;
+              this.resetData();
+              this.getAllCustomer();
+            } else {
+              alert(res.data.message);
+            }
+          }.bind(this)
+        );
     },
 
     resetData() {
@@ -659,4 +679,11 @@ td {
     font-size: 14px;
   }
 }
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+} 
 </style>

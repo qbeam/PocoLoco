@@ -115,7 +115,8 @@
     <Popup v-bind:visible="visible" @popReturn="popReturn">
       <div class="popup-head1">Booking ID: {{ bookingID }}</div>
       <div class="popup-head">
-        <div class="item">Name: {{ customerName }}</div>
+        <div class="item">
+          Name: {{ customerName }}</div>
         <div class="item">Phone: {{ phone }}</div>
       </div>
       <table v-if="bookingDetail_db.length !== 0" style="magin-top: 10px;">
@@ -230,54 +231,7 @@
           />
         </div>
       </div>
-      <div class="group-row" :style="{ marginBottom: '25px' }">
-        <div class="group-item">
-          <p>Check IN</p>
-          <div class="flex x-full">
-            <v-date-picker
-              v-model="form.checkIn"
-              :masks="{ input: ['DD/MM/YYYY'] }"
-              :model-config="startDateConfig"
-              mode="single"
-              class="flex-grow"
-            >
-              <template v-slot="{ inputValue, inputEvents }">
-                <div :style="{ display: 'flex', flexDirection: 'row' }">
-                  <input
-                    :value="inputValue"
-                    v-on="inputEvents"
-                    :style="width < 700 ? { width: '120px' } : {}"
-                  />
-                  <i class="fa fa-calendar fa-2x" />
-                </div>
-              </template>
-            </v-date-picker>
-          </div>
-        </div>
-        <div class="group-item">
-          <p>Check OUT</p>
-          <div class="flex x-full">
-            <v-date-picker
-              v-model="form.checkOut"
-              :masks="{ input: ['DD/MM/YYYY'] }"
-              :model-config="endDateConfig"
-              mode="single"
-              class="flex-grow"
-            >
-              <template v-slot="{ inputValue, inputEvents }">
-                <div :style="{ display: 'flex', flexDirection: 'row' }">
-                  <input
-                    :value="inputValue"
-                    v-on="inputEvents"
-                    :style="width < 700 ? { width: '120px' } : {}"
-                  />
-                  <i class="fa fa-calendar fa-2x" />
-                </div>
-              </template>
-            </v-date-picker>
-          </div>
-        </div>
-      </div>
+    
       <div>
         <p>Status</p>
         <div class="choices">

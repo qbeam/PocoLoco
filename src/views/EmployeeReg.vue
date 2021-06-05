@@ -69,7 +69,7 @@
 
         <!-- Not Admin / Owner -->
         <div v-else>
-          <h4>Department : {{ details.department }}</h4>
+          <h4>Department : {{ details.departmentName }}</h4>
           <!-- Role -->
           <div v-if="roleError">
             <h4>Role</h4>
@@ -218,6 +218,7 @@
 
           <input
             type="number"
+            placeholder="13 digits"
             onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
             v-model="details.identification"
             pattern="^[A-PR-WYa-pr-wy][1-9]\d\s?\d{4}[1-9]$"
@@ -228,6 +229,7 @@
           <h4 style="color:red">ID Number (13 digits)</h4>
           <input
             type="number"
+            placeholder="13 digits"
             onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107"
             v-model="details.identification"
             pattern="^[A-PR-WYa-pr-wy][1-9]\d\s?\d{4}[1-9]$"
@@ -475,6 +477,7 @@ export default {
     } else {
       this.role = localStorage.getItem("userRole");
       this.departmentName = localStorage.getItem("userDepartment");
+      this.details.departmentName = this.departmentName;
       this.getRole();
     }
   },

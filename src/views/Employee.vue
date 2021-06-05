@@ -220,7 +220,7 @@
       :visible="editVisible"
       :buttons="true"
       @popReturn="popReturn"
-      @submit="updateData"
+      @submit="validateCheck"
     >
       <div class="popup-head">
         <div class="group-row">
@@ -488,8 +488,42 @@ export default {
       this.form.picName = employee.picName;
     },
 
+    validateCheck(value) {
+      if (this.form.firstName == "") {
+        alert("Please fill name");
+      } else if (this.form.lastName == "") {
+        alert("Please fill lastname");
+      } else if (this.form.phone == "") {
+        alert("Please fill phone number");
+      } else if (this.form.phone != "") {
+        if (this.form.phone.length != 10) {
+          alert("Phone number must be 10 digits");
+        } else if (this.form.email == "") {
+          alert("Please fill email");
+        } else if (this.form.email != "") {
+          this.checkEmail(value);
+        }
+      }
+    },
+
+    checkEmail(value) {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {
+          action: "checkEmail",
+          email: this.form.email,
+        })
+        .then(
+          function(res) {
+            if (res.data == true) {
+              alert("Invalid Email");
+            } else {
+              this.updateData(value);
+            }
+          }.bind(this)
+        );
+    },
+
     updateData(value) {
-      this.editVisible = value;
       this.form.workStatus = this.convertWorkStatus(this.form.workStatus);
       this.form.shift = this.converShift(this.form.shift);
       axios
@@ -502,6 +536,7 @@ export default {
         .then(
           function(res) {
             if (res.data.success == true) {
+              this.editVisible = value;
               alert(res.data.message);
               this.getAllEmployee();
             } else {

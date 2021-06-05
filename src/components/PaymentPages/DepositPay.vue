@@ -117,7 +117,7 @@
       <p
         :style="width > 750 ? { marginRight: '15%' } : { marginRight: '10px' }"
       >
-        Total Payment: {{ totalPayment }} ฿
+        Total Payment: {{ deposit }} ฿
       </p>
     </div>
   </div>
