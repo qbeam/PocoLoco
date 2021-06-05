@@ -157,57 +157,58 @@ export default {
 
   created() {
     if (localStorage.getItem("user") == "130001") {
-      this.$router.push("/TimeStamp")
-      alert("You don't have permission to access this page")
-    }
-    else {
-    this.employeeID = localStorage.getItem("user");
-    this.role = localStorage.getItem("userRole");
-    this.department = localStorage.getItem("userDepartment");
-    this.gender = localStorage.getItem("userGender");
-      
-    if (this.employeeID == null) {
-      this.error404();
-    }
-    else {
-    this.profilePic = this.role + this.gender;
-    if (this.role === "Owner" || this.role === "Admin") {
-      this.permissions = AdminOwner;
-    }
-    if (this.role === "Manager" && this.department === "Receptionist") {
-      this.permissions = ReceptionManager;
-    }
-    if (this.role === "Receptionist") {
-      this.permissions = Receptionist;
-    }
-    if (this.role === "Manager" && this.department === "Kitchen") {
-      this.permissions = ChefManager;
-    }
-    if (this.role === "Chef") {
-      this.permissions = Chef;
-    }
-    if (this.role === "Manager" && this.department === "Housekeeping") {
-      this.permissions = MaidManager;
-    }
-    if (this.role === "Maid") {
-      this.permissions = Maid;
-    }
-    if (
-      (this.role === "Manager" && this.department === "Security") ||
-      (this.role === "Manager" && this.department === "Maintenance")
-    ) {
-      this.permissions = StaffManager;
-    }
-    if (this.role === "Guard" || this.role === "Staff") {
-      this.permissions = Staff;
-    }
-    if (this.role === "Manager" && this.department === "Accounts and Credits") {
-      this.permissions = AccountantManager;
-    }
-    if (this.role === "Accountant") {
-      this.permissions = Accountant;
-    }
-    }
+      this.$router.push("/TimeStamp");
+      alert("You don't have permission to access this page");
+    } else {
+      this.employeeID = localStorage.getItem("user");
+      this.role = localStorage.getItem("userRole");
+      this.department = localStorage.getItem("userDepartment");
+      this.gender = localStorage.getItem("userGender");
+
+      if (this.employeeID == null) {
+        this.error404();
+      } else {
+        this.profilePic = this.role + this.gender;
+        if (this.role === "Owner" || this.role === "Admin") {
+          this.permissions = AdminOwner;
+        }
+        if (this.role === "Manager" && this.department === "Receptionist") {
+          this.permissions = ReceptionManager;
+        }
+        if (this.role === "Receptionist") {
+          this.permissions = Receptionist;
+        }
+        if (this.role === "Manager" && this.department === "Kitchen") {
+          this.permissions = ChefManager;
+        }
+        if (this.role === "Chef") {
+          this.permissions = Chef;
+        }
+        if (this.role === "Manager" && this.department === "Housekeeping") {
+          this.permissions = MaidManager;
+        }
+        if (this.role === "Maid") {
+          this.permissions = Maid;
+        }
+        if (
+          (this.role === "Manager" && this.department === "Security") ||
+          (this.role === "Manager" && this.department === "Maintenance")
+        ) {
+          this.permissions = StaffManager;
+        }
+        if (this.role === "Guard" || this.role === "Staff") {
+          this.permissions = Staff;
+        }
+        if (
+          this.role === "Manager" &&
+          this.department === "Accounts and Credits"
+        ) {
+          this.permissions = AccountantManager;
+        }
+        if (this.role === "Accountant") {
+          this.permissions = Accountant;
+        }
+      }
     }
   },
 
@@ -322,7 +323,7 @@ b {
 .menu {
   display: flex;
   flex-direction: column;
-  padding: 45px 0 0 20px;
+  padding: 25px 0 0 20px;
   margin-right: -20px;
 }
 .logout-button {
