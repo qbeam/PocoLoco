@@ -30,6 +30,7 @@ import TablePage from "../components/TablePage.vue";
 import AllPayment from "../components/PaymentPages/AllPayment";
 import DepositPay from "../components/PaymentPages/DepositPay";
 import CheckOutPay from "../components/PaymentPages/CheckOutPay";
+import Mixins from "../Mixins";
 
 const menus = ["All Payment", "Pay Deposit", "Check Out"];
 export default {
@@ -41,9 +42,13 @@ export default {
     CheckOutPay,
   },
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Receptionist") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userDepartment") !== "Receptionist"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
     }
   },
   data() {

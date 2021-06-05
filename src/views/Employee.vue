@@ -68,7 +68,7 @@
 
     <!-- Employee Table For Manager -->
     <SearchError v-if="errorSearching" :style="{ marginTop: '80px' }" />
-    <table v-if="employee_db.length !== 0 && role === 'Manager'">
+    <table v-if="!errorSearching && role === 'Manager'">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
@@ -383,8 +383,7 @@ export default {
     ) {
       this.$router.push("/Home");
       alert("You don't have permission to access this page");
-    } 
-    else {
+    } else {
       this.role = localStorage.getItem("userRole");
       this.departmentName = localStorage.getItem("userDepartment");
       this.getAllEmployee();

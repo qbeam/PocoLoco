@@ -1,6 +1,7 @@
 <template>
   <div class="dropdown-container">
     <p v-if="type == 'Filter'">Search by</p>
+    <p v-if="type == 'Year'">Year</p>
     <div
       :class="dropdownType"
       @click="showDropdown"
@@ -68,7 +69,7 @@ export default {
     if (this.defaultChoice) {
       this.label = this.defaultChoice;
     }
-    if (this.type == "Transparent") {
+    if (this.type == "Transparent" || this.type == "Year") {
       this.dropdownType = "transparent-dropdown";
       this.dropdownLabel = "dark-label";
       this.arrowColor = "var(--button-blue)";

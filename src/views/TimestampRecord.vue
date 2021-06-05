@@ -19,6 +19,12 @@
           :style="{ margin: '0 20px 20px 0' }"
           @selection="setSearchFilter"
         />
+        <CustomSelect
+          type="Year"
+          :options="past5Years"
+          :style="{ marginRight: '20px' }"
+          @selection="setSelectedYear"
+        />
         <DefaultButton @click="searchData" type="small">
           Search
         </DefaultButton>
@@ -26,7 +32,7 @@
     </div>
 
     <SearchError v-if="errorSearching" />
-    <table v-if="stampRecord.length !== 0 && !errorSearching">
+    <table v-if="stampRecord.length > 0 && !errorSearching">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div
@@ -60,7 +66,7 @@
             class="fa fa-circle"
             :style="{ color: getTagColor(record.type) }"
           />
-          {{ record.type }}
+          {{ getStampType(record.type) }}
         </td>
         <td :style="{ width: '15%', color: '#FF0000', fontWeight: 'bold' }">
           {{ record.late }}
@@ -104,6 +110,7 @@ import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
 import SortingArrow from "../components/SortingArrow";
 import axios from "axios";
+import Mixins from "../Mixins";
 
 export default {
   name: "TimestampRecord",
@@ -131,9 +138,13 @@ export default {
       this.getTodayDate();
       this.getTodayTimeStamp();
     }
+    this.past5Years = Mixins.methods.getPastYears(5);
+    this.selectedYear = this.past5Years[0];
   },
   data() {
     return {
+      past5Years: "",
+      selectedYear: "",
       todayDate: "",
       stampRecord: "",
 
@@ -198,6 +209,9 @@ export default {
         this.sortFilter = "late";
       }
     },
+    setSelectedYear(year) {
+      this.selectedYear = year;
+    },
     sortReturn(direction) {
       this.sortDirection = direction;
       this.searchData();
@@ -206,7 +220,7 @@ export default {
       this.currentPage = page;
     },
     getTagColor(type) {
-      if (type == "Out") {
+      if (type == "O") {
         return "#FF0000";
       } else {
         return "#24BA45";

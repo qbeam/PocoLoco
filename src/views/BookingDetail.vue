@@ -22,13 +22,21 @@
           placeholder="search"
         />
       </div>
-      <CustomSelect
-        type="Filter"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionFilter"
-      />
-      <DefaultButton @click="searchData" type="small">Search</DefaultButton>
+      <div class="menu-buttons">
+        <CustomSelect
+          type="Filter"
+          :options="selectOption"
+          :style="{ marginRight: '20px' }"
+          @selection="selectionFilter"
+        />
+        <CustomSelect
+          type="Year"
+          :options="past5Years"
+          :style="{ marginRight: '20px' }"
+          @selection="setSelectedYear"
+        />
+        <DefaultButton @click="searchData" type="small">Search</DefaultButton>
+      </div>
     </div>
 
     <SearchError v-if="errorSearching" />
@@ -294,6 +302,7 @@ import CustomSelect from "../components/CustomSelect.vue";
 import SortingArrow from "../components/SortingArrow";
 import SearchError from "../components/SearchError";
 import axios from "axios";
+import Mixins from "../Mixins";
 
 const selectOption = [
   "Detail ID",
@@ -332,6 +341,8 @@ export default {
   },
   data() {
     return {
+      past5Years: "",
+      selectedYear: "",
       currentPage: 1,
       visible: false,
       searchVisible: false,
@@ -379,6 +390,8 @@ export default {
     } else {
       this.getallBookingDetail();
     }
+    this.past5Years = Mixins.methods.getPastYears(5);
+    this.selectedYear = this.past5Years[0];
   },
 
   methods: {
@@ -424,7 +437,6 @@ export default {
         this.sort = "statusPayment";
       }
     },
-
     searchDetail(bookings) {
       this.searchVisible = !this.searchVisible;
       this.booking = bookings;
@@ -534,6 +546,7 @@ export default {
     },
 
     selectionFilter(value) {
+      console.log("FIL RET", value);
       if (value === selectOption[0]) {
         this.filter = "bookingDetailID";
       }
@@ -552,6 +565,9 @@ export default {
       if (value === selectOption[5]) {
         this.filter = "statusPayment";
       }
+    },
+    setSelectedYear(year) {
+      this.selectedYear = year;
     },
 
     convertDate(date) {
@@ -584,7 +600,6 @@ h3 {
 .menu-bar {
   width: 100%;
   display: flex;
-  flex-direction: row;
   align-items: center;
 }
 .search-container {
@@ -606,7 +621,10 @@ h3 {
 i {
   color: #5f5f5f;
 }
-
+.menu-buttons {
+  display: flex;
+  align-items: center;
+}
 table {
   width: 100%;
   margin-top: 50px;
@@ -791,11 +809,21 @@ td {
 @media (max-width: 700px) {
   h3 {
     font-size: 44px;
-    margin: 80px 0 35px 0;
+    margin: 20px 0;
+    padding: 0;
+  }
+  .menu-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 0;
   }
   .search-field {
-    width: 150px;
+    width: 300px;
     font-size: 16px;
+  }
+  .menu-buttons {
+    margin-top: 40px;
+    width: 100%;
   }
   table {
     font-size: 12px;

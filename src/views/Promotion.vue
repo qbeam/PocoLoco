@@ -27,7 +27,8 @@
       <DefaultButton @click="searchData()" type="small">
         Search
       </DefaultButton>
-      <AddButton v-if="role === 'Admin' || role === 'Owner' || role === 'Manager'"
+      <AddButton
+        v-if="role === 'Admin' || role === 'Owner' || role === 'Manager'"
         :style="
           width < 800
             ? { position: 'fixed', right: '20px', top: '50px' }
@@ -38,7 +39,7 @@
     </div>
 
     <SearchError v-if="errorSearching" />
-    <table v-if="promotion_db.length !== 0" style="margin-top: 50px;">
+    <table v-if="!errorSearching" style="margin-top: 50px;">
       <tr>
         <th v-for="(colName, i) in colNames" :key="i">
           <div class="tb-head">
@@ -308,11 +309,14 @@ export default {
     };
   },
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Receptionist") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
-    }
-    else {
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userDepartment") !== "Receptionist"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } else {
       this.role = localStorage.getItem("userRole");
       this.departmentName = localStorage.getItem("userDepartment");
       this.getPromotion();

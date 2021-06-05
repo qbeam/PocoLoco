@@ -1,142 +1,149 @@
 <template>
-  <div class="menu-bar">
-    <div class="search-container">
-      <i
-        class="fa fa-search"
-        :style="{
-          position: 'absolute',
-          zIndex: '5',
-          marginLeft: '15px',
-          pointerEvents: 'none',
-        }"
-      ></i>
-      <input
-        v-model="search"
-        class="search-field"
-        type="text"
-        placeholder="search"
-      />
+  <div>
+    <div class="menu-bar">
+      <div class="search-container">
+        <i
+          class="fa fa-search"
+          :style="{
+            position: 'absolute',
+            zIndex: '5',
+            marginLeft: '15px',
+            pointerEvents: 'none',
+          }"
+        />
+        <input
+          v-model="search"
+          class="search-field"
+          type="text"
+          placeholder="search"
+        />
+      </div>
+      <div class="menu-buttons">
+        <CustomSelect
+          type="Filter"
+          :options="selectOption"
+          :style="{ marginRight: '20px' }"
+          @selection="selectionFilter"
+        />
+        <CustomSelect
+          type="Year"
+          :options="past5Years"
+          :style="{ marginRight: '20px' }"
+          @selection="setSelectedYear"
+        />
+        <DefaultButton @click="searchData" type="small">
+          Search
+        </DefaultButton>
+      </div>
     </div>
-    <div class="menu-buttons">
-      <CustomSelect
-        type="Filter"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionFilter"
-      />
 
-      <DefaultButton @click="searchData" type="small">
-        Search
-      </DefaultButton>
-    </div>
-  </div>
+    <SearchError v-if="errorSearching" :style="{ marginTop: '80px' }" />
 
-  <SearchError v-if="errorSearching" :style="{ marginTop: '80px' }" />
-
-  <table v-if="history_db.length !== 0">
-    <tr>
-      <th v-for="(colName, i) in colNames" :key="i">
-        <div class="tb-head">
-          {{ colName }}
-          <SortingArrow
-            :active="activeArrow == i ? true : false"
-            @click="setActiveArrow(i)"
-            @sortReturn="sortReturn"
-          />
-        </div>
-      </th>
-      <th>Manage</th>
-    </tr>
-
-    <tr
-      v-for="(record, i) in history_db.slice(
-        currentPage * tableRow - tableRow,
-        currentPage * tableRow
-      )"
-      :key="i"
-      class="row"
-    >
-      <td>{{ convertDate(record.date) }}</td>
-      <td>{{ record.roomID }}</td>
-      <td>{{ record.total }}</td>
-
-      <td>
-        <div class="manage">
-          <button class="manage-button" @click="getServiceData(record)">
-            <i class="fa fa-search" :style="{ fontSize: '20px' }"></i>
-          </button>
-        </div>
-      </td>
-    </tr>
-  </table>
-
-  <PaginationBar
-    :pageCount="Math.ceil(history_db.length / tableRow)"
-    :paginationVisible="history_db.length > tableRow"
-    @pageReturn="pageReturn"
-    :style="
-      width <= 700
-        ? {
-            position: 'fixed',
-            bottom: '30px',
-            margin: '0 auto',
-            right: '0',
-            left: '60px',
-          }
-        : width <= 1000
-        ? {
-            position: 'fixed',
-            bottom: '50px',
-            margin: '0 auto',
-            right: '0',
-            left: '60px',
-          }
-        : {
-            position: 'fixed',
-            bottom: '50px',
-            margin: '0 auto',
-            right: '0',
-            left: '200px',
-          }
-    "
-  />
-  <Popup
-    v-bind:visible="viewVisible"
-    @popReturn="viewReturn"
-    :style="{ top: '0', left: '0', margin: '0' }"
-  >
-    <div class="popup-head">
-      <p>Room Number: {{ room }}</p>
-      <h4>Date: {{ convertDate(date) }}</h4>
-    </div>
-    <table :style="{ marginBottom: '20px' }">
+    <table v-if="history_db.length !== 0">
       <tr>
-        <th>Service</th>
-        <th>Amount</th>
-        <th>Price</th>
-        <th>Total</th>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
+          </div>
+        </th>
+        <th>Manage</th>
       </tr>
 
-      <tr v-for="(order, i) in order_db" :key="i" class="row">
-        <td>{{ order.serviceName }}</td>
-        <td>{{ order.amount }}</td>
-        <td>{{ order.servicePrice }}</td>
-        <td>{{ order.amount * order.servicePrice }}</td>
-      </tr>
-      <tr class="summary">
+      <tr
+        v-for="(record, i) in history_db.slice(
+          currentPage * tableRow - tableRow,
+          currentPage * tableRow
+        )"
+        :key="i"
+        class="row"
+      >
+        <td>{{ convertDate(record.date) }}</td>
+        <td>{{ record.roomID }}</td>
+        <td>{{ record.total }}</td>
+
         <td>
-          <b>Total</b>
-        </td>
-        <td>
-          <b>{{ amountSum }}</b>
-        </td>
-        <td></td>
-        <td>
-          <b>{{ priceSum }}</b>
+          <div class="manage">
+            <button class="manage-button" @click="getServiceData(record)">
+              <i class="fa fa-search" :style="{ fontSize: '20px' }"></i>
+            </button>
+          </div>
         </td>
       </tr>
     </table>
-  </Popup>
+
+    <PaginationBar
+      :pageCount="Math.ceil(history_db.length / tableRow)"
+      :paginationVisible="history_db.length > tableRow"
+      @pageReturn="pageReturn"
+      :style="
+        width <= 700
+          ? {
+              position: 'fixed',
+              bottom: '30px',
+              margin: '0 auto',
+              right: '0',
+              left: '60px',
+            }
+          : width <= 1000
+          ? {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '60px',
+            }
+          : {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '200px',
+            }
+      "
+    />
+    <Popup
+      v-bind:visible="viewVisible"
+      @popReturn="viewReturn"
+      :style="{ top: '0', left: '0', margin: '0' }"
+    >
+      <div class="popup-head">
+        <p>Room Number: {{ room }}</p>
+        <h4>Date: {{ convertDate(date) }}</h4>
+      </div>
+      <table :style="{ marginBottom: '20px' }">
+        <tr>
+          <th>Service</th>
+          <th>Amount</th>
+          <th>Price</th>
+          <th>Total</th>
+        </tr>
+
+        <tr v-for="(order, i) in order_db" :key="i" class="row">
+          <td>{{ order.serviceName }}</td>
+          <td>{{ order.amount }}</td>
+          <td>{{ order.servicePrice }}</td>
+          <td>{{ order.amount * order.servicePrice }}</td>
+        </tr>
+        <tr class="summary">
+          <td>
+            <b>Total</b>
+          </td>
+          <td>
+            <b>{{ amountSum }}</b>
+          </td>
+          <td></td>
+          <td>
+            <b>{{ priceSum }}</b>
+          </td>
+        </tr>
+      </table>
+    </Popup>
+  </div>
 </template>
 
 <script>
@@ -148,6 +155,7 @@ import PaginationBar from "../PaginationBar";
 import Popup from "../Popup";
 import SearchError from "../SearchError";
 import SortingArrow from "../SortingArrow";
+import Mixins from "../../Mixins";
 import axios from "axios";
 
 const selectOption = ["Room No.", "Date"];
@@ -170,6 +178,8 @@ export default {
   },
   data() {
     return {
+      past5Years: "",
+      selectedYear: "",
       selectOption,
       colNames,
       currentPage: 1,
@@ -200,6 +210,8 @@ export default {
     this.role = localStorage.getItem("userRole");
     this.departmentName = localStorage.getItem("userDepartment");
     this.getServiceActivity();
+    this.past5Years = Mixins.methods.getPastYears(5);
+    this.selectedYear = this.past5Years[0];
   },
   methods: {
     pageReturn(page) {
@@ -243,7 +255,9 @@ export default {
         this.sort = "total";
       }
     },
-
+    setSelectedYear(year) {
+      this.selectedYear = year;
+    },
     // ORDER_DB (Popup)
     getServiceData(record) {
       this.viewVisible = !this.viewVisible;
@@ -437,7 +451,7 @@ h4 {
     margin-top: 40px;
   }
   .search-field {
-    width: 300px;
+    width: 280px;
   }
   .popup-head {
     flex-direction: column;

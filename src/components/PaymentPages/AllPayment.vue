@@ -17,14 +17,20 @@
           :style="{ margin: ' 0 20px 18px 0' }"
           @selection="selectionFilter"
         />
+        <CustomSelect
+          type="Year"
+          :options="past5Years"
+          :style="{ margin: ' 0 20px 18px 0' }"
+          @selection="setSelectedYear"
+        />
         <DefaultButton @click="searchPayment()" type="small">
           Search
         </DefaultButton>
       </div>
     </div>
-    <SearchError v-if="errorSearching" :style="{ marginTop: '80px' }" />
+    <SearchError v-if="errorSearching" :style="{ marginTop: '50px' }" />
     <div class="table-container">
-      <table v-if="payment_db.length !== 0 && !error">
+      <table v-if="!errorSearching">
         <tr>
           <th v-for="(colName, i) in colNames" :key="i">
             <div class="tb-head">
@@ -52,16 +58,9 @@
           <td :style="{ width: '15%' }">{{ payment.methodName }}</td>
           <td :style="{ width: '15%' }">
             <i
-              v-if="payment.type == 'Deposit'"
               class="fa fa-circle"
-              :style="{ color: '#ffc42e' }"
+              :style="{ color: getTagColor(payment.type) }"
             />
-            <i
-              v-if="payment.type == 'Check Out'"
-              class="fa fa-circle"
-              :style="{ color: '#e11818' }"
-            />
-
             {{ payment.type }}
           </td>
           <td :style="{ width: '10%' }">{{ payment.amountPaid }}</td>
@@ -71,7 +70,7 @@
     </div>
 
     <PaginationBar
-      v-if="!error"
+      v-if="!errorSearching"
       :pageCount="Math.ceil(payment_db.length / tableRow)"
       :paginationVisible="payment_db.length > tableRow"
       @pageReturn="pageReturn"
@@ -87,6 +86,7 @@ import PaginationBar from "../PaginationBar";
 import SearchError from "../SearchError";
 import SortingArrow from "../../components/SortingArrow";
 import axios from "axios";
+import Mixins from "../../Mixins";
 
 const selectOption = [
   "Room No.",
@@ -121,12 +121,13 @@ export default {
   },
   data() {
     return {
+      past5Years: null,
+      selectedYear: null, // selected year to search
       selectOption,
       sortDirection: "up",
       colNames,
       currentPage: 1,
       tableRow: 10,
-      error: false,
       errorSearching: false,
       search: "",
       searchSent: "",
@@ -141,6 +142,8 @@ export default {
 
   created() {
     this.getallPayment();
+    this.past5Years = Mixins.methods.getPastYears(5);
+    this.selectedYear = this.past5Years[0]; // set default selected year to current year
   },
 
   methods: {
@@ -193,10 +196,19 @@ export default {
         this.filter = "datePaid";
       }
     },
+    setSelectedYear(year) {
+      this.searchYear = year;
+    },
     goToCustomerReg() {
       this.$router.push("/CustomerReg");
     },
-
+    getTagColor(type) {
+      if (type == "Deposit") {
+        return "#ffc42e";
+      } else if (type == "Check Out") {
+        return "#e11818";
+      }
+    },
     getallPayment() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_allPayment.php", {

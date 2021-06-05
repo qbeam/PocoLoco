@@ -18,19 +18,28 @@
           :style="{ marginBottom: '0' }"
         />
       </div>
-      <CustomSelect
-        type="Filter"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionFilter"
-      />
-      <DefaultButton
-        @click="searchData"
-        type="small"
-        :style="width < 650 ? { width: '70px' } : {}"
-      >
-        Search
-      </DefaultButton>
+      <div class="menu-buttons">
+        <CustomSelect
+          type="Filter"
+          :options="selectOption"
+          :style="{ marginRight: '20px' }"
+          @selection="selectionFilter"
+        />
+        <CustomSelect
+          type="Year"
+          :options="past5Years"
+          :style="{ marginRight: '20px' }"
+          @selection="setSelectedYear"
+        />
+        <DefaultButton
+          @click="searchData"
+          type="small"
+          :style="width < 650 ? { width: '70px' } : {}"
+        >
+          Search
+        </DefaultButton>
+      </div>
+
       <AddButton
         :style="
           width < 800
@@ -257,6 +266,7 @@ import { useScreenHeight } from "../composables/useScreenHeight";
 import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
 import SortingArrow from "../components/SortingArrow";
+import Mixins from "../Mixins";
 import axios from "axios";
 
 const selectOption = ["Name", "Type", "Expense", "Date"];
@@ -291,6 +301,8 @@ export default {
   },
   data() {
     return {
+      past5Years: null,
+      selectedYear: null, // selected year to search
       selectOption,
       colNames,
       expenseType,
@@ -338,6 +350,8 @@ export default {
     } else {
       this.getAllExpense();
     }
+    this.past5Years = Mixins.methods.getPastYears(5);
+    this.selectedYear = this.past5Years[0];
   },
 
   methods: {
@@ -372,6 +386,9 @@ export default {
       } else if (click == 3) {
         this.sort = "expenseDate";
       }
+    },
+    setSelectedYear(year) {
+      this.searchYear = year;
     },
     getExpenseData(type, expense) {
       if (type === "view") {
@@ -587,6 +604,10 @@ h4 {
   flex-direction: row;
   align-items: center;
 }
+.menu-buttons {
+  display: flex;
+  align-items: center;
+}
 .search-container {
   display: flex;
   align-items: center;
@@ -768,10 +789,21 @@ td {
 @media (max-width: 700px) {
   h3 {
     font-size: 44px;
+    margin: 20px 0;
+    padding: 0;
+  }
+  .menu-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 0;
   }
   .search-field {
-    width: 150px;
+    width: 250px;
     font-size: 16px;
+  }
+  .menu-buttons {
+    margin-top: 40px;
+    width: 100%;
   }
   input {
     width: 125px;
