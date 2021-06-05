@@ -882,6 +882,11 @@ td {
   }
 }
 @media (max-width: 700px) {
+  h3 {
+    font-size: 44px;
+    margin: 20px 0;
+    padding: 0;
+  }
   .search-field {
     width: 150px;
     font-size: 16px;

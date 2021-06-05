@@ -23,15 +23,21 @@
           placeholder="search"
         />
       </div>
-
-      <CustomSelect
-        type="Filter"
-        :options="selectOption"
-        :style="{ marginRight: '20px' }"
-        @selection="selectionFilter"
-      />
-      <DefaultButton @click="searchData" type="small">Search</DefaultButton>
-
+      <div class="search-buttons">
+        <CustomSelect
+          type="Filter"
+          :options="selectOption"
+          :style="{ marginRight: '20px' }"
+          @selection="selectionFilter"
+        />
+        <CustomSelect
+          type="Year"
+          :options="past5Years"
+          :style="{ marginRight: '20px' }"
+          @selection="setSelectedYear"
+        />
+        <DefaultButton @click="searchData" type="small">Search</DefaultButton>
+      </div>
       <AddButton
         :style="
           width < 800
@@ -43,50 +49,66 @@
     </div>
 
     <SearchError v-if="errorSearching" :style="{ marginTop: '100px' }" />
-    <div class="table-container">
-      <table v-if="booking_db.length !== 0" style="margin-top: 50px;">
-        <tr>
-          <th v-for="(colName, i) in colNames" :key="i">
-            <div class="tb-head">
-              {{ colName }}
-              <SortingArrow
-                :active="activeArrow == i ? true : false"
-                @click="setActiveArrow(i)"
-                @sortReturn="sortReturn"
-              />
-            </div>
-          </th>
-          <th>Manage</th>
-        </tr>
 
-        <tr
-          v-for="(booking, i) in booking_db.slice(
-            currentPage * tableRow - tableRow,
-            currentPage * tableRow
-          )"
-          :key="i"
-          class="row"
-        >
-          <td :style="{ width: '15%' }">{{ convertDate(booking.date) }}</td>
-          <td :style="{ width: '15%' }">{{ booking.bookingID }}</td>
-          <td :style="{ width: '25%' }">{{ booking.customerName }}</td>
-          <td :style="{ width: '15%' }">{{ booking.phone }}</td>
-          <td :style="{ width: '20%' }">{{ booking.email }}</td>
-          <td :style="{ width: '10%' }">
-            <div class="manage">
-              <button class="manage-button" @click="getRecord(booking)">
-                <i class="fa fa-search fa-2x"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </div>
+    <table v-if="booking_db.length !== 0" style="margin-top: 50px;">
+      <tr>
+        <th v-for="(colName, i) in colNames" :key="i">
+          <div class="tb-head">
+            {{ colName }}
+            <SortingArrow
+              :active="activeArrow == i ? true : false"
+              @click="setActiveArrow(i)"
+              @sortReturn="sortReturn"
+            />
+          </div>
+        </th>
+        <th>Manage</th>
+      </tr>
+
+      <tr
+        v-for="(booking, i) in booking_db.slice(
+          currentPage * tableRow - tableRow,
+          currentPage * tableRow
+        )"
+        :key="i"
+        class="row"
+      >
+        <td :style="{ width: '15%' }">{{ convertDate(booking.date) }}</td>
+        <td :style="{ width: '15%' }">{{ booking.bookingID }}</td>
+        <td :style="{ width: '25%' }">{{ booking.customerName }}</td>
+        <td :style="{ width: '15%' }">{{ booking.phone }}</td>
+        <td :style="{ width: '20%' }">{{ booking.email }}</td>
+        <td :style="{ width: '10%' }">
+          <div class="manage">
+            <button class="manage-button" @click="getRecord(booking)">
+              <i class="fa fa-search fa-2x"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </table>
 
     <PaginationBar
       :pageCount="Math.ceil(booking_db.length / tableRow)"
       :paginationVisible="booking_db.length > tableRow"
       @pageReturn="pageReturn"
+      :style="
+        width <= 1000
+          ? {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '60px',
+            }
+          : {
+              position: 'fixed',
+              bottom: '50px',
+              margin: '0 auto',
+              right: '0',
+              left: '200px',
+            }
+      "
     />
 
     <!-- getRecord -->
@@ -292,6 +314,7 @@ import CustomSelect from "../components/CustomSelect.vue";
 import SortingArrow from "../components/SortingArrow";
 import SearchError from "../components/SearchError";
 import axios from "axios";
+import Mixins from "../Mixins";
 
 const selectOption = ["Name", "Date", "BookingID", "Phone", "Email"];
 const colNames = ["Date", "Booking ID", "Customer Name", "Phone", "Email"];
@@ -310,11 +333,13 @@ export default {
   },
   setup() {
     const { width } = useScreenWidth();
-    const { height, tableRow } = useScreenHeight(420);
+    const { height, tableRow } = useScreenHeight(430);
     return { width, height, tableRow };
   },
   data() {
     return {
+      past5Years: "",
+      selectedYear: "",
       colNames,
       currentPage: 1,
       visible: false,
@@ -379,6 +404,8 @@ export default {
     } else {
       this.getAllBooking();
     }
+    this.past5Years = Mixins.methods.getPastYears(5);
+    this.selectedYear = this.past5Years[0];
   },
 
   methods: {
@@ -399,7 +426,9 @@ export default {
       this.setSort(clickedArrow);
       this.searchData();
     },
-
+    setSelectedYear(year) {
+      this.selectedYear = year;
+    },
     sortReturn(direction) {
       this.sortDirection = direction;
     },
@@ -634,6 +663,16 @@ h3 {
   display: inline-block;
   font-size: 25px;
 }
+.menu-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.search-buttons {
+  display: flex;
+  align-items: center;
+}
 .search-container {
   display: flex;
   align-items: center;
@@ -654,15 +693,6 @@ i {
   color: #5f5f5f;
 }
 
-.menu-bar {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-.table-container {
-  height: 600px;
-}
 table {
   width: 100%;
   border: 1px solid black;
@@ -834,8 +864,20 @@ td {
   }
 }
 @media (max-width: 700px) {
+  h3 {
+    font-size: 44px;
+    margin: 20px 0;
+    padding: 0;
+  }
+  .menu-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .search-buttons {
+    margin-top: 30px;
+  }
   .search-field {
-    width: 150px;
+    width: 280px;
     font-size: 16px;
   }
   table {

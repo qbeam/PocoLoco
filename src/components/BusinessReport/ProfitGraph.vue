@@ -22,6 +22,7 @@
 <script>
 import CustomSelect from "../CustomSelect";
 import axios from "axios";
+import Mixins from "../../Mixins";
 
 const lineColors = ["#FFC42E", "#FF0000", "#24BA45"];
 
@@ -38,11 +39,37 @@ export default {
       series: [
         {
           name: "Earning",
-          data: [null,null,null,null,null,null,null,null,null,null,null,null],
+          data: [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+          ],
         },
         {
           name: "Expense",
-          data: [null,null,null,null,null,null,null,null,null,null,null,null],
+          data: [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+          ],
         },
         {
           name: "Profit",
@@ -144,14 +171,8 @@ export default {
       this.getEarning();
       this.getExpense();
     },
-    getYear(){
-      const year=[];
-      var yearNow = this.year;
-      for (let i = 0; i < 6; i++) {
-        year.push(yearNow);
-        yearNow = yearNow -1;
-      }
-      this.searchRange = year;
+    getYear() {
+      this.searchRange = Mixins.methods.getPastYears(5);
       this.getEarning();
       this.getExpense();
     },
@@ -163,39 +184,48 @@ export default {
         })
         .then(
           function(res) {
-            this.setSeries(res.data,'earning');
+            this.setSeries(res.data, "earning");
           }.bind(this)
         );
     },
-    setSeries(data,type) {
-      const temp = [null,null,null,null,null,null,null,null,null,null,null,null];
-      
+    setSeries(data, type) {
+      const temp = [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      ];
+
       for (let i = 0; i < data.length; i++) {
         const month = data[i].month;
-        temp[month-1] = Number(data[i].summary);
+        temp[month - 1] = Number(data[i].summary);
       }
-      if(type == "earning"){
+      if (type == "earning") {
         this.series[0].data = temp;
-      }
-      else if(type == "expense"){
+      } else if (type == "expense") {
         this.series[1].data = temp;
       }
       this.getProfit();
-
     },
-    getProfit(){
+    getProfit() {
       const profit = [];
 
       for (let i = 0; i < 12; i++) {
-        if(this.series[0].data[i] == null && this.series[1].data[i] == null){
+        if (this.series[0].data[i] == null && this.series[1].data[i] == null) {
           profit.push(null);
-        }
-        else{
+        } else {
           profit.push(this.series[0].data[i] - this.series[1].data[i]);
         }
-        
       }
-      this.series[2].data=profit;
+      this.series[2].data = profit;
     },
 
     getExpense() {
@@ -206,8 +236,7 @@ export default {
         })
         .then(
           function(res) {
-            this.setSeries(res.data,'expense');
-
+            this.setSeries(res.data, "expense");
           }.bind(this)
         );
     },

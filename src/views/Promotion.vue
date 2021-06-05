@@ -68,6 +68,7 @@
         <td>{{ promotion.discount }}%</td>
         <td>{{ convertDate(promotion.startDate) }}</td>
         <td>{{ convertDate(promotion.endDate) }}</td>
+
         <td v-if="role != 'Receptionist'">
           <div class="manage">
             <button
@@ -232,6 +233,7 @@ import CustomSelect from "../components/CustomSelect.vue";
 import SearchError from "../components/SearchError";
 import SortingArrow from "../components/SortingArrow";
 import axios from "axios";
+import Mixins from "../Mixins";
 
 const selectOption = [
   "Promotion",
@@ -410,9 +412,7 @@ export default {
     },
     searchData() {
       if (this.filter == "startDate" || this.filter == "endDate") {
-        this.searchSent = this.searchSent.trim();
-        console.log("--", this.searchSent);
-        this.searchSent = this.converDateToQuery(this.search);
+        this.searchSent = Mixins.methods.getDefaultDateFormat(this.search);
       } else {
         this.searchSent = this.search;
       }
@@ -529,20 +529,8 @@ export default {
       this.form.startDate = "";
       this.form.endDate = "";
     },
-
     convertDate(date) {
-      var datearray = date.split("-");
-      var newdate = datearray[2] + "/" + datearray[1] + "/" + datearray[0];
-      return newdate;
-    },
-
-    converDateToQuery(date) {
-      var datearray = date.split("/");
-      if (datearray.length != 3 || date.length != 10) {
-        alert("Date format should be dd/mm/yyyy");
-      }
-      var newdate = datearray[2] + "-" + datearray[1] + "-" + datearray[0];
-      return newdate;
+      return Mixins.methods.convertToSlash(date);
     },
   },
 };
@@ -710,7 +698,9 @@ td {
     font-size: 16px;
   }
   h3 {
-    margin: 40px 0 20px 0;
+    font-size: 44px;
+    margin: 20px 0;
+    padding: 0;
   }
   h4 {
     font-size: 14px;

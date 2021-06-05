@@ -51,6 +51,7 @@
 import { useScreenWidth } from "../../composables/useScreenWidth";
 import CustomSelect from "../CustomSelect";
 import axios from "axios";
+import Mixins from "../../Mixins";
 
 const month = [
   "Jan",
@@ -175,13 +176,7 @@ export default {
       this.getRecord();
     },
     setUpGraph() {
-      const yearRange = [];
-      let currentYear = new Date().getFullYear();
-      for (let i = 0; i < 5; i++) {
-        yearRange.push(currentYear);
-        currentYear = currentYear - 1;
-      }
-      this.searchRange = yearRange; // set year choice up to past 5 years
+      this.searchRange = Mixins.methods.getPastYears(5); // set year choice up to past 5 years
       this.getRecord(); // get record for graph
     },
     getAction(type) {

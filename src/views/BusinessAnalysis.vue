@@ -339,6 +339,11 @@ h3 {
   }
 }
 @media (max-width: 750px) {
+  h3 {
+    font-size: 42px;
+    margin: 20px 0;
+    padding: 0;
+  }
   .cards {
     flex-direction: column;
     margin: 0;

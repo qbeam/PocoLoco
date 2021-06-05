@@ -197,11 +197,14 @@ export default {
     };
   },
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Receptionist") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
-    }
-    else {
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userDepartment") !== "Receptionist"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } else {
       this.role = this.$store.state.employeeDetail.role;
       this.departmentName = this.$store.state.employeeDetail.department;
       this.getAllRoom();
@@ -501,7 +504,9 @@ td {
     font-size: 16px;
   }
   h3 {
-    margin: 40px 0 20px 0;
+    font-size: 44px;
+    margin: 20px 0;
+    padding: 0;
   }
   h4 {
     font-size: 14px;

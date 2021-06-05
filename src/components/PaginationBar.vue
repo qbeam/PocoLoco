@@ -104,12 +104,14 @@ export default {
       if (this.pageGroup > 0) {
         this.pageGroup -= 1;
         this.currentPage = this.pageGroup * 10 + 1;
+        this.$emit("pageReturn", this.currentPage);
       }
     },
     nextGroup() {
       if (this.pageGroup < Math.ceil(this.pageCount / 10) - 1) {
         this.pageGroup += 1;
         this.currentPage = this.pageGroup * 10 + 1;
+        this.$emit("pageReturn", this.currentPage);
       }
     },
     setCurrentPage(page) {

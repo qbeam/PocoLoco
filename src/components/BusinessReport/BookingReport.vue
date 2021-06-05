@@ -23,8 +23,8 @@
         </div>
       </button>
     </div>
-    <div class="error-img">
-      <img src="../../assets/search-icon.png" v-if="errorSearching" />
+    <div class="error-img" v-if="errorSearching">
+      <img src="../../assets/search-icon.png" />
     </div>
   </div>
 </template>
@@ -32,6 +32,7 @@
 <script>
 import CustomSelect from "../CustomSelect";
 import axios from "axios";
+import Mixins from "../../Mixins";
 
 export default {
   name: "BookingReport",
@@ -54,13 +55,7 @@ export default {
       this.getBookingPro();
     },
     getYear() {
-      const year = [];
-      var yearNow = this.year;
-      for (let i = 0; i < 6; i++) {
-        year.push(yearNow);
-        yearNow = yearNow - 1;
-      }
-      this.searchRange = year;
+      this.searchRange = Mixins.methods.getPastYears(5);
       this.getBookingPro();
     },
     getBookingPro() {
@@ -169,8 +164,8 @@ export default {
   display: flex;
   margin: auto;
   justify-content: center;
-  }
-img{
+}
+img {
   width: 80%;
 }
 .title {

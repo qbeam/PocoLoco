@@ -33,6 +33,7 @@
 <script>
 import CustomSelect from "../CustomSelect";
 import axios from "axios";
+import Mixins from "../../Mixins";
 
 export default {
   name: "AbsentReport",
@@ -41,27 +42,17 @@ export default {
     return {
       errorSearching: false,
       absenceSum: [],
-      searchRange: [2021, 2020, 2019, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      searchRange: "",
       displayRange: null,
     };
   },
   created() {
     this.year = new Date().getFullYear();
-    this.getYear();
+    this.searchRange = Mixins.methods.getPastYears(5);
   },
   methods: {
     graphRange(value) {
       this.year = value;
-      this.getAbsence();
-    },
-    getYear() {
-      const year = [];
-      var yearNow = this.year;
-      for (let i = 0; i < 5; i++) {
-        year.push(yearNow);
-        yearNow = yearNow - 1;
-      }
-      this.searchRange = year;
       this.getAbsence();
     },
     getAbsence() {

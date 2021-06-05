@@ -92,6 +92,11 @@ h3 {
   }
 }
 @media (max-width: 700px) {
+  h3 {
+    font-size: 44px;
+    margin: 20px 0;
+    padding: 0;
+  }
   .inner-container {
     margin-bottom: 20px;
   }
