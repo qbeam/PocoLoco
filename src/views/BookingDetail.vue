@@ -142,7 +142,7 @@
     />
 
     <Popup :visible="searchVisible" @popReturn="popReturn">
-      <div class="popup-head1">Booking ID: {{ booking.bookingDetailID }}</div>
+      <div class="popup-head1">Booking ID: {{ booking.bookingID }}</div>
       <div class="popup-head">
         <div class="item">
           Name: {{ booking.firstName }} {{ booking.lastName }}

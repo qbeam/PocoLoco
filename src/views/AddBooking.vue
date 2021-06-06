@@ -202,6 +202,8 @@ export default {
     addBooking() {
       if (this.customerID == "") {
         alert("Plese fill Customer ID");
+      } else if (this.bookingDetail_db.length == 0) {
+        alert("Please booking room");
       } else {
         axios
           .post("http://localhost:8080/PocoLoco_db/api_addBooking.php", {

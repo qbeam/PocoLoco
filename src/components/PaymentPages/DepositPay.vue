@@ -117,7 +117,7 @@
       <p
         :style="width > 750 ? { marginRight: '15%' } : { marginRight: '10px' }"
       >
-        Total Payment: {{ deposit }} ฿
+        Total Payment: {{ totalPayment }} ฿
       </p>
     </div>
   </div>
@@ -275,7 +275,7 @@ export default {
         this.totalCharge = (this.deposit * this.chargeRate) / 100;
         this.totalPayment = this.deposit + this.totalCharge;
       } else {
-        this.totalPayment = sum;
+        this.totalPayment = this.deposit;
         this.totalCharge = 0;
       }
     },

@@ -238,7 +238,6 @@ export default {
       outDateError: true,
     };
   },
-
   mounted() {
     this.$nextTick(() => {
       window.addEventListener("resize", this.onResize);
@@ -250,14 +249,22 @@ export default {
   },
 
   created() {
-    if (localStorage.getItem("userRole") === "Owner" || localStorage.getItem("userRole") === "Admin" || localStorage.getItem("userDepartment") === "Receptionist") {
+    if (
+      localStorage.getItem("userRole") === "Owner" ||
+      localStorage.getItem("userRole") === "Admin" ||
+      localStorage.getItem("userDepartment") === "Receptionist"
+    ) {
       this.details.bookingID = this.$route.params.bookingID;
       this.customerID = this.$route.params.customerID;
-      this.getRoomType();
-    }
-    else {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
+      console.log(this.customerID);
+      if (this.customerID == undefined) {
+        this.$router.push("/AddBooking");
+      } else {
+        this.getRoomType();
+      }
+    } else {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
     }
   },
 

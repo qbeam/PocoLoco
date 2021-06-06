@@ -74,6 +74,9 @@ export default {
     if (this.role === "Accountant") {
       this.$router.push("/HotelExpenses");
     }
+    if (this.role === "Timestamp") {
+      this.$router.push("/TimeStamp");
+    }
   },
 };
 </script>
