@@ -424,7 +424,7 @@ export default {
           })
           .then(
             function(res) {
-              console.log(res.date);
+              
               if (res.data.success == true) {
                 alert(res.data.message);
                 this.backToPromo();

@@ -224,7 +224,7 @@ export default {
             } else {
               this.errorSearching = true;
             }
-            console.log("Search", this.errorSearching);
+            
             this.returnQuery();
           }.bind(this)
         );
@@ -344,7 +344,7 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res.data);
+            
             if (res.data.success == true) {
               this.count_success++;
               if (this.count_success == this.orders.length) {

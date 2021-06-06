@@ -165,6 +165,7 @@
       <PaginationBar
         :pageCount="Math.ceil(roomDB.length / numberPerPage)"
         :paginationVisible="roomDB.length > numberPerPage"
+        :changePage="currentPage"
         @pageReturn="pageReturn"
       />
     </InnerFormContainer>
@@ -256,7 +257,7 @@ export default {
     ) {
       this.details.bookingID = this.$route.params.bookingID;
       this.customerID = this.$route.params.customerID;
-      console.log(this.customerID);
+
       if (this.customerID == undefined) {
         this.$router.push("/AddBooking");
       } else {
@@ -275,10 +276,6 @@ export default {
 
     onResize() {
       this.windowWidth = self.innerWidth;
-    },
-
-    setSelectedRoom(roomType) {
-      console.log("SELECTED", roomType);
     },
 
     getRoomType() {
@@ -306,7 +303,10 @@ export default {
     },
 
     getRoomNumber() {
-      if (this.details.checkIn > this.details.checkOut) {
+      if (
+        this.details.checkIn > this.details.checkOut ||
+        this.details.checkIn == this.details.checkOut
+      ) {
         alert("Please check your date again");
       } else {
         axios
@@ -319,6 +319,7 @@ export default {
           .then(
             function(res) {
               this.roomDB = res.data;
+              this.currentPage = 1;
             }.bind(this)
           );
       }

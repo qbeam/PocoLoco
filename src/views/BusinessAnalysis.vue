@@ -186,6 +186,7 @@ export default {
         this.earningProgress = getEarningProgress.toFixed(2);
       }
     },
+    
     //Booking
     getBookingAmountNew() {
       axios
@@ -223,6 +224,7 @@ export default {
         this.bookingProgress = getBookingProgress.toFixed(2);
       }
     },
+
     //Order
     getOrderNew() {
       axios

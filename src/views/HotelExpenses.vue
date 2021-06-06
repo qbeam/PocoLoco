@@ -173,7 +173,7 @@
       v-bind:visible="editVisible"
       :buttons="true"
       @popReturn="editReturn"
-      @submit="submit"
+      @submit="validateCheck"
     >
       <div class="popup-head">
         <div class="user-pic">
@@ -365,10 +365,7 @@ export default {
     editReturn(value) {
       this.editVisible = value;
     },
-    submit(value) {
-      this.editVisible = value;
-      this.updateData();
-    },
+
     setActiveArrow(clickedArrow) {
       this.activeArrow = clickedArrow;
       this.setSort(clickedArrow);
@@ -449,36 +446,46 @@ export default {
         );
     },
 
-    updateData() {
-      this.check =
-        this.form.employeeID != "" &&
-        this.form.detail != "" &&
-        this.form.expense != "" &&
-        this.form.expenseDate != "";
-
-      if (this.check) {
-        axios
-          .post("http://localhost:8080/PocoLoco_db/api_hotelExpense.php", {
-            action: "update",
-            employeeID: this.form.employeeID,
-            expenseID: this.form.expenseID,
-            type: this.form.type,
-            detail: this.form.detail,
-            expense: this.form.expense,
-            expenseDate: this.form.expenseDate,
-          })
-          .then(
-            function(res) {
-              if (res.data.success == true) {
-                alert(res.data.message);
-                this.resetData();
-                this.getAllExpense();
-              } else {
-                alert(res.data.message);
-              }
-            }.bind(this)
-          );
+    validateCheck(value) {
+      if (
+        this.form.detail == "" ||
+        this.form.expense == "" ||
+        this.form.expenseDate == ""
+      ) {
+        alert("Please fill the required fields");
+      } else if (this.form.expense != "") {
+        this.form.expense = parseFloat(this.form.expense);
+        if (this.form.expense < 0) {
+          alert("Expense amount must more than 0");
+        } else {
+          this.updateData(value);
+        }
       }
+    },
+
+    updateData(value) {
+      this.editVisible = value;
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_hotelExpense.php", {
+          action: "update",
+          employeeID: this.form.employeeID,
+          expenseID: this.form.expenseID,
+          type: this.form.type,
+          detail: this.form.detail,
+          expense: this.form.expense,
+          expenseDate: this.form.expenseDate,
+        })
+        .then(
+          function(res) {
+            if (res.data.success == true) {
+              alert(res.data.message);
+              this.resetData();
+              this.getAllExpense();
+            } else {
+              alert(res.data.message);
+            }
+          }.bind(this)
+        );
     },
 
     resetData() {

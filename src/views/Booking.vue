@@ -533,6 +533,7 @@ export default {
     },
 
     getAllBooking() {
+      this.currentPage = 1;
       axios
         .post("http://localhost:8080/PocoLoco_db/api_booking.php", {
           action: "getAll",

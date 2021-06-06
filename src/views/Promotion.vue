@@ -114,7 +114,7 @@
     <Popup
       v-bind:visible="editVisible"
       @popReturn="editReturn"
-      @submit="submit"
+      @submit="validateCheck"
       :buttons="true"
     >
       <div class="input-group">
@@ -216,7 +216,7 @@
         </div>
       </div>
       <!-- Discount -->
-      <h4>Discount</h4>
+      <h4>% Discount</h4>
       <input v-model="form.discount" type="text" :placeholder="discount" />
     </Popup>
   </TablePage>
@@ -332,10 +332,6 @@ export default {
     editReturn(value) {
       this.editVisible = value;
     },
-    submit(value) {
-      this.editVisible = value;
-      this.updateData();
-    },
     setActiveArrow(clickedArrow) {
       this.activeArrow = clickedArrow;
       this.setSort(clickedArrow);
@@ -442,33 +438,30 @@ export default {
     goToAddPromotion() {
       this.$router.push("/AddPromo");
     },
-    updateData() {
-      this.validate();
-
-      if (this.check && this.form.isEdit) {
-        axios
-          .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
-            action: "updateData",
-            promotionID: this.form.promotionID,
-            promotion: this.form.promotion,
-            season: this.form.season,
-            roomType: this.form.roomType,
-            startDate: this.form.startDate,
-            endDate: this.form.endDate,
-            discount: this.form.discount,
-          })
-          .then(
-            function(res) {
-              if (res.data.success == true) {
-                alert(res.data.message);
-                this.resetData();
-                this.getPromotion();
-              } else {
-                alert(res.data.message);
-              }
-            }.bind(this)
-          );
-      }
+    updateData(value) {
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_promotion.php", {
+          action: "updateData",
+          promotionID: this.form.promotionID,
+          promotion: this.form.promotion,
+          season: this.form.season,
+          roomType: this.form.roomType,
+          startDate: this.form.startDate,
+          endDate: this.form.endDate,
+          discount: this.form.discount,
+        })
+        .then(
+          function(res) {
+            if (res.data.success == true) {
+              this.editVisible = value;
+              alert(res.data.message);
+              this.resetData();
+              this.getPromotion();
+            } else {
+              alert(res.data.message);
+            }
+          }.bind(this)
+        );
     },
     deleteData(promotion) {
       if (
@@ -512,15 +505,6 @@ export default {
         this.filter = "endDate";
       }
     },
-    validate() {
-      this.check =
-        this.form.season != "" &&
-        this.form.promotion != "" &&
-        this.form.roomType != "" &&
-        this.form.discount != "" &&
-        this.form.startDate != "" &&
-        this.form.endDate != "";
-    },
 
     resetData() {
       this.form.promotionID = "";
@@ -533,6 +517,24 @@ export default {
     },
     convertDate(date) {
       return Mixins.methods.convertToSlash(date);
+    },
+
+    validateCheck(value) {
+      if (this.form.promotion == "" || this.form.discount == "") {
+        alert("Please fill the required fields");
+      } else if (
+        this.form.startDate > this.form.endDate ||
+        this.form.startDate == this.form.endDate
+      ) {
+        alert("Please check your date again");
+      } else if (this.form.discount != "") {
+        this.form.discount = Number(this.form.discount);
+        if (this.form.discount < 0 || this.form.discount > 100) {
+          alert("Discount must be 0 - 100 %");
+        } else {
+          this.updateData(value);
+        }
+      }
     },
   },
 };

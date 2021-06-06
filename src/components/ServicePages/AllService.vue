@@ -106,7 +106,7 @@
     v-bind:visible="editVisible"
     :buttons="true"
     @popReturn="editReturn"
-    @submit="submit"
+    @submit="validateCheck"
     :style="{ top: '0', left: '0', margin: '0' }"
   >
     <div v-if="role == 'Owner' || role == 'Admin' || role == 'Manager'">
@@ -222,10 +222,6 @@ export default {
     editReturn(value) {
       this.editVisible = value;
     },
-    submit(value) {
-      this.editVisible = value;
-      this.updateData();
-    },
     setActiveArrow(clickedArrow) {
       this.activeArrow = clickedArrow;
       this.setSort(clickedArrow);
@@ -262,30 +258,28 @@ export default {
           }.bind(this)
         );
     },
-    updateData() {
+    updateData(value) {
+      this.editVisible = value;
       this.serviceOption(this.form.type);
-      this.validate();
-      if (this.check) {
-        axios
-          .post("http://localhost:8080/PocoLoco_db/api_allService.php", {
-            action: "updateData",
-            serviceID: this.form.serviceID,
-            type: this.form.type,
-            name: this.form.name,
-            servicePrice: this.form.servicePrice,
-          })
-          .then(
-            function(res) {
-              if (res.data.success == true) {
-                alert(res.data.message);
-                this.resetData();
-                this.getAllService();
-              } else {
-                alert(res.data.message);
-              }
-            }.bind(this)
-          );
-      }
+      axios
+        .post("http://localhost:8080/PocoLoco_db/api_allService.php", {
+          action: "updateData",
+          serviceID: this.form.serviceID,
+          type: this.form.type,
+          name: this.form.name,
+          servicePrice: this.form.servicePrice,
+        })
+        .then(
+          function(res) {
+            if (res.data.success == true) {
+              this.resetData();
+              alert(res.data.message);
+              this.getAllService();
+            } else {
+              alert(res.data.message);
+            }
+          }.bind(this)
+        );
     },
     deleteService(service) {
       if (confirm("Delete '" + service.name + "' ?")) {
@@ -324,7 +318,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res.data);
             this.service_db = res.data;
             this.countRow = this.service_db.length;
             this.returnQuery();
@@ -337,11 +330,21 @@ export default {
           }.bind(this)
         );
     },
-    validate() {
-      this.check =
-        this.form.type != "" &&
-        this.form.name != "" &&
-        this.form.servicePrice != "";
+    validateCheck(value) {
+      if (
+        this.form.type == "" ||
+        this.form.name == "" ||
+        this.form.servicePrice == ""
+      ) {
+        alert("Please fill the required fields");
+      } else if (this.form.servicePrice != "") {
+        this.form.servicePrice = parseFloat(this.form.servicePrice);
+        if (this.form.servicePrice < 0) {
+          alert("Service price must more than 0");
+        } else {
+          this.updateData(value);
+        }
+      }
     },
     resetData() {
       this.form.serviceID = "";

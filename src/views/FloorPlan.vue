@@ -118,11 +118,10 @@ export default {
 
     selectBuilding(selectedBuilding) {
       this.building = selectedBuilding;
-      console.log("selected B", this.building);
+      
     },
     selectFloor(selectedFloor) {
       this.floor = selectedFloor;
-      console.log("selected F", this.floor);
     },
   },
   watch: {

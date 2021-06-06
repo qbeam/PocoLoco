@@ -1,14 +1,11 @@
 <template>
   <div class="container">
     <div class="inner-container">
-      <button class="logout-button">
-        <div @click="logOut()" class="logout-text">
-          <i
-            class="fa fa-sign-out fa-2x"
-          >
-          </i>
-        </div>
-      </button>
+      <div class="logout">
+        <button class="logout-button" @click="logOut()">
+          <i class="fa fa-sign-out" />
+        </button>
+      </div>
       <h1>Timestamp</h1>
       <div class="current-time">
         <p>{{ hour }}</p>
@@ -39,8 +36,8 @@
           }"
           >OUT</DefaultButton
         >
-      </div> 
       </div>
+    </div>
   </div>
 </template>
 
@@ -110,10 +107,13 @@ export default {
       employeeID: "",
     };
   },
-    created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("user") !== "130001") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
+  created() {
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("user") !== "130001"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
     }
   },
   methods: {
@@ -154,7 +154,6 @@ export default {
         })
         .then(
           function(res) {
-            console.log("data", res.data);
             if (res.data.success == true) {
               alert("Employee ID : " + this.employeeID + " Out!");
             } else {
@@ -178,16 +177,19 @@ export default {
   width: 70%;
   height: 80%;
   margin: auto;
+  padding: 0;
   background-color: white;
   justify-content: center;
   align-items: center;
 }
+.logout {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
 .logout-button {
   width: 120px;
-  /* left: 100px; */
-  /* bottom: 50px; */
-  /* height: 35px; */
-  /* position: fixed; */
+  height: 35px;
   z-index: 10;
   background: none;
   border: none;
@@ -196,15 +198,9 @@ export default {
   cursor: pointer;
   opacity: 0.7;
 }
-.logout-text {
-  width: 100%;
+.fa-sign-out {
   color: var(--primary-blue);
-  font-size: 16px;
-  font-family: sans-serif;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 30px;
 }
 h1 {
   font-size: 64px;

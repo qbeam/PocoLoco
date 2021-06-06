@@ -8,43 +8,30 @@
       <div class="expense-item" v-for="(expense, i) in expenseSum" :key="i">
         <img src="../../assets/expense.png" />
         <div>
-          <p :style="{ fontWeight: 'bold' }">{{ expense.type }}</p>
-          <p class="amount">{{ expense.amount }} ฿</p>
+          <p :style="{ fontWeight: 'bold' }">{{ setExpense(expense.type) }}</p>
+          <p class="amount">{{ expense.expense }} ฿</p>
         </div>
       </div>
+    </div>
+    <div class="error-img">
+      <img src="../../assets/search-icon.png" v-if="errorSearching" />
     </div>
   </div>
 </template>
 
 <script>
-
 import axios from "axios";
-// const expenseSum = [
-//   { type: "Electricity Bill", amount: 1200000 },
-//   { type: "Kitchen", amount: 3200000 },
-//   { type: "Laundry", amount: 800000 },
-//   { type: "Maintenance", amount: 2993578 },
-//   { type: "Security", amount: 800000 },
-//   { type: "Others", amount: 50000 },
-// ];
+
 export default {
   name: "ExpenseReport",
   data() {
     return {
-      expenseSum: [
-        { type: "Housekeeping", amount: 0 },
-        { type: "Kitchen", amount: 0 },
-        { type: "Maintenance", amount: 0 },
-        { type: "Electricity", amount: 0 },
-        { type: "Water", amount: 0 },
-        { type: "Advertisement", amount: 0 },
-        { type: "Entertainment", amount: 0 },
-        { type: "Others", amount: 0 },
-      ],
-      date:"",
-      day:"",
-      month:"",
-      year:"",
+      errorSearching: false,
+      expenseSum: [],
+      date: "",
+      day: "",
+      month: "",
+      year: "",
     };
   },
   created() {
@@ -54,7 +41,7 @@ export default {
     this.getDate();
   },
   methods: {
-    getDate(){
+    getDate() {
       if (this.day < 10) {
         this.day = "0" + this.day;
       }
@@ -64,7 +51,7 @@ export default {
       this.date = this.year + "-" + this.month;
       this.getExpense();
     },
-    getExpense(){
+    getExpense() {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_businessAnalysis.php", {
           action: "getMontlyExpenses",
@@ -72,28 +59,40 @@ export default {
         })
         .then(
           function(res) {
-            if(res.data != ""){
-              this.setExpense(res.data);
+            if (res.data == "") {
+              this.errorSearching = true;
+            } else {
+              this.errorSearching = false;
+              console.log(res.data);
+              for (var i = 0; i < res.data.length; i++) {
+                this.expenseSum.push(res.data[i]);
+              }
             }
           }.bind(this)
         );
     },
-    setExpense(expense){
-      var type = 1;
-      var j = 0;
+    setExpense(data) {
+      var expenseName = "";
 
-      for (let i = 0; i < 8; i++) {
-        if(type == Number(expense[j].type)){
-          this.expenseSum[i].amount = expense[j].expense;
-          j=j+1;
-          if(j == expense.length){
-            break;
-          }
-        }
-        type = type+1;
+      if (data == "1") {
+        expenseName = "Housekeeping";
+      } else if (data == "2") {
+        expenseName = "Kitchen";
+      } else if (data == "3") {
+        expenseName = "Maintenance";
+      } else if (data == "4") {
+        expenseName = "Electricity";
+      } else if (data == "5") {
+        expenseName = "Water";
+      } else if (data == "6") {
+        expenseName = "Advertisement";
+      } else if (data == "7") {
+        expenseName = "Entertainment";
+      } else if (data == "8") {
+        expenseName = "Others";
       }
-      
-      
+
+      return expenseName;
     },
   },
 };

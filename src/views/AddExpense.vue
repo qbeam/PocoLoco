@@ -188,9 +188,13 @@ export default {
     };
   },
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Accounts and Credits") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userDepartment") !== "Accounts and Credits"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
     }
   },
   methods: {
@@ -240,7 +244,6 @@ export default {
           })
           .then(
             function(res) {
-              console.log(res.data);
               if (res.data.success == true) {
                 alert("Saved Successful");
                 this.resetData();
@@ -259,7 +262,7 @@ export default {
         this.form.detail != "" &&
         this.form.expense != "" &&
         this.form.expenseDate != "";
-      console.log("check", this.check);
+
       if (this.form.employeeID == "") {
         this.employeeIDError = false;
       }

@@ -185,24 +185,17 @@ export default {
     };
   },
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
     }
   },
   methods: {
     backToRolePage() {
       this.$router.push("/Employee");
-    },
-    fetch() {
-      axios
-        .get("http://localhost:8080/PocoLoco_db/api_addRole.php")
-        .then((response) => {
-          console.log("SUCCESS");
-        })
-        .catch(() => {
-          console.log("ERROR");
-        });
     },
     validateCheck() {
       if (this.details.departmentID == "") {
@@ -230,7 +223,6 @@ export default {
         var bonus = 0;
         bonus = Number(this.details.bonusRate);
         if (bonus < 0 || bonus > 100) {
-          // console.log(bonus);
           this.bonusRateError = false;
         } else {
           this.bonusRateError = true;

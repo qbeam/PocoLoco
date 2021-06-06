@@ -203,7 +203,7 @@ export default {
         })
         .then(
           function(res) {
-            console.log("Charge", res.data);
+            
             this.chargeRate = res.data;
           }.bind(this)
         );
@@ -262,7 +262,7 @@ export default {
           })
           .then(
             function(res) {
-              console.log("detail", res.data);
+              
               var i = 0;
               if (
                 this.allRoom.length == 0 ||
@@ -276,9 +276,7 @@ export default {
                 this.calAmountPaid(res.data);
                 this.getAmount(this.payment);
                 this.currentPage = 1;
-              } else {
-                console.log("Not Match");
-              }
+              } 
             }.bind(this)
           );
       }
@@ -390,7 +388,7 @@ export default {
         })
         .then(
           function(res) {
-            console.log(res.data);
+            
             alert(res.data.message);
             if (res.data.success == true) {
               this.clearPayment();

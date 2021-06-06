@@ -22,7 +22,8 @@
               <option value="Maintenance">Maintenance</option>
             </select>
           </div>
-          <!-- Department Error-->
+
+          <!-- Department Error -->
           <div v-else>
             <h4 style="color:red">Department</h4>
             <select @change="getRole" v-model="details.department">
@@ -51,7 +52,8 @@
               </option>
             </select>
           </div>
-          <!-- Role Error-->
+
+          <!-- Role Error -->
           <div v-else>
             <h4 style="color:red">Role</h4>
             <select v-model="details.roleID">
@@ -69,7 +71,7 @@
 
         <!-- Not Admin / Owner -->
         <div v-else>
-          <h4>Department : {{ details.departmentName }}</h4>
+          <h4>Department : {{ details.department }}</h4>
           <!-- Role -->
           <div v-if="roleError">
             <h4>Role</h4>
@@ -477,7 +479,7 @@ export default {
     } else {
       this.role = localStorage.getItem("userRole");
       this.departmentName = localStorage.getItem("userDepartment");
-      this.details.departmentName = this.departmentName;
+      this.details.department = this.departmentName;
       this.getRole();
     }
   },

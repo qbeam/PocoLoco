@@ -119,7 +119,7 @@ export default {
     } else if (this.departmentName == "Kitchen") {
       this.serviceType = 2;
     }
-    console.log(this.departmentName);
+    
     if (
       localStorage.getItem("userRole") !== "Owner" &&
       localStorage.getItem("userRole") !== "Admin" &&
@@ -145,7 +145,7 @@ export default {
           })
           .then(
             function(res) {
-              console.log(res);
+              
               if (res.data.success == true) {
                 alert("Saved Successful");
                 this.resetData();

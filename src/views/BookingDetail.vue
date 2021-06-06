@@ -498,7 +498,7 @@ export default {
     },
 
     selectionFilter(value) {
-      console.log("FIL RET", value);
+      
       if (value === selectOption[0]) {
         this.filter = "bookingDetailID";
       }

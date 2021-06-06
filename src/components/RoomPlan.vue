@@ -260,8 +260,7 @@ export default {
   },
   methods: {
     getRoomNumber() {
-      console.log("building", this.building);
-      console.log("floor", this.floor);
+      
       axios
         .post("http://localhost:8080/PocoLoco_db/api_floorPlan.php", {
           action: "getRoomNumber",
