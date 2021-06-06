@@ -86,6 +86,7 @@
       v-if="!errorSearching"
       :pageCount="Math.ceil(stampRecord.length / tableRow)"
       :paginationVisible="stampRecord.length > tableRow"
+      :changePage="currentPage"
       @pageReturn="pageReturn"
       :style="
         width <= 1000
@@ -230,7 +231,7 @@ export default {
         .then(
           function(res) {
             this.stampRecord = res.data;
-
+            this.currentPage = 1;
             if (this.stampRecord == "") {
               this.errorSearching = true;
             } else {

@@ -80,6 +80,7 @@
   <PaginationBar
     :pageCount="Math.ceil(service_db.length / resultPerPage)"
     :paginationVisible="service_db.length > resultPerPage"
+    :changePage="currentPage"
     @pageReturn="pageReturn"
   />
 
@@ -230,9 +231,9 @@ export default {
     },
 
     searchService() {
-      if (this.role == "Maid" || this.role == "Manager Maid") {
+      if (this.departmentName == "Housekeeping") {
         this.type = 1;
-      } else if (this.role == "Chef" || this.role == "Manager Chef") {
+      } else if (this.departmentName == "Kitchen") {
         this.type = 2;
       }
       axios
@@ -252,6 +253,7 @@ export default {
             } else {
               this.errorSearching = true;
             }
+            this.currentPage = 1;
             this.returnQuery();
           }.bind(this)
         );
@@ -410,7 +412,6 @@ i {
 .search-table {
   width: 100%;
   height: 220px;
-  max-width: 1000px;
   border-collapse: collapse;
   margin: 10px;
   position: relative;
@@ -441,7 +442,6 @@ td {
 }
 .orders {
   width: 100%;
-  max-width: 1000px;
   border-collapse: collapse;
   margin-top: 20px;
   border: 1px solid black;

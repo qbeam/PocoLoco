@@ -91,6 +91,7 @@
     <PaginationBar
       :pageCount="Math.ceil(booking_db.length / tableRow)"
       :paginationVisible="booking_db.length > tableRow"
+      :changePage="currentPage"
       @pageReturn="pageReturn"
       :style="
         width <= 1000
@@ -115,8 +116,7 @@
     <Popup v-bind:visible="visible" @popReturn="popReturn">
       <div class="popup-head1">Booking ID: {{ bookingID }}</div>
       <div class="popup-head">
-        <div class="item">
-          Name: {{ customerName }}</div>
+        <div class="item">Name: {{ customerName }}</div>
         <div class="item">Phone: {{ phone }}</div>
       </div>
       <table v-if="bookingDetail_db.length !== 0" style="magin-top: 10px;">
@@ -231,7 +231,7 @@
           />
         </div>
       </div>
-    
+
       <div>
         <p>Status</p>
         <div class="choices">
@@ -452,6 +452,7 @@ export default {
             } else {
               this.errorSearching = true;
             }
+            this.currentPage = 1;
           }.bind(this)
         );
     },

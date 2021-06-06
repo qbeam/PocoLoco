@@ -60,6 +60,7 @@
     v-if="!error"
     :pageCount="Math.ceil(payment.length / tableRow)"
     :paginationVisible="payment.length > tableRow"
+    :changePage="currentPage"
     @pageReturn="pageReturn"
   />
 
@@ -274,6 +275,7 @@ export default {
                 }
                 this.calAmountPaid(res.data);
                 this.getAmount(this.payment);
+                this.currentPage = 1;
               } else {
                 console.log("Not Match");
               }
@@ -325,6 +327,14 @@ export default {
           i++;
           j++;
         }
+        this.roomID = "";
+        if (this.payment.length == 0) {
+          this.customerID = "";
+          this.firstName = "";
+          this.lastName = "";
+          this.phone = "";
+        }
+        this.currentPage = 1;
       }
 
       i = 0;

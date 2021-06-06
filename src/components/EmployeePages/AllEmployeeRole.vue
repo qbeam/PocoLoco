@@ -86,6 +86,7 @@
     <PaginationBar
       :pageCount="Math.ceil(role_db.length / tableRow)"
       :paginationVisible="role_db.length > tableRow"
+      :changePage="currentPage"
       @pageReturn="pageReturn"
     />
 
@@ -264,14 +265,15 @@ export default {
         .then(
           function(res) {
             this.role_db = res.data;
-            
+
             if (this.role_db == "") {
               this.errorSearching = true;
             } else {
               this.errorSearching = false;
-              this.countRow = this.role_db.length; 
+              this.countRow = this.role_db.length;
             }
             this.returnQuery();
+            this.currentPage = 1;
           }.bind(this)
         );
     },

@@ -108,6 +108,7 @@
     <PaginationBar
       :pageCount="Math.ceil(expenseDetail_db.length / tableRow)"
       :paginationVisible="expenseDetail_db.length > tableRow"
+      :changePage="currentPage"
       @pageReturn="pageReturn"
       :style="
         width <= 1000
@@ -344,7 +345,8 @@ export default {
     this.year = this.past5Years[0];
     if (
       localStorage.getItem("userRole") !== "Owner" &&
-      localStorage.getItem("userRole") !== "Admin"
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userDepartment") !== "Accounts and Credits"
     ) {
       this.$router.push("/Home");
       alert("You don't have permission to access this page");
@@ -437,6 +439,7 @@ export default {
           function(res) {
             this.expenseDetail_db = res.data;
             this.countRow = this.expenseDetail_db.length;
+            this.currentPage = 1;
             if (this.expenseDetail_db != "") {
               this.errorSearching = false;
             } else {

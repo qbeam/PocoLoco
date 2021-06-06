@@ -73,6 +73,7 @@
       v-if="!errorSearching"
       :pageCount="Math.ceil(payment_db.length / tableRow)"
       :paginationVisible="payment_db.length > tableRow"
+      :changePage="currentPage"
       @pageReturn="pageReturn"
     />
   </div>
@@ -140,7 +141,6 @@ export default {
   },
 
   created() {
-    
     this.past5Years = Mixins.methods.getPastYears(6);
     this.year = this.past5Years[0];
     this.getallPayment();
@@ -175,7 +175,6 @@ export default {
         this.sort = "datePaid";
       }
     },
-
     selectionFilter(value) {
       if (value === selectOption[0]) {
         this.filter = "roomID";
@@ -242,6 +241,7 @@ export default {
         .then(
           function(res) {
             this.payment_db = res.data;
+            this.currentPage = 1;
             if (this.payment_db != "") {
               this.errorSearching = false;
             } else {

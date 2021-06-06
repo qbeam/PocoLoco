@@ -103,6 +103,7 @@
     <PaginationBar
       :pageCount="Math.ceil(customer_db.length / tableRow)"
       :paginationVisible="customer_db.length > tableRow"
+      :changePage="currentPage"
       @pageReturn="pageReturn"
       :style="
         width <= 1000
@@ -188,7 +189,12 @@
         <input type="text" v-model="form.lastName" :placeholder="lname" />
       </div>
       <p><b>Phone</b></p>
-      <input type="number" v-model="form.phone" :placeholder="phone" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107 && event.keyCode !== 110 && event.keyCode !== 190"/>
+      <input
+        type="number"
+        v-model="form.phone"
+        :placeholder="phone"
+        onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 109 && event.keyCode !== 107 && event.keyCode !== 110 && event.keyCode !== 190"
+      />
       <p><b>Email</b></p>
       <input
         type="text"
@@ -397,6 +403,7 @@ export default {
             } else {
               this.errorSearching = true;
             }
+            this.currentPage = 1;
           }.bind(this)
         );
     },
@@ -685,5 +692,5 @@ input[type="number"] {
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
-} 
+}
 </style>

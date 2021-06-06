@@ -89,6 +89,7 @@
     <PaginationBar
       :pageCount="Math.ceil(promotion_db.length / tableRow)"
       :paginationVisible="promotion_db.length > tableRow"
+      :changePage="currentPage"
       @pageReturn="pageReturn"
       :style="
         width <= 1000
@@ -434,6 +435,7 @@ export default {
             } else {
               this.errorSearching = true;
             }
+            this.currentPage = 1;
           }.bind(this)
         );
     },

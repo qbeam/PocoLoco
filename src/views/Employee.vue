@@ -59,8 +59,8 @@
       <AddButton
         :style="
           width < 800
-            ? { position: 'fixed', right: '5%', top: '80px' }
-            : { position: 'fixed', right: '5%', top: '170px' }
+            ? { position: 'fixed', right: '20px', top: '50px' }
+            : { position: 'fixed', right: '60px', top: '170px' }
         "
         @click="goToEmployeeReg()"
       />
@@ -132,7 +132,14 @@
         </td>
 
         <td>
-          <div class="manage">
+          <div v-if="employee.workStatus == 'Quited'" class="manage">
+            <button class="manage-button" @click="viewEmployee(employee)">
+              <i class="fa fa-search fa-2x"></i>
+            </button>
+            <div class="vl"></div>
+          </div>
+
+          <div v-else class="manage">
             <button class="manage-button" @click="viewEmployee(employee)">
               <i class="fa fa-search fa-2x"></i>
             </button>
@@ -149,6 +156,7 @@
       v-if="role === 'Manager'"
       :pageCount="Math.ceil(employee_db.length / tableRow)"
       :paginationVisible="employee_db.length > tableRow"
+      :changePage="currentPage"
       @pageReturn="pageReturn"
       :style="
         width <= 1000
@@ -177,7 +185,6 @@
             <div class="group-row">
               <div class="group-item-left">
                 <div class="circle">
-                  <!-- <img src="../assets/ReceptionistF.png" /> -->
                   <img :src="require(`../assets/${employee.picName}.png`)" />
                 </div>
               </div>
@@ -202,7 +209,7 @@
           <p><b>Department: </b>{{ employee.departmentName }}</p>
           <p><b>Working time: </b>{{ employee.shift }}</p>
           <p><b>Identification: </b>{{ employee.identification }}</p>
-          <p><b>Gender: </b>{{ employee.gender }}</p>
+          <p><b>Gender: </b>{{ convertGender(employee.gender) }}</p>
           <p><b>Email: </b>{{ employee.email }}</p>
         </div>
         <div class="group-item">
@@ -220,7 +227,7 @@
       :visible="editVisible"
       :buttons="true"
       @popReturn="popReturn"
-      @submit="validateCheck"
+      @submit="updateData"
     >
       <div class="popup-head">
         <div class="group-row">
@@ -297,7 +304,7 @@ const menus = ["All Employees", "All Employees Roles"];
 
 const selectOption = ["Name", "ID", "Role", "Salary", "Status", "Duration"];
 
-const colNames = ["Name", "ID", "Role", "Salary", "Status"];
+const colNames = ["ID", "Name", "Role", "Salary", "Status"];
 const selectShift = ["05:00 - 13:00", "13:00 - 21:00", "21:00 - 05:00"];
 const workStatus = ["Employed", "Suspended", "Quited"];
 
@@ -317,7 +324,7 @@ export default {
   },
   setup() {
     const { width } = useScreenWidth();
-    const { height, tableRow } = useScreenHeight(420);
+    const { height, tableRow } = useScreenHeight(600);
     return { width, height, tableRow };
   },
   data() {
@@ -488,41 +495,6 @@ export default {
       this.form.picName = employee.picName;
     },
 
-    validateCheck(value) {
-      if (this.form.firstName == "") {
-        alert("Please fill name");
-      } else if (this.form.lastName == "") {
-        alert("Please fill lastname");
-      } else if (this.form.phone == "") {
-        alert("Please fill phone number");
-      } else if (this.form.phone != "") {
-        if (this.form.phone.length != 10) {
-          alert("Phone number must be 10 digits");
-        } else if (this.form.email == "") {
-          alert("Please fill email");
-        } else if (this.form.email != "") {
-          this.checkEmail(value);
-        }
-      }
-    },
-
-    checkEmail(value) {
-      axios
-        .post("http://localhost:8080/PocoLoco_db/api_addEmployee.php", {
-          action: "checkEmail",
-          email: this.form.email,
-        })
-        .then(
-          function(res) {
-            if (res.data == true) {
-              alert("Invalid Email");
-            } else {
-              this.updateData(value);
-            }
-          }.bind(this)
-        );
-    },
-
     updateData(value) {
       this.form.workStatus = this.convertWorkStatus(this.form.workStatus);
       this.form.shift = this.converShift(this.form.shift);
@@ -560,6 +532,7 @@ export default {
           function(res) {
             this.employee_db = res.data;
             this.countRow = this.employee_db.length;
+            this.currentPage = 1;
             if (this.employee_db != "") {
               this.errorSearching = false;
             } else {
@@ -579,6 +552,14 @@ export default {
         status = "Q";
       }
       return status;
+    },
+
+    convertGender(gender) {
+      if (gender == "F") {
+        return "Female";
+      } else {
+        return "Male";
+      }
     },
 
     convertDate(date) {

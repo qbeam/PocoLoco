@@ -1,6 +1,14 @@
 <template>
   <div class="container">
     <div class="inner-container">
+      <button class="logout-button">
+        <div @click="logOut()" class="logout-text">
+          <i
+            class="fa fa-sign-out fa-2x"
+          >
+          </i>
+        </div>
+      </button>
       <h1>Timestamp</h1>
       <div class="current-time">
         <p>{{ hour }}</p>
@@ -31,8 +39,8 @@
           }"
           >OUT</DefaultButton
         >
+      </div> 
       </div>
-    </div>
   </div>
 </template>
 
@@ -109,6 +117,15 @@ export default {
     }
   },
   methods: {
+    logOut() {
+      if (confirm("Are you sure you want to log out ?")) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("userDepartment");
+        localStorage.removeItem("userGender");
+        this.$router.push("/");
+      }
+    },
     stampCheckIn(type) {
       axios
         .post("http://localhost:8080/PocoLoco_db/api_timeStamp.php", {
@@ -164,6 +181,30 @@ export default {
   background-color: white;
   justify-content: center;
   align-items: center;
+}
+.logout-button {
+  width: 120px;
+  /* left: 100px; */
+  /* bottom: 50px; */
+  /* height: 35px; */
+  /* position: fixed; */
+  z-index: 10;
+  background: none;
+  border: none;
+}
+.logout-button:hover {
+  cursor: pointer;
+  opacity: 0.7;
+}
+.logout-text {
+  width: 100%;
+  color: var(--primary-blue);
+  font-size: 16px;
+  font-family: sans-serif;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 h1 {
   font-size: 64px;

@@ -79,12 +79,13 @@
     <PaginationBar
       :pageCount="Math.ceil(history_db.length / tableRow)"
       :paginationVisible="history_db.length > tableRow"
+      :changePage="currentPage"
       @pageReturn="pageReturn"
       :style="
         width <= 700
           ? {
               position: 'fixed',
-              bottom: '30px',
+              bottom: '50px',
               margin: '0 auto',
               right: '0',
               left: '60px',
@@ -92,14 +93,14 @@
           : width <= 1000
           ? {
               position: 'fixed',
-              bottom: '50px',
+              bottom: '80px',
               margin: '0 auto',
               right: '0',
               left: '60px',
             }
           : {
               position: 'fixed',
-              bottom: '50px',
+              bottom: '80px',
               margin: '0 auto',
               right: '0',
               left: '200px',
@@ -173,7 +174,7 @@ export default {
   },
   setup() {
     const { width } = useScreenWidth();
-    const { height, tableRow } = useScreenHeight(480);
+    const { height, tableRow } = useScreenHeight(500);
     return { width, height, tableRow };
   },
   data() {
@@ -329,6 +330,7 @@ export default {
               this.errorSearching = true;
             }
             this.returnQuery();
+            this.currentPage = 1;
           }.bind(this)
         );
     },

@@ -52,6 +52,7 @@
     <PaginationBar
       :pageCount="Math.ceil(order_db.length / tableRow)"
       :paginationVisible="order_db.length > tableRow"
+      :changePage="currentPage"
       @pageReturn="pageReturn"
       :style="
         width <= 1000
@@ -124,11 +125,15 @@ export default {
   },
 
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userDepartment") !== "Kitchen" && localStorage.getItem("userDepartment") !== "Housekeeping") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
-    }
-    else {
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userDepartment") !== "Kitchen" &&
+      localStorage.getItem("userDepartment") !== "Housekeeping"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
+    } else {
       this.storeData();
       this.checkRole();
       this.getOrder();
@@ -149,7 +154,7 @@ export default {
       this.sortDirection = direction;
     },
     goToAddOrder() {
-      this.$router.push({name: "Services"});
+      this.$router.push({ name: "Services" });
     },
     async getOrder() {
       await axios
@@ -193,6 +198,7 @@ export default {
               } else {
                 alert(res.data.message);
               }
+              this.currentPage = 1;
             }.bind(this)
           );
       }
@@ -209,7 +215,6 @@ export default {
       ) {
         this.type = 2;
       }
-
     },
   },
 };

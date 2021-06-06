@@ -18,7 +18,7 @@
     </div>
 
     <div class="inner-container">
-      <AllPayment v-if="selected == menus[0]" />
+      <AllPayment @countQuery="countQuery" v-if="selected == menus[0]" />
       <DepositPay v-if="selected == menus[1]" />
       <CheckOutPay v-if="selected == menus[2]" />
     </div>

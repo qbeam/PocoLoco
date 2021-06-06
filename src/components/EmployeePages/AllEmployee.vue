@@ -101,7 +101,13 @@
             </div>
           </td>
           <td>
-            <div class="manage">
+            <div v-if="employee.workStatus == 'Quited'" class="manage">
+              <button class="manage-button" @click="viewEmployee(employee)">
+                <i class="fa fa-search fa-2x"></i>
+              </button>
+            </div>
+
+            <div v-else class="manage">
               <button class="manage-button" @click="viewEmployee(employee)">
                 <i class="fa fa-search fa-2x"></i>
               </button>
@@ -117,6 +123,7 @@
     <PaginationBar
       :pageCount="Math.ceil(employee_db.length / tableRow)"
       :paginationVisible="employee_db.length > tableRow"
+      :changePage="currentPage"
       @pageReturn="pageReturn"
     />
 
@@ -156,7 +163,7 @@
           <p><b>Department: </b> {{ employee.departmentName }}</p>
           <p><b>Working time: </b>{{ employee.shift }}</p>
           <p><b>Identification: </b>{{ employee.identification }}</p>
-          <p><b>Gender: </b>{{ employee.gender }}</p>
+          <p><b>Gender: </b>{{ convertGender(employee.gender) }}</p>
           <p><b>Email: </b>{{ employee.email }}</p>
         </div>
         <div class="group-item">
@@ -257,7 +264,7 @@ import SortingArrow from "../SortingArrow";
 import SearchError from "../SearchError";
 import axios from "axios";
 
-const colNames = ["ID", "Name", "Role", "Dept", "Salary", "Status"];
+const colNames = ["ID", "Name", "Role", "Department", "Salary", "Status"];
 const selectOption = [
   "Name",
   "ID",
@@ -536,8 +543,17 @@ export default {
             } else {
               this.errorSearching = true;
             }
+            this.currentPage = 1;
           }.bind(this)
         );
+    },
+
+    convertGender(gender) {
+      if (gender == "F") {
+        return "Female";
+      } else {
+        return "Male";
+      }
     },
 
     convertWorkStatus(s) {

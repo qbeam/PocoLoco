@@ -24,7 +24,7 @@
           @click="setCurrentPage(page)"
           class="pagination-button"
           v-bind:style="
-            currentPage === page
+            page === changePage
               ? { background: 'var(--primary-blue)', color: 'white' }
               : {}
           "
@@ -50,7 +50,7 @@
 <script>
 export default {
   name: "PaginationBar",
-  props: ["pageCount", "paginationVisible"],
+  props: ["pageCount", "paginationVisible", "changePage"],
   data() {
     return {
       currentPage: 1,
@@ -67,6 +67,14 @@ export default {
   watch: {
     pageCount: function() {
       this.setPageNumber();
+    },
+    changePage: function() {
+      if (this.currentPage != this.changePage) {
+        this.setCurrentPage(this.changePage);
+        if (this.changePage == 1) {
+          this.pageGroup = 0;
+        }
+      }
     },
   },
 

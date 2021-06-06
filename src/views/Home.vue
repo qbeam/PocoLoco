@@ -69,7 +69,7 @@ export default {
       this.$router.push("/MyAccount");
     }
     if (this.role === "Manager" && this.department === "Accounts and Credits") {
-      this.$router.push("/Employee");
+      this.$router.push("/HotelExpenses");
     }
     if (this.role === "Accountant") {
       this.$router.push("/HotelExpenses");

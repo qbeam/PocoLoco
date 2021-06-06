@@ -98,6 +98,7 @@
   <PaginationBar
     :pageCount="Math.ceil(service_db.length / tableRow)"
     :paginationVisible="service_db.length > tableRow"
+    :changePage="currentPage"
     @pageReturn="pageReturn"
   />
 
@@ -257,6 +258,7 @@ export default {
             this.service_db = res.data;
             this.countRow = this.service_db.length;
             this.returnQuery();
+            this.currentPage = 1;
           }.bind(this)
         );
     },
@@ -303,11 +305,12 @@ export default {
       }
     },
     searchData() {
-      if (this.role == "Chef" || this.role == "Manager Chef") {
-        this.type = "Food & Beverage";
-      } else if (this.role == "Maid" || this.role == "Manager Maid") {
+      if (this.departmentName == "Housekeeping") {
         this.type = "Room Facilities";
+      } else if (this.departmentName == "Kitchen") {
+        this.type = "Food & Beverage";
       }
+
       axios
         .post("http://localhost:8080/PocoLoco_db/api_allService.php", {
           action: "searchService",
@@ -321,9 +324,11 @@ export default {
         })
         .then(
           function(res) {
+            console.log(res.data);
             this.service_db = res.data;
             this.countRow = this.service_db.length;
             this.returnQuery();
+            this.currentPage = 1;
             if (this.service_db != "") {
               this.errorSearching = false;
             } else {

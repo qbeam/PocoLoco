@@ -5,24 +5,32 @@
     </div>
 
     <InnerFormContainer>
-      <!-- Service Type Error -->
-      <div v-if="serviceTypeError">
-        <h4 style="color:red">Service Type</h4>
-        <select v-model="serviceType">
-          <option disabled value="">Service Type</option>
-          <option value="1">Room Facilities</option>
-          <option value="2">Food & Beverage</option>
-        </select>
+      <div v-if="departmentName == 'Kitchen'">
+        <h4>Service Type : Food & Beverage</h4>
       </div>
-
-      <!-- Service Type -->
+      <div v-else-if="departmentName == 'Housekeeping'">
+        <h4>Service Type : Room Facilities</h4>
+      </div>
       <div v-else>
-        <h4>Service Type</h4>
-        <select v-model="serviceType">
-          <option disabled value="">Service Type</option>
-          <option value="1">Room Facilities</option>
-          <option value="2">Food & Beverage</option>
-        </select>
+        <!-- Service Type Error -->
+        <div v-if="serviceTypeError">
+          <h4 style="color:red">Service Type</h4>
+          <select v-model="serviceType">
+            <option disabled value="">Service Type</option>
+            <option value="1">Room Facilities</option>
+            <option value="2">Food & Beverage</option>
+          </select>
+        </div>
+
+        <!-- Service Type -->
+        <div v-else>
+          <h4>Service Type</h4>
+          <select v-model="serviceType">
+            <option disabled value="">Service Type</option>
+            <option value="1">Room Facilities</option>
+            <option value="2">Food & Beverage</option>
+          </select>
+        </div>
       </div>
 
       <div class="input-group">
@@ -96,6 +104,7 @@ export default {
       serviceType: "",
       serviceName: "",
       price: "",
+      departmentName: "",
 
       check: false,
       serviceTypeError: false,
@@ -104,17 +113,27 @@ export default {
     };
   },
   created() {
-    if (localStorage.getItem("userRole") !== "Owner" && localStorage.getItem("userRole") !== "Admin" && localStorage.getItem("userRole") !== "Manager") {
-      this.$router.push("/Home")
-      alert("You don't have permission to access this page")
+    this.departmentName = localStorage.getItem("userDepartment");
+    if (this.departmentName == "Housekeeping") {
+      this.serviceType = 1;
+    } else if (this.departmentName == "Kitchen") {
+      this.serviceType = 2;
+    }
+    console.log(this.departmentName);
+    if (
+      localStorage.getItem("userRole") !== "Owner" &&
+      localStorage.getItem("userRole") !== "Admin" &&
+      localStorage.getItem("userRole") !== "Manager"
+    ) {
+      this.$router.push("/Home");
+      alert("You don't have permission to access this page");
     }
   },
   methods: {
     backToAllService() {
       this.$router.push("/Services");
     },
-    addNewService(e) {
-      e.preventDefault();
+    addNewService() {
       this.validate();
       if (this.check) {
         axios
